@@ -54,6 +54,6 @@ COPY tests/ tests/
 COPY compose.yaml ./
 COPY packaging/ packaging/
 COPY scripts/ scripts/
-COPY .gitignore .dockerignore .env.example ./
+COPY .gitattributes .gitignore .dockerignore .env.example ./
 COPY --from=web-build /web/dist /app/web
 CMD ["/app/.venv/bin/pytest", "tests/unit"]

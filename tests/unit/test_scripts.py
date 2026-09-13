@@ -32,3 +32,26 @@ def test_future_commands_do_not_report_success():
         result = subprocess.run(['bash', str(ROOT / f'scripts/{name}.sh')], capture_output=True)
         assert result.returncode == 2
         assert b'Not implemented' in result.stderr
+
+
+def test_shell_scripts_have_lf_and_valid_bash_syntax():
+    for path in (ROOT / 'scripts').glob('*.sh'):
+        assert b'\r' not in path.read_bytes(), path.name
+        subprocess.run(['bash', '-n', str(path)], check=True)
+
+
+def test_git_checkout_preserves_lf_with_autocrlf(tmp_path):
+    if not shutil.which('git'):
+        import pytest
+        pytest.skip('Git checkout check runs on the authoring host; runtime images omit Git')
+    checkout = tmp_path / 'checkout'
+    checkout.mkdir()
+    commands = ['git', '-c', 'core.autocrlf=true', '-C', str(checkout)]
+    subprocess.run([*commands, 'init', '--quiet'], check=True)
+    shutil.copy(ROOT / '.gitattributes', checkout / '.gitattributes')
+    shutil.copytree(ROOT / 'scripts', checkout / 'scripts')
+    subprocess.run([*commands, 'add', '.gitattributes', 'scripts'], check=True, capture_output=True)
+    exported = tmp_path / 'exported'
+    subprocess.run([*commands, 'checkout-index', '--all', '--prefix=' + exported.as_posix() + '/'], check=True)
+    for path in (exported / 'scripts').glob('*.sh'):
+        assert b'\r' not in path.read_bytes(), path.name
