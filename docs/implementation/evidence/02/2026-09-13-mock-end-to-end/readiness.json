@@ -1,0 +1,15 @@
+{
+  "status": "ready",
+  "dependencies": {
+    "database": "ready",
+    "schema": "ready",
+    "artifacts": "ready"
+  },
+  "services": {
+    "dispatcher": "ready",
+    "worker-mock": "ready",
+    "broker": "observed_connected",
+    "provider": "ready"
+  },
+  "generation": "ready"
+}

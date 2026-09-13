@@ -1,0 +1,63 @@
+[
+  {
+    "identity": {
+      "job_id": "7f7c58d7-e2fb-4349-9126-9372c1739f0c",
+      "project_id": "122680ed-8b1b-49d0-9713-569434bd322f",
+      "state": "queued",
+      "status_url": "/api/v1/jobs/7f7c58d7-e2fb-4349-9126-9372c1739f0c",
+      "project_url": "/projects/122680ed-8b1b-49d0-9713-569434bd322f"
+    },
+    "job": {
+      "id": "7f7c58d7-e2fb-4349-9126-9372c1739f0c",
+      "project_id": "122680ed-8b1b-49d0-9713-569434bd322f",
+      "state": "succeeded",
+      "stage": "saving_result",
+      "progress": null,
+      "attempt_count": 1,
+      "cancellation_requested_at": null,
+      "result_version_id": "0dbee0b5-e879-4032-9e18-7d7ce506b105",
+      "created_at": "2026-09-13T13:35:56.696438Z",
+      "completed_at": "2026-09-13T13:36:00.958693Z",
+      "correlation_id": "832e1bcc-5da5-4117-b800-d8c2dc778da1",
+      "dispatch_sequence": 1,
+      "error": null,
+      "version_url": "/api/v1/versions/0dbee0b5-e879-4032-9e18-7d7ce506b105",
+      "dispatch_status": "published",
+      "attempts": [
+        {
+          "attempt_number": 1,
+          "worker_id": "570c89ef-0f36-4cac-8f7e-43bb00bf1f33",
+          "started_at": "2026-09-13T13:35:59.601509Z",
+          "ended_at": "2026-09-13T13:36:00.958693Z",
+          "outcome": "succeeded"
+        }
+      ],
+      "provider_readiness": {
+        "state": "ready",
+        "last_observed_at": "2026-09-13T13:36:01.072172Z"
+      }
+    },
+    "audio": {
+      "id": "2fba7466-d36f-4b53-8258-f3ab2d9cd926",
+      "created_at": "2026-09-13T13:36:00.956871Z",
+      "sha256": "943153404b326980a579d1706eb82fad090fbd4c2ad97f5138d408292ccf1c8f",
+      "byte_size": 882044,
+      "media_type": "audio/wav",
+      "sample_rate": 44100,
+      "channels": 2,
+      "duration_seconds": 5.0,
+      "published_at": "2026-09-13T13:36:00.958693Z",
+      "available_at": "2026-09-13T13:36:00.958693Z",
+      "retired_at": null,
+      "url": "/api/v1/artifacts/2fba7466-d36f-4b53-8258-f3ab2d9cd926"
+    },
+    "decoded": {
+      "duration_seconds": 5.0,
+      "sample_rate": 44100,
+      "channels": 2,
+      "sample_width_bytes": 2,
+      "frames": 220500,
+      "non_silent": true
+    }
+  }
+]

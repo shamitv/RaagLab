@@ -1,4 +1,4 @@
-# Foundation development
+# Development
 
 ## Service boundaries
 
@@ -6,7 +6,7 @@
 
 PostgreSQL is authoritative. Run migrations through `python -m museforge.db.migrate`, normally via `bash scripts/migrate.sh`; bare Alembic intentionally refuses execution without the guarded connection. A session advisory lock serializes migration commands, including initial schema creation and singleton workspace setup. Future migrations must not modify `0001_foundation`.
 
-Worker/dispatcher process probes check PostgreSQL, the schema, and an authenticated broker connection. Their observations expire in PostgreSQL and in container health files. Provider registrations remain `initializing` with capability revision `foundation-no-generation`: no provider has been implemented. The dispatcher does not publish outbox jobs yet. The named generation task rejects messages to a bounded quarantine queue instead of returning a simulated success.
+Worker/dispatcher process probes check PostgreSQL, the schema, and an authenticated broker connection. Their observations expire in PostgreSQL and in container health files. Provider registrations report ready/busy with capability revision `1`. The dispatcher publishes durable outbox jobs and reconciles leases; the named task runs the fenced mock pipeline. Invalid envelopes are rejected to the bounded quarantine queue. See [architecture](architecture.md).
 
 Each broker probe runs in a disposable subprocess. `BROKER_TIMEOUT_SECONDS` bounds connection setup, channel creation, queue declarations, and connection cleanup together. A timeout kills and reaps the child, records a safe failure category, and allows the next heartbeat to retry. Child output is discarded so broker-controlled errors cannot enter service logs.
 
@@ -20,7 +20,7 @@ Copy defaults through `bash scripts/setup.sh`; it preserves an existing `.env`, 
 
 The application container paths in `.env.example` match Compose mounts. The API mounts artifacts read-only; the worker mounts the same volume writable. PostgreSQL 18 uses the named volume at `/var/lib/postgresql`, with its data under `18/docker` ([official image documentation](https://hub.docker.com/_/postgres)). RabbitMQ uses a stable hostname and its own persistent volume. DB/broker publish no host ports. Normal `stop.sh` never removes volumes.
 
-`/health/live` measures the HTTP process. `/health/ready` requires reachable DB, exact schema head, the configured local workspace, and readable artifact storage; broker/dispatcher/worker observations are reported separately. The `generation` field is always `not_implemented` in foundation. No generation endpoint is advertised in OpenAPI.
+`/health/live` measures the HTTP process. `/health/ready` requires reachable DB, exact schema head, the configured local workspace, and readable artifact storage; broker/dispatcher/worker observations are reported separately. The `generation` field reports ready/unavailable based on fresh provider observations. Generation endpoints are described in OpenAPI and [API documentation](api.md).
 
 Only documented SPA routes receive HTML fallback. Unknown API paths, missing assets, invalid project UUID paths, and unsupported routes return 404. Hashed assets have immutable caching; HTML and unhashed assets revalidate.
 
@@ -49,7 +49,7 @@ To run the API locally against explicitly configured local service URLs, set abs
 uv run --frozen --group api uvicorn museforge.api.app:create_app --factory --host 127.0.0.1 --port 8000
 ```
 
-Generate TypeScript types from the actual foundation OpenAPI:
+Generate TypeScript types from the actual OpenAPI:
 
 ```bash
 mkdir -p test-results
@@ -64,9 +64,9 @@ bash scripts/setup.sh
 bash scripts/test.sh integration
 ```
 
-The Python runner uses a fresh `museforge-foundation-test-<uuid>` Compose project and an automatically allocated loopback API port. It overrides `.env` connection settings and credentials for every test service. It clean-builds the images, runs unit and real-service integration tests, inspects package inventories, and repeats integration checks after an ordinary `down`/`up`. Its `finally` cleanup removes only that generated test project and its volumes. A failed assertion exits nonzero.
+The Phase 2 Python runner uses a fresh `museforge-phase2-test-<uuid>` Compose project and an automatically allocated loopback API port. It overrides developer connection settings, builds pinned images, runs unit and real-service tests, checks project/audio persistence after an API restart, and executes the smoke client. Set `PHASE2_BROWSER=1` to also run locally installed Playwright browsers against the isolated origin. Evidence is written under `test-results/`; cleanup removes only the generated test project's volumes. A failed assertion exits nonzero.
 
-The runner also publishes four malformed test messages, checks actual worker logs for the safe diagnostic codes and absence of a unique private sentinel, and confirms worker health afterward. These messages are restricted to the isolated test broker.
+The original `verify-foundation.py` remains available for package boundaries, malformed consumer log redaction, and full ordinary down/up persistence checks.
 
 Frontend tests in the pinned build runtime can also run with:
 
@@ -74,14 +74,14 @@ Frontend tests in the pinned build runtime can also run with:
 docker build -f packaging/Dockerfile --target web-test .
 ```
 
-Browser shell checks use the actual API origin (start the mock stack first):
+Browser generation and navigation checks use the actual API origin (start the mock stack first):
 
 ```bash
 (cd apps/web && npm ci --no-audit --no-fund && npx playwright install chromium)
 (cd apps/web && API_BASE_URL=http://127.0.0.1:8000 npm run test:browser)
 ```
 
-These checks cover navigation/refresh, no overflow at 1440/390/320 px, browser errors, and automated axe checks. They do not claim the full Phase 03 accessibility or Phase 06 browser acceptance.
+These checks cover all lyrics modes, actual playback/seek/download, refresh, navigation, no overflow at 1440/390/320 px, browser errors, and automated axe checks. They do not claim the full Phase 03 accessibility or Phase 06 browser acceptance.
 
 ## Remote Linux execution
 

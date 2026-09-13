@@ -2,7 +2,7 @@
 
 - Contract baseline: 1
 - Decision date: 2026-09-13
-- State: Phase 01 foundation schema and health/static interfaces implemented; product endpoints and providers remain planned. See [foundation report](phases/01-foundation/implementation-status.md).
+- State: Phase 01 foundations and Phase 02 generation/provider/artifact interfaces are implemented; later-phase endpoints remain planned. See [Phase 02 report](phases/02-mock-end-to-end/implementation-status.md).
 - Related: [ADR 0001](decisions/0001-application-architecture.md), [job reliability](job-reliability.md), [UI behavior](ui-behavior.md)
 
 ## Common conventions and validation

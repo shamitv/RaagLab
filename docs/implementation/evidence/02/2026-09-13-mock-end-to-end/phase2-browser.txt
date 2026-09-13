@@ -1,0 +1,27 @@
+
+> museforge-web@0.1.0 test:browser
+> playwright test
+
+
+Running 12 tests using 1 worker
+
+(node:166472) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [desktop] › browser/generation.spec.ts:4:1 › real generation plays, seeks, downloads and survives refresh (33.5s)
+  ✓   2 [desktop] › browser/generation.spec.ts:49:39 › real static lyrics (9.5s)
+  ✓   3 [desktop] › browser/generation.spec.ts:49:39 › real mock lyrics (12.5s)
+  ✓   4 [desktop] › browser/routing.spec.ts:4:1 › API-served shell supports navigation, refresh, and accessible placeholders (2.5s)
+(node:166673) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   5 [mobile] › browser/generation.spec.ts:4:1 › real generation plays, seeks, downloads and survives refresh (30.4s)
+  ✓   6 [mobile] › browser/generation.spec.ts:49:39 › real static lyrics (6.4s)
+  ✓   7 [mobile] › browser/generation.spec.ts:49:39 › real mock lyrics (6.5s)
+  ✓   8 [mobile] › browser/routing.spec.ts:4:1 › API-served shell supports navigation, refresh, and accessible placeholders (2.5s)
+(node:166959) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   9 [narrow] › browser/generation.spec.ts:4:1 › real generation plays, seeks, downloads and survives refresh (11.5s)
+  ✓  10 [narrow] › browser/generation.spec.ts:49:39 › real static lyrics (9.4s)
+  ✓  11 [narrow] › browser/generation.spec.ts:49:39 › real mock lyrics (6.4s)
+  ✓  12 [narrow] › browser/routing.spec.ts:4:1 › API-served shell supports navigation, refresh, and accessible placeholders (2.3s)
+
+  12 passed (2.3m)

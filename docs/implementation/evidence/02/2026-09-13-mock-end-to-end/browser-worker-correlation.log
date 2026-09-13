@@ -1,0 +1,184 @@
+dispatcher-1  | INFO museforge outbox_publication job=d0548af2-3cbb-4df1-a4da-d7546046c2ae message=9c061530-b555-4b34-8b7d-cab2c315c168 confirmed=True
+dispatcher-1  | INFO museforge outbox_publication job=ec6a04f4-fd9c-458e-a97a-e4acfb8fe6c1 message=bff0340c-4cb2-428f-b573-f7d272f12dce confirmed=True
+dispatcher-1  | INFO museforge outbox_publication job=9504eeaf-e117-46dd-b2ab-314eecdd7034 message=920c7a14-cd46-44d8-aa35-58675ee2a594 confirmed=True
+dispatcher-1  | INFO museforge outbox_publication job=6f4ff091-2708-4c4e-abc3-c9b47cc9bc38 message=794a35b2-9061-455c-ae70-e9d022851e35 confirmed=True
+dispatcher-1  | INFO museforge outbox_publication job=048a4492-d676-4627-a115-396a9e68604e message=835921c8-a37f-46d1-953a-8bc70cdb4bca confirmed=True
+dispatcher-1  | INFO museforge outbox_publication job=35543219-64e9-44fc-8347-948d97f8867e message=8d15aef7-4d3a-4973-a6e6-9471df2f6783 confirmed=True
+dispatcher-1  | INFO museforge outbox_publication job=cfe3d6d8-815a-4230-9fe4-031d7481238b message=27eb7836-2824-4c9b-af42-10ffbdacbd10 confirmed=True
+dispatcher-1  | INFO museforge outbox_publication job=7fbc3e8f-0576-4736-b6e1-867c3ba04f4f message=b313a319-bb7c-4d8e-a2ad-26642a271d41 confirmed=True
+dispatcher-1  | INFO museforge outbox_publication job=ee849533-d4e4-4f6a-9500-eb631aad60a9 message=7917d603-291d-40a0-9602-9bde0a3ad5e6 confirmed=True
+dispatcher-1  | INFO museforge outbox_publication job=ee849533-d4e4-4f6a-9500-eb631aad60a9 message=1f636f90-f562-4b0e-921d-2d556e2505fd confirmed=True
+dispatcher-1  | INFO museforge outbox_publication job=ee849533-d4e4-4f6a-9500-eb631aad60a9 message=9010786c-d779-4a1b-93a8-0b382b70d077 confirmed=False
+dispatcher-1  | WARNING museforge process_probe_failed role=dispatcher error_type=BrokerProbeTimeout
+dispatcher-1  | INFO museforge outbox_publication job=ee849533-d4e4-4f6a-9500-eb631aad60a9 message=9010786c-d779-4a1b-93a8-0b382b70d077 confirmed=True
+dispatcher-1  | INFO museforge outbox_publication job=2990be9c-7354-4ebc-b492-8559042e1f1b message=dac1fee8-3317-470a-8b16-c5f79d357c12 confirmed=True
+dispatcher-1  | WARNING museforge process_probe_failed role=dispatcher error_type=BrokerProbeTimeout
+dispatcher-1  | INFO museforge outbox_publication job=1047fa7d-6947-46d5-bbdb-22ccd0a1f9bf message=9705f1d3-04ee-4116-9947-a97a0e4fa5d6 confirmed=True
+dispatcher-1  | WARNING museforge process_probe_failed role=dispatcher error_type=BrokerProbeTimeout
+dispatcher-1  | INFO museforge outbox_publication job=88bda046-aa3e-462c-b3bc-6bb7cb493662 message=4d21c08c-602e-4b58-9db3-a6068fe8e42b confirmed=False
+dispatcher-1  | WARNING museforge process_probe_failed role=dispatcher error_type=BrokerProbeTimeout
+dispatcher-1  | INFO museforge outbox_publication job=88bda046-aa3e-462c-b3bc-6bb7cb493662 message=4d21c08c-602e-4b58-9db3-a6068fe8e42b confirmed=False
+dispatcher-1  | INFO museforge outbox_publication job=88bda046-aa3e-462c-b3bc-6bb7cb493662 message=4d21c08c-602e-4b58-9db3-a6068fe8e42b confirmed=True
+dispatcher-1  | INFO museforge outbox_publication job=3723fd7f-0cde-48b7-b537-9197f1ca4dd0 message=3ed5fbc4-7d37-441f-adfb-cac8e3ad9184 confirmed=False
+dispatcher-1  | INFO museforge outbox_publication job=9998a0c3-ee2c-4054-be9b-e05465c14341 message=c481e1de-00f2-45ff-ba57-f425f7a1ec5d confirmed=True
+dispatcher-1  | INFO museforge outbox_publication job=3723fd7f-0cde-48b7-b537-9197f1ca4dd0 message=3ed5fbc4-7d37-441f-adfb-cac8e3ad9184 confirmed=False
+dispatcher-1  | INFO museforge outbox_publication job=a1621dac-7b29-4086-912c-1008e5d9cbcc message=688d9b90-7da4-434a-a4af-923bf5ee184d confirmed=False
+dispatcher-1  | INFO museforge outbox_publication job=3723fd7f-0cde-48b7-b537-9197f1ca4dd0 message=3ed5fbc4-7d37-441f-adfb-cac8e3ad9184 confirmed=True
+dispatcher-1  | INFO museforge outbox_publication job=a1621dac-7b29-4086-912c-1008e5d9cbcc message=688d9b90-7da4-434a-a4af-923bf5ee184d confirmed=False
+dispatcher-1  | WARNING museforge process_probe_failed role=dispatcher error_type=BrokerProbeTimeout
+dispatcher-1   | INFO museforge outbox_publication job=a1621dac-7b29-4086-912c-1008e5d9cbcc message=688d9b90-7da4-434a-a4af-923bf5ee184d confirmed=True
+dispatcher-1   | WARNING museforge process_probe_failed role=dispatcher error_type=BrokerProbeTimeout
+dispatcher-1   | INFO museforge outbox_publication job=384617e5-82ae-4daf-b9f0-bc7f1fb90bc4 message=4f9fdf45-9ee6-4b44-a650-21bc3ea343b7 confirmed=True
+worker-mock-1  | INFO museforge job_claimed job=d0548af2-3cbb-4df1-a4da-d7546046c2ae message=9c061530-b555-4b34-8b7d-cab2c315c168 correlation=95a03a8b-9d6f-489c-a63b-c7ba0d52bde9 fence=1
+worker-mock-1  | INFO museforge job_stage job=d0548af2-3cbb-4df1-a4da-d7546046c2ae fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=d0548af2-3cbb-4df1-a4da-d7546046c2ae fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=d0548af2-3cbb-4df1-a4da-d7546046c2ae fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=d0548af2-3cbb-4df1-a4da-d7546046c2ae correlation=95a03a8b-9d6f-489c-a63b-c7ba0d52bde9 fence=1 version=78dc2e0a-1155-4e9c-8d87-3961659d6869
+worker-mock-1  | INFO museforge job_claimed job=ec6a04f4-fd9c-458e-a97a-e4acfb8fe6c1 message=bff0340c-4cb2-428f-b573-f7d272f12dce correlation=ff177a74-6a87-4f3b-83d7-9b52a64667eb fence=1
+worker-mock-1  | INFO museforge job_stage job=ec6a04f4-fd9c-458e-a97a-e4acfb8fe6c1 fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=ec6a04f4-fd9c-458e-a97a-e4acfb8fe6c1 fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=ec6a04f4-fd9c-458e-a97a-e4acfb8fe6c1 fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=ec6a04f4-fd9c-458e-a97a-e4acfb8fe6c1 correlation=ff177a74-6a87-4f3b-83d7-9b52a64667eb fence=1 version=1ce7639c-4ed2-4e15-9f6a-ad29ad1dcbc5
+worker-mock-1  | INFO museforge job_claimed job=9504eeaf-e117-46dd-b2ab-314eecdd7034 message=920c7a14-cd46-44d8-aa35-58675ee2a594 correlation=f13534cf-7680-4c38-abf0-b07bd2dbdf66 fence=1
+worker-mock-1  | INFO museforge job_stage job=9504eeaf-e117-46dd-b2ab-314eecdd7034 fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=9504eeaf-e117-46dd-b2ab-314eecdd7034 fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=9504eeaf-e117-46dd-b2ab-314eecdd7034 fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=9504eeaf-e117-46dd-b2ab-314eecdd7034 correlation=f13534cf-7680-4c38-abf0-b07bd2dbdf66 fence=1 version=29f65a22-967f-4c6f-befc-f91ce4eb24b8
+worker-mock-1  | INFO museforge job_claimed job=6f4ff091-2708-4c4e-abc3-c9b47cc9bc38 message=794a35b2-9061-455c-ae70-e9d022851e35 correlation=ae85c1e1-8636-4ba4-a1e4-8084803fff43 fence=1
+worker-mock-1  | INFO museforge job_stage job=6f4ff091-2708-4c4e-abc3-c9b47cc9bc38 fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=6f4ff091-2708-4c4e-abc3-c9b47cc9bc38 fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=6f4ff091-2708-4c4e-abc3-c9b47cc9bc38 fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=6f4ff091-2708-4c4e-abc3-c9b47cc9bc38 correlation=ae85c1e1-8636-4ba4-a1e4-8084803fff43 fence=1 version=23d71523-d21c-4fae-85a4-3357423c88ef
+worker-mock-1  | INFO museforge job_claimed job=048a4492-d676-4627-a115-396a9e68604e message=835921c8-a37f-46d1-953a-8bc70cdb4bca correlation=11da773c-cb11-4e2e-bc3d-81e4878382d5 fence=1
+worker-mock-1  | INFO museforge job_stage job=048a4492-d676-4627-a115-396a9e68604e fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=048a4492-d676-4627-a115-396a9e68604e fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=048a4492-d676-4627-a115-396a9e68604e fence=1 stage=saving_result
+dispatcher-1   | WARNING museforge process_probe_failed role=dispatcher error_type=BrokerProbeTimeout
+dispatcher-1   | INFO museforge outbox_publication job=c2fdf1f0-3063-48bc-a2df-4e7fed7eb3b9 message=5abee952-6fa3-4414-9024-c7cc6697bb8a confirmed=True
+dispatcher-1   | WARNING museforge process_probe_failed role=dispatcher error_type=BrokerProbeTimeout
+dispatcher-1   | INFO museforge outbox_publication job=f11c5267-399d-45a2-a5c4-f61dc082a5aa message=9acaef01-ce05-41bf-8fdc-d981a9d4e51c confirmed=False
+dispatcher-1   | INFO museforge outbox_publication job=1ee81870-ba61-4654-8622-513cfe5e2637 message=88c2f3b7-0846-44d1-8309-59dc59fb85c6 confirmed=True
+dispatcher-1   | INFO museforge outbox_publication job=f11c5267-399d-45a2-a5c4-f61dc082a5aa message=9acaef01-ce05-41bf-8fdc-d981a9d4e51c confirmed=False
+dispatcher-1   | WARNING museforge process_probe_failed role=dispatcher error_type=BrokerProbeTimeout
+dispatcher-1   | INFO museforge outbox_publication job=f11c5267-399d-45a2-a5c4-f61dc082a5aa message=9acaef01-ce05-41bf-8fdc-d981a9d4e51c confirmed=True
+dispatcher-1   | WARNING museforge process_probe_failed role=dispatcher error_type=BrokerProbeTimeout
+dispatcher-1   | INFO museforge outbox_publication job=1e6af520-dbf5-4286-a5af-59446f5edf1a message=032de18d-62e7-4658-900b-001486628299 confirmed=False
+dispatcher-1   | INFO museforge outbox_publication job=fe77887a-2ad8-4279-8481-13205858fdc3 message=98118edd-1498-4519-b508-ba668f56ab44 confirmed=True
+dispatcher-1   | INFO museforge outbox_publication job=1e6af520-dbf5-4286-a5af-59446f5edf1a message=032de18d-62e7-4658-900b-001486628299 confirmed=False
+dispatcher-1   | WARNING museforge process_probe_failed role=dispatcher error_type=BrokerProbeTimeout
+dispatcher-1   | INFO museforge outbox_publication job=1e6af520-dbf5-4286-a5af-59446f5edf1a message=032de18d-62e7-4658-900b-001486628299 confirmed=True
+dispatcher-1   | INFO museforge outbox_publication job=4d5e0bd9-21fd-4fdf-88c5-2a6a58e747c8 message=d470d39f-c213-4a46-b462-7a52726ede06 confirmed=True
+dispatcher-1   | INFO museforge outbox_publication job=5bc13730-63e6-4bfe-b88e-17a45a835e76 message=b441b395-8620-4fb6-979f-24a3844b5c6a confirmed=True
+dispatcher-1   | INFO museforge outbox_publication job=e8fbe445-3ebe-42da-9802-25957875ee93 message=ddafbd6b-e6f8-47ed-80ef-b0a4812c6ee1 confirmed=True
+dispatcher-1   | WARNING museforge process_probe_failed role=dispatcher error_type=BrokerProbeTimeout
+dispatcher-1   | INFO museforge outbox_publication job=bb07a958-2934-4dd3-a4b1-97e1fb79e326 message=e992b52e-24bd-4463-a815-7411272a76d2 confirmed=True
+dispatcher-1   | INFO museforge outbox_publication job=5451bfe9-2734-4fa6-a46d-c83f8127b3c9 message=ab09f5ea-617e-4fce-8025-b2fd4c25d656 confirmed=True
+dispatcher-1   | WARNING museforge process_probe_failed role=dispatcher error_type=BrokerProbeTimeout
+worker-mock-1  | INFO museforge job_succeeded job=048a4492-d676-4627-a115-396a9e68604e correlation=11da773c-cb11-4e2e-bc3d-81e4878382d5 fence=1 version=dd411d89-522b-4884-80f6-f1d9967b3b64
+worker-mock-1  | INFO museforge job_claimed job=35543219-64e9-44fc-8347-948d97f8867e message=8d15aef7-4d3a-4973-a6e6-9471df2f6783 correlation=ed94e077-6cfb-4031-abe7-8211fc399be8 fence=1
+worker-mock-1  | INFO museforge job_stage job=35543219-64e9-44fc-8347-948d97f8867e fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=35543219-64e9-44fc-8347-948d97f8867e fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=35543219-64e9-44fc-8347-948d97f8867e fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=35543219-64e9-44fc-8347-948d97f8867e correlation=ed94e077-6cfb-4031-abe7-8211fc399be8 fence=1 version=d40eafe3-ada8-45cd-99a8-9e003a57211a
+worker-mock-1  | INFO museforge job_claimed job=cfe3d6d8-815a-4230-9fe4-031d7481238b message=27eb7836-2824-4c9b-af42-10ffbdacbd10 correlation=88b0ac23-58b6-4802-8100-6009190762d5 fence=1
+worker-mock-1  | INFO museforge job_stage job=cfe3d6d8-815a-4230-9fe4-031d7481238b fence=1 stage=composing_music
+worker-mock-1  | WARNING museforge job_stopped job=cfe3d6d8-815a-4230-9fe4-031d7481238b fence=1 code=invalid_request
+worker-mock-1  | INFO museforge job_claimed job=7fbc3e8f-0576-4736-b6e1-867c3ba04f4f message=b313a319-bb7c-4d8e-a2ad-26642a271d41 correlation=f16979f2-ff5b-4c97-8626-8dd70b9ee7a1 fence=1
+worker-mock-1  | INFO museforge job_stage job=7fbc3e8f-0576-4736-b6e1-867c3ba04f4f fence=1 stage=composing_music
+worker-mock-1  | WARNING museforge job_stopped job=7fbc3e8f-0576-4736-b6e1-867c3ba04f4f fence=1 code=deadline_exceeded
+worker-mock-1  | INFO museforge job_claimed job=ee849533-d4e4-4f6a-9500-eb631aad60a9 message=7917d603-291d-40a0-9602-9bde0a3ad5e6 correlation=4dc50056-c798-48ba-ba1e-073660a9017d fence=1
+worker-mock-1  | INFO museforge job_stage job=ee849533-d4e4-4f6a-9500-eb631aad60a9 fence=1 stage=composing_music
+worker-mock-1  | WARNING museforge job_stopped job=ee849533-d4e4-4f6a-9500-eb631aad60a9 fence=1 code=transient_failure
+worker-mock-1  | INFO museforge job_claimed job=ee849533-d4e4-4f6a-9500-eb631aad60a9 message=1f636f90-f562-4b0e-921d-2d556e2505fd correlation=4dc50056-c798-48ba-ba1e-073660a9017d fence=2
+worker-mock-1  | INFO museforge job_stage job=ee849533-d4e4-4f6a-9500-eb631aad60a9 fence=2 stage=composing_music
+worker-mock-1  | WARNING museforge job_stopped job=ee849533-d4e4-4f6a-9500-eb631aad60a9 fence=2 code=transient_failure
+worker-mock-1  | INFO museforge job_claimed job=ee849533-d4e4-4f6a-9500-eb631aad60a9 message=9010786c-d779-4a1b-93a8-0b382b70d077 correlation=4dc50056-c798-48ba-ba1e-073660a9017d fence=3
+worker-mock-1  | INFO museforge job_stage job=ee849533-d4e4-4f6a-9500-eb631aad60a9 fence=3 stage=composing_music
+worker-mock-1  | WARNING museforge job_stopped job=ee849533-d4e4-4f6a-9500-eb631aad60a9 fence=3 code=transient_failure
+worker-mock-1  | INFO museforge job_claimed job=2990be9c-7354-4ebc-b492-8559042e1f1b message=dac1fee8-3317-470a-8b16-c5f79d357c12 correlation=82fa8883-4d48-4673-8a30-3f3b3b093d3f fence=1
+worker-mock-1  | INFO museforge job_stage job=2990be9c-7354-4ebc-b492-8559042e1f1b fence=1 stage=composing_music
+worker-mock-1  | WARNING museforge job_stopped job=2990be9c-7354-4ebc-b492-8559042e1f1b fence=1 code=cancelled
+worker-mock-1  | INFO museforge job_claimed job=1047fa7d-6947-46d5-bbdb-22ccd0a1f9bf message=9705f1d3-04ee-4116-9947-a97a0e4fa5d6 correlation=ce42ff21-75cd-4158-bccd-0caf90abfb1a fence=1
+worker-mock-1  | INFO museforge job_stage job=1047fa7d-6947-46d5-bbdb-22ccd0a1f9bf fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=1047fa7d-6947-46d5-bbdb-22ccd0a1f9bf fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=1047fa7d-6947-46d5-bbdb-22ccd0a1f9bf fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=1047fa7d-6947-46d5-bbdb-22ccd0a1f9bf correlation=ce42ff21-75cd-4158-bccd-0caf90abfb1a fence=1 version=725cc998-52a2-4e0b-8724-028b15a607e7
+worker-mock-1  | WARNING museforge process_probe_failed role=worker-mock error_type=BrokerProbeTimeout
+worker-mock-1  | INFO museforge job_claimed job=88bda046-aa3e-462c-b3bc-6bb7cb493662 message=4d21c08c-602e-4b58-9db3-a6068fe8e42b correlation=47c7ec46-9795-489a-b8a8-1d39d1cc2139 fence=1
+worker-mock-1  | INFO museforge job_stage job=88bda046-aa3e-462c-b3bc-6bb7cb493662 fence=1 stage=composing_music
+worker-mock-1  | WARNING museforge job_stopped job=88bda046-aa3e-462c-b3bc-6bb7cb493662 fence=1 code=cancelled
+worker-mock-1  | WARNING museforge process_probe_failed role=worker-mock error_type=BrokerProbeTimeout
+worker-mock-1  | INFO museforge job_claimed job=9998a0c3-ee2c-4054-be9b-e05465c14341 message=c481e1de-00f2-45ff-ba57-f425f7a1ec5d correlation=bdfa1b10-c976-480a-8eb7-7cb2224cda35 fence=1
+worker-mock-1  | INFO museforge job_stage job=9998a0c3-ee2c-4054-be9b-e05465c14341 fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=9998a0c3-ee2c-4054-be9b-e05465c14341 fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=9998a0c3-ee2c-4054-be9b-e05465c14341 fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=9998a0c3-ee2c-4054-be9b-e05465c14341 correlation=bdfa1b10-c976-480a-8eb7-7cb2224cda35 fence=1 version=cb735a24-fe16-4bba-9412-97abc3e95fe3
+worker-mock-1  | WARNING museforge process_probe_failed role=worker-mock error_type=BrokerProbeTimeout
+worker-mock-1  | INFO museforge job_claimed job=3723fd7f-0cde-48b7-b537-9197f1ca4dd0 message=3ed5fbc4-7d37-441f-adfb-cac8e3ad9184 correlation=6862d066-e52a-4838-835b-7475d8258a27 fence=1
+worker-mock-1  | INFO museforge job_stage job=3723fd7f-0cde-48b7-b537-9197f1ca4dd0 fence=1 stage=composing_music
+worker-mock-1  | WARNING museforge process_probe_failed role=worker-mock error_type=BrokerProbeTimeout
+worker-mock-1  | INFO museforge job_stage job=3723fd7f-0cde-48b7-b537-9197f1ca4dd0 fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=3723fd7f-0cde-48b7-b537-9197f1ca4dd0 fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=3723fd7f-0cde-48b7-b537-9197f1ca4dd0 correlation=6862d066-e52a-4838-835b-7475d8258a27 fence=1 version=fa0499f0-872e-410e-8b9f-cf955e727445
+worker-mock-1  | INFO museforge job_claimed job=a1621dac-7b29-4086-912c-1008e5d9cbcc message=688d9b90-7da4-434a-a4af-923bf5ee184d correlation=28fbcb66-68f1-401f-887a-2293c20e6b81 fence=1
+worker-mock-1  | INFO museforge job_stage job=a1621dac-7b29-4086-912c-1008e5d9cbcc fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=a1621dac-7b29-4086-912c-1008e5d9cbcc fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=a1621dac-7b29-4086-912c-1008e5d9cbcc fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=a1621dac-7b29-4086-912c-1008e5d9cbcc correlation=28fbcb66-68f1-401f-887a-2293c20e6b81 fence=1 version=f1a50f9c-0696-4fc8-9b9d-3eca8cff97b6
+worker-mock-1  | INFO museforge job_claimed job=384617e5-82ae-4daf-b9f0-bc7f1fb90bc4 message=4f9fdf45-9ee6-4b44-a650-21bc3ea343b7 correlation=4a45a7be-2664-42ec-b939-7eb61440ed17 fence=1
+worker-mock-1  | INFO museforge job_stage job=384617e5-82ae-4daf-b9f0-bc7f1fb90bc4 fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=384617e5-82ae-4daf-b9f0-bc7f1fb90bc4 fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=384617e5-82ae-4daf-b9f0-bc7f1fb90bc4 fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=384617e5-82ae-4daf-b9f0-bc7f1fb90bc4 correlation=4a45a7be-2664-42ec-b939-7eb61440ed17 fence=1 version=288ae5ca-e10d-4e51-8936-41bbb046b73f
+worker-mock-1  | WARNING museforge process_probe_failed role=worker-mock error_type=BrokerProbeTimeout
+worker-mock-1  | INFO museforge job_claimed job=c2fdf1f0-3063-48bc-a2df-4e7fed7eb3b9 message=5abee952-6fa3-4414-9024-c7cc6697bb8a correlation=c50104a7-222c-4f04-a2d9-58a461c19c1c fence=1
+worker-mock-1  | INFO museforge job_stage job=c2fdf1f0-3063-48bc-a2df-4e7fed7eb3b9 fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=c2fdf1f0-3063-48bc-a2df-4e7fed7eb3b9 fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=c2fdf1f0-3063-48bc-a2df-4e7fed7eb3b9 fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=c2fdf1f0-3063-48bc-a2df-4e7fed7eb3b9 correlation=c50104a7-222c-4f04-a2d9-58a461c19c1c fence=1 version=8c9a4f96-1e73-41a1-ad08-14be78d0837c
+worker-mock-1  | INFO museforge job_claimed job=1ee81870-ba61-4654-8622-513cfe5e2637 message=88c2f3b7-0846-44d1-8309-59dc59fb85c6 correlation=a0708606-2c39-46eb-9ee0-29988831d4de fence=1
+worker-mock-1  | INFO museforge job_stage job=1ee81870-ba61-4654-8622-513cfe5e2637 fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=1ee81870-ba61-4654-8622-513cfe5e2637 fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=1ee81870-ba61-4654-8622-513cfe5e2637 fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=1ee81870-ba61-4654-8622-513cfe5e2637 correlation=a0708606-2c39-46eb-9ee0-29988831d4de fence=1 version=11b8fd2f-ca4e-4c05-8a9e-a6b4e9abb840
+worker-mock-1  | INFO museforge job_claimed job=f11c5267-399d-45a2-a5c4-f61dc082a5aa message=9acaef01-ce05-41bf-8fdc-d981a9d4e51c correlation=bfd1d0fb-6f6e-4702-a4ce-43063a70c570 fence=2
+worker-mock-1  | INFO museforge job_stage job=f11c5267-399d-45a2-a5c4-f61dc082a5aa fence=2 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=f11c5267-399d-45a2-a5c4-f61dc082a5aa fence=2 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=f11c5267-399d-45a2-a5c4-f61dc082a5aa fence=2 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=f11c5267-399d-45a2-a5c4-f61dc082a5aa correlation=bfd1d0fb-6f6e-4702-a4ce-43063a70c570 fence=2 version=b2a54b90-a698-4ed5-ab1d-bc3330a18fb6
+worker-mock-1  | INFO museforge job_claimed job=fe77887a-2ad8-4279-8481-13205858fdc3 message=98118edd-1498-4519-b508-ba668f56ab44 correlation=a58d4c7c-3d95-421d-add3-ffce78d36d50 fence=1
+worker-mock-1  | INFO museforge job_stage job=fe77887a-2ad8-4279-8481-13205858fdc3 fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=fe77887a-2ad8-4279-8481-13205858fdc3 fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=fe77887a-2ad8-4279-8481-13205858fdc3 fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=fe77887a-2ad8-4279-8481-13205858fdc3 correlation=a58d4c7c-3d95-421d-add3-ffce78d36d50 fence=1 version=12d8decf-5b0d-4974-9a5e-155bc65e222b
+worker-mock-1  | INFO museforge job_claimed job=1e6af520-dbf5-4286-a5af-59446f5edf1a message=032de18d-62e7-4658-900b-001486628299 correlation=6fdbaf69-58c0-400d-a7c2-0d9934a4a649 fence=1
+worker-mock-1  | INFO museforge job_stage job=1e6af520-dbf5-4286-a5af-59446f5edf1a fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=1e6af520-dbf5-4286-a5af-59446f5edf1a fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=1e6af520-dbf5-4286-a5af-59446f5edf1a fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=1e6af520-dbf5-4286-a5af-59446f5edf1a correlation=6fdbaf69-58c0-400d-a7c2-0d9934a4a649 fence=1 version=081915bd-f24e-4f75-9439-3917c61ba2a4
+worker-mock-1  | WARNING museforge process_probe_failed role=worker-mock error_type=BrokerProbeTimeout
+worker-mock-1  | INFO museforge job_claimed job=4d5e0bd9-21fd-4fdf-88c5-2a6a58e747c8 message=d470d39f-c213-4a46-b462-7a52726ede06 correlation=079d877a-46f0-4f54-bf56-1ffa15a604e2 fence=1
+worker-mock-1  | INFO museforge job_stage job=4d5e0bd9-21fd-4fdf-88c5-2a6a58e747c8 fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=4d5e0bd9-21fd-4fdf-88c5-2a6a58e747c8 fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=4d5e0bd9-21fd-4fdf-88c5-2a6a58e747c8 fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=4d5e0bd9-21fd-4fdf-88c5-2a6a58e747c8 correlation=079d877a-46f0-4f54-bf56-1ffa15a604e2 fence=1 version=40bb8d32-47bd-4877-b4b4-09944c511403
+worker-mock-1  | INFO museforge job_claimed job=5bc13730-63e6-4bfe-b88e-17a45a835e76 message=b441b395-8620-4fb6-979f-24a3844b5c6a correlation=a72ecdf8-81fd-4110-ad19-c72a297a37b4 fence=1
+worker-mock-1  | INFO museforge job_stage job=5bc13730-63e6-4bfe-b88e-17a45a835e76 fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=5bc13730-63e6-4bfe-b88e-17a45a835e76 fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=5bc13730-63e6-4bfe-b88e-17a45a835e76 fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=5bc13730-63e6-4bfe-b88e-17a45a835e76 correlation=a72ecdf8-81fd-4110-ad19-c72a297a37b4 fence=1 version=a579dc84-03d0-4c94-aead-5348f24547c2
+worker-mock-1  | INFO museforge job_claimed job=e8fbe445-3ebe-42da-9802-25957875ee93 message=ddafbd6b-e6f8-47ed-80ef-b0a4812c6ee1 correlation=4a8ae4d4-d1a0-49b1-ba18-aa08a9b61fb5 fence=1
+worker-mock-1  | INFO museforge job_stage job=e8fbe445-3ebe-42da-9802-25957875ee93 fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=e8fbe445-3ebe-42da-9802-25957875ee93 fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=e8fbe445-3ebe-42da-9802-25957875ee93 fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=e8fbe445-3ebe-42da-9802-25957875ee93 correlation=4a8ae4d4-d1a0-49b1-ba18-aa08a9b61fb5 fence=1 version=4502a98f-876e-407e-8da9-89c6c7fb1ace
+worker-mock-1  | INFO museforge job_claimed job=bb07a958-2934-4dd3-a4b1-97e1fb79e326 message=e992b52e-24bd-4463-a815-7411272a76d2 correlation=d5dadb76-81e6-401e-8ac0-92150a1ed748 fence=1
+worker-mock-1  | INFO museforge job_stage job=bb07a958-2934-4dd3-a4b1-97e1fb79e326 fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=bb07a958-2934-4dd3-a4b1-97e1fb79e326 fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=bb07a958-2934-4dd3-a4b1-97e1fb79e326 fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=bb07a958-2934-4dd3-a4b1-97e1fb79e326 correlation=d5dadb76-81e6-401e-8ac0-92150a1ed748 fence=1 version=608f33c2-ffea-4a3c-b25b-3a15067ee378
+worker-mock-1  | INFO museforge job_claimed job=5451bfe9-2734-4fa6-a46d-c83f8127b3c9 message=ab09f5ea-617e-4fce-8025-b2fd4c25d656 correlation=9b1eb24b-7fc0-4d31-afcb-58085468ab04 fence=1
+worker-mock-1  | INFO museforge job_stage job=5451bfe9-2734-4fa6-a46d-c83f8127b3c9 fence=1 stage=composing_music
+worker-mock-1  | INFO museforge job_stage job=5451bfe9-2734-4fa6-a46d-c83f8127b3c9 fence=1 stage=validating_audio
+worker-mock-1  | INFO museforge job_stage job=5451bfe9-2734-4fa6-a46d-c83f8127b3c9 fence=1 stage=saving_result
+worker-mock-1  | INFO museforge job_succeeded job=5451bfe9-2734-4fa6-a46d-c83f8127b3c9 correlation=9b1eb24b-7fc0-4d31-afcb-58085468ab04 fence=1 version=a4eb9728-1e2d-4be5-99f0-4fa07889b8d0

@@ -1,0 +1,14 @@
+{
+  "schema": "0001_foundation",
+  "jobs_by_state": {
+    "cancelled": 8,
+    "failed": 6,
+    "succeeded": 53,
+    "timed_out": 3
+  },
+  "completed_versions": 53,
+  "artifacts": 53,
+  "duplicate_job_results": 0,
+  "non_successful_job_versions": 0,
+  "successful_jobs_without_result": 0
+}

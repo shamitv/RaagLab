@@ -1,7 +1,7 @@
 # Durable jobs, worker lifecycle, and artifact recovery
 
 - Date: 2026-09-13
-- State: implementation design; every runtime assertion below requires the assigned tests
+- State: Phase 02 baseline implemented and verified in its [report](phases/02-mock-end-to-end/implementation-status.md); Phase 04 proof obligations remain planned
 - Owners: Phase 02 implements the first safe path; Phase 04 completes recovery and adversarial verification
 - Related: [contracts](contracts.md), [verification strategy](verification-strategy.md)
 

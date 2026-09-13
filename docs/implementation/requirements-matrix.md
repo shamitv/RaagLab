@@ -1,7 +1,7 @@
 # Requirement traceability matrix
 
 - Baseline: [Part 1](../prompts/01-portable-application.md) and [design](../../design.md)
-- State: scope assigned; runtime requirements remain unimplemented/unverified until the indicated phase gates pass
+- State: Phase 01 foundations and the Phase 02 baseline passed; later-phase scope remains pending. See [Phase 02 evidence](evidence/02/2026-09-13-mock-end-to-end/README.md) for A03/A04 and baseline A05/A07/A09/A10/A12.
 - Evidence catalogue: [verification strategy](verification-strategy.md); A01–A12 match the prompt's numbered acceptance checks
 - Phase links and dependencies: [master plan](master-plan.md)
 
