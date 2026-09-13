@@ -50,7 +50,8 @@ def test_documentation_and_health_are_not_intercepted(client):
     assert client.get('/health/live').json() == {'status': 'alive'}
     schema = client.get('/openapi.json').json()
     assert '/health/ready' in schema['paths']
-    assert not any(path.startswith('/api/v1') for path in schema['paths'])
+    assert '/api/v1/generations' in schema['paths']
+    assert schema['paths']['/api/v1/generations']['post']['responses']['422']['content']['application/json']['schema']['$ref'].endswith('/ErrorResponse')
     for path in ('/docs', '/redoc'):
         assert client.get(path).status_code == 200
     ready = client.get('/health/ready')

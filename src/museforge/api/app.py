@@ -3,9 +3,14 @@ import re
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Literal
-from uuid import UUID
+from uuid import UUID, uuid4
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from sqlalchemy.exc import SQLAlchemyError
+from museforge.domain import ProviderError
+from museforge.api.routes import router, readiness as provider_readiness
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 from sqlalchemy import text
@@ -23,12 +28,12 @@ class Readiness(BaseModel):
     status: Literal["ready", "unavailable"]
     dependencies: dict[str, str]
     services: dict[str, str]
-    generation: Literal["not_implemented"] = "not_implemented"
+    generation: Literal["ready", "unavailable"] = "unavailable"
 
 
 def storage_readiness(settings, engine):
     dependencies = {"database": "unavailable", "schema": "unavailable", "artifacts": "unavailable"}
-    services = {"dispatcher": "unobserved", "worker-mock": "unobserved", "broker": "unobserved", "provider": "not_implemented"}
+    services = {"dispatcher": "unobserved", "worker-mock": "unobserved", "broker": "unobserved", "provider": "offline"}
     try:
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
@@ -41,6 +46,7 @@ def storage_readiness(settings, engine):
             """)).mappings().all()
             for row in observations:
                 services[row["role"]] = "ready" if row["broker_connected"] else "degraded"
+            services["provider"] = provider_readiness(connection, settings)["state"]
             if observations:
                 services["broker"] = "observed_connected" if any(row["broker_connected"] for row in observations) else "degraded"
     except Exception:
@@ -54,7 +60,7 @@ def storage_readiness(settings, engine):
     except OSError:
         pass
     return Readiness(status="ready" if all(v == "ready" for v in dependencies.values()) else "unavailable",
-                     dependencies=dependencies, services=services)
+                     dependencies=dependencies, services=services, generation="ready" if services["provider"] in ("ready", "busy") else "unavailable")
 
 
 def is_client_route(path: str):
@@ -77,9 +83,50 @@ def create_app(settings: Settings | None = None):
         yield
         engine.dispose()
 
-    app = FastAPI(title="MuseForge Foundation", version="0.1.0", lifespan=lifespan)
+    app = FastAPI(title="MuseForge AI", version="0.1.0", lifespan=lifespan)
     app.state.settings = settings
     app.state.engine = engine
+
+    def error(code, status, correlation, fields=None):
+        return JSONResponse({'code': code, 'message': code.replace('_', ' '),
+            'retryable': status == 503, 'correlation_id': correlation, 'fields': fields}, status_code=status)
+
+    @app.middleware('http')
+    async def bounded_body(request: Request, call_next):
+        request.state.correlation_id = str(uuid4())
+        if request.method in ('POST', 'PATCH', 'PUT'):
+            body = bytearray()
+            async for chunk in request.stream():
+                body.extend(chunk)
+                if len(body) > 131072:
+                    return error('request_too_large', 413, request.state.correlation_id)
+            request._body = bytes(body)
+        response = await call_next(request)
+        response.headers['X-Correlation-ID'] = request.state.correlation_id
+        if request.url.path.startswith('/api/v1') and not request.url.path.startswith('/api/v1/artifacts/'):
+            response.headers['Cache-Control'] = 'no-store'
+        return response
+
+    @app.exception_handler(StarletteHTTPException)
+    async def http_error(request, exc):
+        return error('not_found' if exc.status_code == 404 else 'request_failed', exc.status_code, request.state.correlation_id)
+
+    @app.exception_handler(ProviderError)
+    async def provider_error(request, exc):
+        status = {'not_found': 404, 'idempotency_conflict': 409, 'project_archived': 409,
+                  'artifact_unavailable': 410, 'invalid_cursor': 422}.get(exc.code, 422)
+        return error(exc.code, status, request.state.correlation_id)
+
+    @app.exception_handler(RequestValidationError)
+    async def validation_error(request, exc):
+        fields = [{'field': '.'.join(str(v) for v in item['loc']), 'code': item['type']} for item in exc.errors()]
+        return error('invalid_request', 422, request.state.correlation_id, fields)
+
+    @app.exception_handler(SQLAlchemyError)
+    async def database_error(request, exc):
+        return error('storage_unavailable', 503, request.state.correlation_id)
+
+    app.include_router(router)
 
     @app.get("/health/live", response_model=Liveness)
     def live():

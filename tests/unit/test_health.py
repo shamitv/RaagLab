@@ -27,7 +27,7 @@ def test_missing_workers_do_not_block_storage(tmp_path):
     health = storage_readiness(settings, Engine(settings))
     assert health.status == 'ready'
     assert health.services['worker-mock'] == 'unobserved'
-    assert health.generation == 'not_implemented'
+    assert health.generation == 'unavailable'
 
 
 def test_old_schema_and_missing_workspace_block_readiness(tmp_path):
