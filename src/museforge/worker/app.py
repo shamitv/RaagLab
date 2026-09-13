@@ -7,6 +7,7 @@ from kombu import Exchange, Queue
 
 from museforge.config import Settings
 from museforge.observability import probe_loop
+from museforge.worker.broker_probe import check_broker
 from museforge.worker.tasks import GenerationEnvelope, TASK_NAME
 
 settings = Settings()
@@ -43,12 +44,7 @@ app.conf.update(
 
 
 def broker_check():
-    with app.connection_for_write(connect_timeout=settings.broker_timeout_seconds) as connection:
-        connection.ensure_connection(max_retries=0, timeout=settings.broker_timeout_seconds)
-        with connection.channel() as channel:
-            # Declare quarantine as well; the worker consumes only the mock queue.
-            for queue in app.conf.task_queues:
-                queue(channel).declare()
+    check_broker(settings.broker_timeout_seconds)
 
 
 @app.task(name=TASK_NAME, bind=True, typing=True)
