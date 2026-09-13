@@ -60,6 +60,7 @@ def test_conditional_metadata_and_cross_project_selection():
     assert patch(vpath, {'label': 'Exact name', 'favorite': True}, source['revision']).status_code == 200
     updated = get(vpath)
     assert updated['favorite'] and updated['label'] == 'Exact name'
+    assert get(path + '/versions')['items'][0]['favorite'] is True
     assert patch(vpath, {'favorite': False}, source['revision']).status_code == 412
     assert patch(vpath, {'lyrics': 'Overwrite'}, updated['revision']).status_code == 422
     assert patch(vpath, {'favorite': False}, updated['revision']).status_code == 200

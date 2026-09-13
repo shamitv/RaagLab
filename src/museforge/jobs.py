@@ -69,7 +69,7 @@ def submit(engine, settings, request, key, operation="generate", source_id=None)
             if source:
                 if request.project_id != source['project_id']: raise ProviderError('invalid_request')
                 if operation == 'lyrics_edit':
-                    execution_intent = {k: v for k, v in source['inputs'].items() if k in request.model_fields}
+                    execution_intent = {k: v for k, v in source['inputs'].items() if k in type(request).model_fields}
                     execution_intent.update(lyrics=request.lyrics.model_dump(), iteration_instruction=request.iteration_instruction)
             mode = execution_intent['lyrics']['mode']
             duration = execution_intent['duration_seconds']

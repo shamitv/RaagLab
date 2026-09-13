@@ -15,7 +15,7 @@ from museforge.jobs import accepted, cancel, row, scoped, submit
 from museforge.storage import open_artifact, range_bounds
 
 router = APIRouter(prefix='/api/v1', responses={status: {'model': ErrorResponse}
-    for status in (404, 409, 410, 413, 422, 503)})
+    for status in (404, 409, 410, 412, 413, 422, 428, 503)})
 
 
 def context(request): return request.app.state.engine, request.app.state.settings
@@ -125,7 +125,11 @@ def versions(identifier: UUID, request: Request, limit: int = Query(20, ge=1, le
     engine, settings = context(request)
     with engine.connect() as c:
         row(c, db.projects, identifier, settings)
-        return page(c, db.versions, settings, limit, cursor, db.versions.c.project_id == identifier)
+        result = page(c, db.versions, settings, limit, cursor, db.versions.c.project_id == identifier)
+        favorites = set(c.execute(sa.select(db.favorites.c.version_id).where(scoped(db.favorites, settings),
+            db.favorites.c.version_id.in_([v['id'] for v in result['items']]))).scalars())
+        for item in result['items']: item['favorite'] = item['id'] in favorites
+        return result
 
 
 @router.get('/versions/{identifier}', response_model=VersionDetail)
