@@ -1,9 +1,10 @@
 import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, NavLink, useLocation } from 'react-router-dom';
+import { BrowserRouter, NavLink, useLocation, Routes, Route } from 'react-router-dom';
 import type { components } from './api.generated';
 import { destinations, pageFor } from './routes';
 import './style.css';
+import { Composer, Projects } from './Composer';
 
 type Readiness = components['schemas']['Readiness'];
 
@@ -40,17 +41,12 @@ function App() {
       <p className="rail-note">A local space for music and ideas.</p>
     </aside>
     <div className="workspace">
-      <header><span>Music workspace</span><span className="badge">Foundation preview</span></header>
+      <header><span>Music workspace</span><span className="badge">Playable demo</span></header>
       <main id="main" tabIndex={-1}>
         <p className="eyebrow">MUSEFORGE AI</p>
         <h1>{page?.title ?? 'Page not found'}</h1>
         <p className="intro">{page?.description ?? 'This page is not part of the workspace.'}</p>
-        <section className="placeholder" aria-labelledby="preview-title">
-          <div className="wave" aria-hidden="true">{[20, 44, 30, 64, 46, 80, 54, 34, 60, 26, 42].map((height, i) => <i key={i} style={{ height }} />)}</div>
-          <h2 id="preview-title">{page ? 'The workspace is taking shape' : 'Find your way back'}</h2>
-          <p>{page?.detail ?? 'Choose a destination from the navigation.'}</p>
-          <p className="muted">This build provides navigation and service checks. It does not generate or play audio yet.</p>
-        </section>
+        <Routes><Route path="/" element={<Composer/>}/><Route path="/create" element={<Composer/>}/><Route path="/projects/:id" element={<Composer/>}/><Route path="/projects" element={<Projects/>}/><Route path="*" element={<p>This workspace feature is planned for a later phase.</p>}/></Routes>
         <section className="service-status" aria-labelledby="status-title">
           <h2 id="status-title">Service status</h2>
           <p role="status">{offline ? 'Service status unavailable.' : health ? health.status === 'ready' ? 'Storage is ready.' : 'Storage is unavailable. Check the local services.' : 'Checking local services…'}</p>
@@ -58,7 +54,7 @@ function App() {
           <a href="/docs">API documentation</a>
         </section>
       </main>
-      <footer>Local workspace · CPU mock foundation</footer>
+      <footer>Local workspace · CPU mock generation</footer>
     </div>
   </>;
 }
