@@ -42,15 +42,17 @@ def insert_outbox(c, job, settings, at=None):
         dispatch_sequence=job['dispatch_sequence'], next_publication_at=at or now(c)))
 
 
-def submit(engine, settings, request, key):
+def submit(engine, settings, request, key, operation="generate", source_id=None):
     intent = request.model_dump(mode='json')
     # Configurable defaults must not change an already accepted replay's hash.
     if 'lyrics' not in request.model_fields_set: intent['lyrics'] = None
     if 'duration_seconds' not in request.model_fields_set: intent['duration_seconds'] = None
+    intent.update(operation=operation, source_version_id=str(source_id) if source_id else None)
+    namespace = operation + (':' + str(source_id) if source_id else '')
     digest = hashlib.sha256(json.dumps(intent, sort_keys=True, ensure_ascii=False, separators=(',', ':')).encode()).hexdigest()
     def replay(c):
         record = c.execute(sa.select(db.idempotency).where(scoped(db.idempotency, settings),
-            db.idempotency.c.operation_namespace == 'generate', db.idempotency.c.key == key)).mappings().first()
+            db.idempotency.c.operation_namespace == namespace, db.idempotency.c.key == key)).mappings().first()
         if record:
             if record['intent_hash'] != digest: raise ProviderError('idempotency_conflict')
             return accepted(row(c, db.jobs, record['job_id'], settings))
@@ -63,6 +65,12 @@ def submit(engine, settings, request, key):
                 if settings.lyrics_provider == 'user': raise ProviderError('invalid_request')
                 execution_intent['lyrics'] = {'mode': settings.lyrics_provider, 'text': None}
             if intent['duration_seconds'] is None: execution_intent['duration_seconds'] = settings.duration_seconds
+            source = row(c, db.versions, source_id, settings) if source_id else None
+            if source:
+                if request.project_id != source['project_id']: raise ProviderError('invalid_request')
+                if operation == 'lyrics_edit':
+                    execution_intent = {k: v for k, v in source['inputs'].items() if k in request.model_fields}
+                    execution_intent.update(lyrics=request.lyrics.model_dump(), iteration_instruction=request.iteration_instruction)
             mode = execution_intent['lyrics']['mode']
             duration = execution_intent['duration_seconds']
             project_id = request.project_id or uuid4()
@@ -76,7 +84,7 @@ def submit(engine, settings, request, key):
             limits = {name: getattr(settings, name) for name in ('heartbeat_seconds', 'lease_seconds', 'attempt_deadline_seconds',
                 'hard_watchdog_seconds', 'max_attempts', 'queue_deadline_seconds', 'cancellation_grace_seconds')}
             snapshot = dict(execution_intent, schema_version=1, workspace_id=str(settings.workspace_id), project_id=str(project_id),
-                operation='generate', source_version_id=None, seed=request.seed if request.seed is not None else secrets.randbits(32),
+                operation=operation, source_version_id=str(source_id) if source_id else None, seed=request.seed if request.seed is not None else secrets.randbits(32),
                 providers={'lyrics': mode, 'music': 'mock', 'revision': '1'}, capabilities=capabilities(),
                 requested_duration_seconds=duration, effective_duration_seconds=duration,
                 tempo_bounds={'Slow': [60,90], 'Medium': [100,120], 'Fast': [130,160]}[request.tempo], limits=limits,
@@ -84,13 +92,13 @@ def submit(engine, settings, request, key):
                 fixture_revision='1' if mode == 'static' else None)
             if settings.mock_test_enabled:
                 snapshot['_test'] = settings.mock_test_scenarios.get(str(snapshot['seed']), {})
-            job = dict(id=uuid4(), workspace_id=settings.workspace_id, project_id=project_id, operation='generate',
+            job = dict(id=uuid4(), workspace_id=settings.workspace_id, project_id=project_id, operation=operation,
                 intent_hash=digest, execution_snapshot=snapshot, provider_route=settings.mock_queue, state='queued',
                 selection_epoch=project['selection_epoch'], submission_seq=sequence, dispatch_sequence=1,
                 queue_deadline=now(c) + timedelta(seconds=settings.queue_deadline_seconds), correlation_id=uuid4())
             c.execute(db.jobs.insert().values(**job))
             response = accepted(job)
-            c.execute(db.idempotency.insert().values(workspace_id=settings.workspace_id, operation_namespace='generate',
+            c.execute(db.idempotency.insert().values(workspace_id=settings.workspace_id, operation_namespace=namespace,
                 key=key, intent_hash=digest, job_id=job['id'], response_identity={k: str(v) for k,v in response.items()}))
             insert_outbox(c, job, settings)
             return response

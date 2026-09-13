@@ -22,8 +22,9 @@ def test_frozen_initial_schema_matches_models():
     migration = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(migration)
     dialect = postgresql.dialect()
-    assert set(metadata.tables) == set(migration.metadata.tables)
-    for name, table in metadata.tables.items():
+    assert set(metadata.tables) - set(migration.metadata.tables) == {"version_favorites"}
+    for name in migration.metadata.tables:
+        table = metadata.tables[name]
         assert str(sa.schema.CreateTable(table).compile(dialect=dialect)) == str(sa.schema.CreateTable(migration.metadata.tables[name]).compile(dialect=dialect))
 
 

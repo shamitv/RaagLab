@@ -110,24 +110,29 @@ def execute(settings, envelope):
             outcome = scenario.get('outcome', settings.mock_test_outcome)
             if outcome != 'success':
                 raise ProviderError(outcome, outcome == 'transient_failure')
-        if settings.artifact_root.is_symlink(): raise ProviderError('artifact_unavailable')
-        settings.artifact_root.mkdir(parents=True, exist_ok=True)
-        fd, name = tempfile.mkstemp(prefix=f'.{job["id"]}-{fence}-', suffix='.tmp', dir=settings.artifact_root)
-        os.close(fd)
-        temporary = Path(name)
-        MockMusic(temporary).generate(request, update, check)
-        update('validating_audio')
-        artifact = publish(settings.artifact_root, temporary, job['id'], fence, request['duration_seconds'])
+        reuse_audio = request['operation'] == 'lyrics_edit'
+        if not reuse_audio:
+            if settings.artifact_root.is_symlink(): raise ProviderError('artifact_unavailable')
+            settings.artifact_root.mkdir(parents=True, exist_ok=True)
+            fd, name = tempfile.mkstemp(prefix=f'.{job["id"]}-{fence}-', suffix='.tmp', dir=settings.artifact_root)
+            os.close(fd)
+            temporary = Path(name)
+            MockMusic(temporary).generate(request, update, check)
+            update('validating_audio')
+            artifact = publish(settings.artifact_root, temporary, job['id'], fence, request['duration_seconds'])
         update('saving_result')
         with engine.begin() as c:
             project, current = lock_job(c, job['id'], settings)
             timestamp = owned(c, current, fence, settings)
             artifact_id, version_id = uuid4(), uuid4()
-            c.execute(db.artifacts.insert().values(id=artifact_id, workspace_id=settings.workspace_id,
-                **artifact, published_at=timestamp, available_at=timestamp))
+            if reuse_audio:
+                artifact_id = c.scalar(sa.select(db.links.c.artifact_id).where(db.links.c.version_id == request['source_version_id'], db.links.c.role == 'audio'))
+            else:
+                c.execute(db.artifacts.insert().values(id=artifact_id, workspace_id=settings.workspace_id,
+                    **artifact, published_at=timestamp, available_at=timestamp))
             c.execute(db.versions.insert().values(id=version_id, workspace_id=settings.workspace_id, project_id=project['id'],
                 generation_job_id=job['id'], number=project['next_version_number'], label=f"Version {project['next_version_number']}",
-                inputs=request, lyrics=checkpoint['text'], provenance=dict(capabilities(), lyrics=checkpoint), audio_recomposed=True))
+                parent_version_id=request['source_version_id'], inputs=request, lyrics=checkpoint['text'], provenance=dict(capabilities(), lyrics=checkpoint), audio_recomposed=not reuse_audio))
             c.execute(db.links.insert().values(workspace_id=settings.workspace_id, version_id=version_id, artifact_id=artifact_id, role='audio'))
             values = {'next_version_number': project['next_version_number'] + 1}
             if project['selection_epoch'] == current['selection_epoch'] and project['latest_submission_seq'] == current['submission_seq']:
