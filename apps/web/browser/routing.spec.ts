@@ -15,7 +15,7 @@ test('API-served shell supports navigation, refresh, and accessible placeholders
   }
   await page.goto('/projects/00000000-0000-4000-8000-000000000001');
   await expect(page.getByRole('heading', { name: 'Project workspace', exact: true })).toBeVisible();
-  await expect(page.getByText('Project loading is not available in this foundation build.')).toBeVisible();
+  await expect(page.getByRole('alert')).toContainText('not found');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   expect(errors).toEqual([]);

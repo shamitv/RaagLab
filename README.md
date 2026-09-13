@@ -1,6 +1,6 @@
 # MuseForge AI
 
-A portable local music workspace. Phase 01 provides a navigable React shell served by FastAPI, PostgreSQL migrations, RabbitMQ, and separate dispatcher/CPU-worker processes. Generation and audio playback arrive in Phase 02; service readiness does not imply provider readiness.
+A portable local music workspace. Phase 02 provides a composer served by FastAPI, durable PostgreSQL jobs, RabbitMQ dispatch, and a separate CPU worker generating playable original demo WAV audio. Results persist across refresh and API restart.
 
 ## Start the foundation
 
@@ -19,7 +19,7 @@ bash scripts/logs.sh         # recent application process logs
 bash scripts/stop.sh         # preserves database, broker, and artifact volumes
 ```
 
-The `mock` profile selects the CPU worker. Real adapters are not implemented. Demo seed/smoke commands and full release/e2e commands fail explicitly until their corresponding phases are delivered.
+The `mock` profile selects the CPU worker. Real adapters are not implemented. Run `bash scripts/seed-demo.sh` to create three source-labelled demo projects, or `bash scripts/smoke.sh mock` for a measured audio smoke check. Both use `API_BASE_URL` (default http://127.0.0.1:8000). Full release acceptance remains Phase 06 work.
 
 ## Verify
 
@@ -30,4 +30,4 @@ bash scripts/test.sh integration   # isolated Docker project, real PostgreSQL/Ra
 
 Integration performs clean image builds, package/service boundary checks, schema and concurrent migration tests, API-hosted static checks, and ordinary stop/start persistence verification. It deletes only its uniquely named test project and volumes. It overrides application connection settings so it cannot use a configured external database.
 
-See [development instructions](docs/development.md), [Phase 01 status](docs/implementation/phases/01-foundation/status.md), and [verification evidence](docs/implementation/evidence/01/2026-09-13-foundation/README.md).
+See [development instructions](docs/development.md), [Phase 02 status](docs/implementation/phases/02-mock-end-to-end/status.md), and [verification evidence](docs/implementation/evidence/01/2026-09-13-foundation/README.md).

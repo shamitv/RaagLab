@@ -42,6 +42,10 @@ class Settings(BaseSettings):
     hard_watchdog_seconds: int = Field(75, gt=0)
     cancellation_grace_seconds: int = Field(10, gt=0)
     max_attempts: int = Field(3, ge=1, le=3)
+    mock_test_enabled: bool = False
+    mock_test_scenarios: dict[str, dict] = Field(default_factory=dict)
+    mock_test_delay_seconds: float = Field(0, ge=0, le=120)
+    mock_test_outcome: Literal['success', 'transient_failure', 'invalid_request', 'deadline_exceeded'] = 'success'
     orphan_grace_seconds: int = Field(86400, ge=86400)
     health_file: Path = Path("/tmp/museforge-health.json")
 
@@ -70,6 +74,8 @@ class Settings(BaseSettings):
             raise ValueError("require heartbeat < lease < attempt deadline < hard watchdog")
         if self.broker_timeout_seconds >= self.outbox_claim_seconds:
             raise ValueError("broker timeout must be shorter than outbox claim")
+        if not self.mock_test_enabled and (self.mock_test_scenarios or self.mock_test_delay_seconds or self.mock_test_outcome != 'success'):
+            raise ValueError("mock test controls require explicit test mode")
         if self.device != "cpu" or self.model_id or self.model_revision:
             raise ValueError("foundation supports CPU mock only; real adapters are not installed")
         return self

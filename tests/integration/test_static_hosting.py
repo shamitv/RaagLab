@@ -19,4 +19,4 @@ def test_compiled_shell_and_missing_resources():
         assert client.get(f'/projects/{uuid4()}').text == index.text
         for path in ('/api/v1/missing', '/assets/missing.js', '/health/missing', '/not-a-route'):
             assert client.get(path).status_code == 404
-        assert client.get('/openapi.json').json()['info']['title'] == 'MuseForge Foundation'
+        assert client.get('/openapi.json').json()['info']['title'] == 'MuseForge AI'

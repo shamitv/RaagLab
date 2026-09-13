@@ -1,0 +1,12 @@
+
+> museforge-web@0.1.0 test
+> vitest run
+
+
+ RUN  v5.0.0 /home/shamit/work/RaagLab/apps/web
+
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  18:55:55
+   Duration  173ms (transform 56%, import 25%, worker 11%, tests 8%)

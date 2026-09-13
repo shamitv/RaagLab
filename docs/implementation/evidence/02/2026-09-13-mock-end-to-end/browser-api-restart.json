@@ -1,0 +1,12 @@
+{
+  "project_id": "f19f7737-e872-4052-bb63-d6030344627e",
+  "before": {
+    "source": "/api/v1/artifacts/1b1bfabc-4d76-4f13-8e4f-cc3ec9931b43",
+    "lyrics": "[Verse]\nWe follow the morning today\nAnd find a little song along the way\n\n[Chorus]\nA moment held, a new day near\nWe carry all our music here\n"
+  },
+  "after": {
+    "source": "/api/v1/artifacts/1b1bfabc-4d76-4f13-8e4f-cc3ec9931b43",
+    "lyrics": "[Verse]\nWe follow the morning today\nAnd find a little song along the way\n\n[Chorus]\nA moment held, a new day near\nWe carry all our music here\n"
+  },
+  "playback_after_restart": true
+}

@@ -1,10 +1,10 @@
 # MuseForge AI portable application master plan
 
 - Plan date: 2026-09-13
-- Scope: Part 1, portable application; Phase 00 planning baseline with Phase 01 implementation now verified.
+- Scope: Part 1, portable application; Phase 00 planning baseline with Phases 01–02 implementation now verified.
 - Branch: `planning-docs`
 - Baseline commit: `ac46f5a535e4461250322351e31b3433bbf96988`
-- Execution state: see [overall status](status.md); Phase 01 is complete, Phases 02–06 remain pending.
+- Execution state: see [overall status](status.md); Phases 01–02 are complete; Phases 03–06 remain pending.
 
 ## Outcome and source of truth
 

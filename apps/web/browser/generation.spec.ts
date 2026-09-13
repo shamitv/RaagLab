@@ -1,0 +1,57 @@
+import { expect, test } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+
+test('real generation plays, seeks, downloads and survives refresh', async ({ page }, testInfo) => {
+  test.setTimeout(90000);
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('/create');
+  const lyrics = '  [अंतरा]\nहवा 🎵\n\n[பல்லவி]\nவானம்\t\n';
+  await page.getByLabel('Music brief').fill('Original browser checkpoint');
+  await page.getByLabel('Lyrics source').selectOption('user');
+  await page.getByLabel('Your lyrics', {exact:true}).fill(lyrics);
+  await page.getByLabel('Duration (seconds)').fill('5');
+  const accepted = page.waitForResponse(r => r.url().endsWith('/api/v1/generations') && r.request().method() === 'POST');
+  await page.getByRole('button', {name:'Generate',exact:true}).click();
+  const response = await accepted;
+  expect(response.status()).toBe(202);
+  const identity = await response.json();
+  await testInfo.attach('accepted-job', {body:JSON.stringify(identity,null,2),contentType:'application/json'});
+  await expect(page).toHaveURL(/\/projects\/[a-f0-9-]+$/);
+  await expect(page.getByRole('region',{name:'Generation status'})).toContainText(/queued|running/);
+  await page.getByLabel('Music brief').fill('Unsent edits stay intact');
+  await expect(page.getByRole('region',{name:'Generated result'})).toBeVisible({timeout:45000});
+  expect(await page.locator('.lyrics').textContent()).toBe(lyrics);
+  await expect(page.getByLabel('Music brief')).toHaveValue('Unsent edits stay intact');
+  const audio = page.locator('audio');
+  await expect.poll(() => audio.evaluate((a: HTMLAudioElement) => a.readyState)).toBeGreaterThanOrEqual(1);
+  await audio.evaluate((a: HTMLAudioElement) => a.play());
+  await expect.poll(() => audio.evaluate((a: HTMLAudioElement) => a.currentTime)).toBeGreaterThan(.2);
+  await audio.evaluate((a: HTMLAudioElement) => {a.pause();a.currentTime=3;});
+  await expect.poll(() => audio.evaluate((a: HTMLAudioElement) => a.currentTime)).toBeGreaterThanOrEqual(3);
+  expect(await audio.evaluate((a: HTMLAudioElement) => a.paused)).toBe(true);
+  const download = page.waitForEvent('download');
+  await page.getByRole('link',{name:'Download WAV'}).click();
+  expect((await download).suggestedFilename()).toMatch(/\.wav$/);
+  await page.reload();
+  await expect(page.getByRole('region',{name:'Generated result'})).toBeVisible();
+  expect(await page.locator('.lyrics').textContent()).toBe(lyrics);
+  await expect(page.getByLabel('Music brief')).toHaveValue('Unsent edits stay intact');
+  expect(await audio.evaluate((a: HTMLAudioElement) => a.paused)).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
+  expect(errors).toEqual([]);
+  await page.screenshot({path:testInfo.outputPath('generation.png'),fullPage:true});
+  const job = await page.request.get(identity.status_url);
+  await testInfo.attach('completed-job',{body:JSON.stringify(await job.json(),null,2),contentType:'application/json'});
+});
+
+for (const mode of ['static','mock']) test(`real ${mode} lyrics`, async ({page}) => {
+  await page.goto('/create');
+  await page.getByLabel('Music brief').fill(`Original ${mode} demo`);
+  await page.getByLabel('Lyrics source').selectOption(mode);
+  await page.getByLabel('Duration (seconds)').fill('5');
+  await page.getByRole('button',{name:'Generate',exact:true}).click();
+  await expect(page.getByRole('region',{name:'Generated result'})).toBeVisible({timeout:45000});
+  await expect(page.getByRole('heading',{name:`Lyrics · ${mode}`})).toBeVisible();
+});
