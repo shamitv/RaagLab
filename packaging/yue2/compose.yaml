@@ -1,0 +1,41 @@
+name: musicgen-yue2-test
+services:
+  acquire:
+    image: musicgen-yue2:0.1.5
+    build: .
+    volumes:
+      - weights:/weights
+    command: ["python", "acquire.py"]
+  test:
+    image: musicgen-yue2:0.1.5
+    init: true
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    environment:
+      HF_HUB_OFFLINE: "1"
+      TRANSFORMERS_OFFLINE: "1"
+      HF_HOME: /tmp/hf
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+    volumes:
+      - weights:/weights:ro
+      - outputs:/outputs
+    tmpfs:
+      - /tmp:size=2g
+    shm_size: 1gb
+    mem_limit: 28g
+    memswap_limit: 28g
+    stop_grace_period: 15s
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: ["python", "run.py"]
+volumes:
+  weights:
+  outputs:

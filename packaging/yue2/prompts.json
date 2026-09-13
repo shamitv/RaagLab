@@ -1,0 +1,23 @@
+[
+  {
+    "id": "acoustic-folk",
+    "style": "English acoustic folk, warm clear lead vocal, fingerpicked acoustic guitar, upright bass, soft brushed percussion, intimate hopeful mood, moderate tempo. A complete short song with a verse and chorus and a natural ending.",
+    "lyrics": "[Verse]\nMorning paints the window gold\nI take the road I used to know\nWith every step the day unfolds\nAnd little seeds begin to grow\n[Chorus]\nCarry the light, carry it home\nOver the fields wherever we roam\nOne quiet spark, one open door\nWe have enough to start once more\n[End]",
+    "seed": 42,
+    "cot": "full"
+  },
+  {
+    "id": "synth-pop",
+    "style": "English upbeat synth-pop, bright clear lead vocal, sparkling synthesizer arpeggios, punchy electronic drums, melodic synth bass, joyful dancing energy. A complete short song with a verse and chorus and a natural ending.",
+    "lyrics": "[Verse]\nNeon colors cross the square\nSummer music fills the air\nCatch the rhythm, count to four\nLeave your worries at the door\n[Chorus]\nTurn it up and let it shine\nYour tomorrow meets with mine\nEvery heartbeat finds a way\nWe can dance into the day\n[End]",
+    "seed": 43,
+    "cot": "full"
+  },
+  {
+    "id": "piano-ballad",
+    "style": "English slow piano ballad, expressive clear lead vocal, gentle grand piano, restrained strings, spacious quiet arrangement, reflective tender mood. A complete short song with a verse and chorus and a natural ending.",
+    "lyrics": "[Verse]\nRain is drawing on the glass\nSilver lines that fade and pass\nIn the room a candle glows\nHolding all the warmth it knows\n[Chorus]\nStay until the clouds are gone\nLet the quiet lead us on\nWhen the night has lost its blue\nI will see the dawn with you\n[End]",
+    "seed": 44,
+    "cot": "full"
+  }
+]

@@ -8,4 +8,5 @@ RUN python -m pip install --no-cache-dir --require-hashes \
     --extra-index-url https://download.pytorch.org/whl/cu128 -r requirements.lock \
     && python -m pip check
 COPY model-lock.json acquire.py ./
+COPY prompts.json preflight.py generate.py validate.py run.py test_harness.py ./
 CMD ["python", "acquire.py"]

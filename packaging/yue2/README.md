@@ -37,3 +37,51 @@ uv pip compile --python-version 3.12 --torch-backend cu128 --generate-hashes \
 The build installs that lock using pip's `--require-hashes` and the CUDA 12.8
 wheel index, then runs `pip check`. No access token is required for these public
 repositories. No registry publishing or hosted inference is involved.
+
+## Run the isolated test
+
+```bash
+docker compose build acquire
+# Before model acquisition: verify CUDA/BF16/tensor computation.
+docker compose run --rm test python preflight.py
+docker compose run --rm acquire
+docker compose run --rm test python -m unittest -v test_harness
+docker compose run --rm test
+# A fresh container and process repeat the first prompt using cached weights.
+docker compose run --rm test python run.py --only acoustic-folk --label restart
+```
+
+`test` has no network or published ports. Weights mount read-only, temporary files
+use tmpfs, and all reports/audio persist in `musicgen-yue2-test_outputs`. Each run
+gets a unique timestamp directory. Inspect retained results with a temporary
+container mounting that volume; export them with `docker cp` for local playback.
+Do not use `docker compose down -v` if you want to retain weights and results.
+
+The GPU must expose BF16. The host used for this test has 16 GB VRAM and about
+31 GiB WSL RAM; upstream recommends 24 GB VRAM and 24 GB available host RAM.
+This is therefore a feasibility test, not a claim of upstream hardware support.
+The inference package receives a 16 GiB budget (it reserves 2 GiB internally),
+BF16 AR/NAR, FP32 VAE, no quantization, full symbolic planning, and its default
+sampling limits. Only CUDA OOM triggers one retry with `offload_ar=True`.
+There is no automatic switch of model, device, precision, prompt, or token budget.
+
+Each attempt runs in a new process. The supervisor samples whole-device GPU use
+and process-tree RSS every 200 ms, enforces a 900-second deadline, allows 5 seconds
+for SIGTERM, then SIGKILL/reaps. It checks device-memory recovery for up to 15
+seconds, allowing 256 MiB noise for WSL/display use, and stops if memory remains
+elevated. Measured NVML peaks include other GPU use; PyTorch allocation peaks are
+also recorded per attempt. Each process loads the model afresh; this is not a
+persistent-worker warm-throughput benchmark.
+
+The fixtures contain original English lyrics and three styles. YuE2 determines
+duration; reaching either token limit is recorded as truncation and fails full
+completion. Technical acceptance requires 48 kHz stereo, more than 5 seconds,
+finite decoded and pre-encoding samples, RMS above 0.0001, and less than 1% of
+samples at absolute amplitude 0.999 or above. These are screening thresholds,
+not perceptual-quality guarantees. FLAC and decoded-PCM hashes support the restart
+comparison. Listening and lyric adherence stay pending until actually assessed.
+
+`report.json` contains subprocess outcomes and resource measurements. Each
+attempt folder contains logs, exact inputs, official generated artifacts,
+`validation.json` or `failure.json`. The supervisor exits nonzero if any selected
+song's final attempt fails; failed and baseline attempts remain available.
