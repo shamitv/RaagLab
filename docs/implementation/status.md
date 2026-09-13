@@ -3,11 +3,11 @@
 - State: in_progress
 - Planning state: completed
 - Application state: in_progress
-- Scope of current run: Phase 01 foundation implementation
+- Scope of current run: Phase 01 review corrections
 - Planning started: 2026-09-13T12:25:42+05:30
 - Planning completed: 2026-09-13T07:27:05Z
 - Application started: 2026-09-13T08:12:41Z
-- Last updated: 2026-09-13T08:36:55+00:00
+- Last updated: 2026-09-13T12:21:11Z
 - Application completed: not completed
 - Current focus: Phase 01 complete; Phase 02 mock end-to-end is next
 
@@ -38,6 +38,8 @@ Phases 02–06 remain unstarted. Next is provider execution and the browser-to-w
 None for Phase 02 mock implementation. The user-authorized Docker VM at `10.42.0.42` supplied the missing runtime environment for foundation verification.
 
 ## Latest verification
+
+Phase 01 review corrections passed on the existing Ubuntu1 WSL2 Docker engine: bounded broker probes, consumer log redaction, and LF checkout rules. Final verification includes 63 Python unit tests, a separate passing Git checkout check, 2 frontend tests, and 8 integration tests before and after restart. See the [correction record](evidence/01/2026-09-13-review-corrections/README.md).
 
 Phase 01 passed all six acceptance criteria: clean pinned image builds; 49 Python and 2 frontend unit tests; 8 real-service tests before and after restart; 3 Chromium shell checks; database/broker/artifact persistence and operational commands. See [foundation evidence](evidence/01/2026-09-13-foundation/README.md).
 

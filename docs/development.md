@@ -8,7 +8,11 @@ PostgreSQL is authoritative. Run migrations through `python -m museforge.db.migr
 
 Worker/dispatcher process probes check PostgreSQL, the schema, and an authenticated broker connection. Their observations expire in PostgreSQL and in container health files. Provider registrations remain `initializing` with capability revision `foundation-no-generation`: no provider has been implemented. The dispatcher does not publish outbox jobs yet. The named generation task rejects messages to a bounded quarantine queue instead of returning a simulated success.
 
+Each broker probe runs in a disposable subprocess. `BROKER_TIMEOUT_SECONDS` bounds connection setup, channel creation, queue declarations, and connection cleanup together. A timeout kills and reaps the child, records a safe failure category, and allows the next heartbeat to retry. Child output is discarded so broker-controlled errors cannot enter service logs.
+
 Celery remote control is disabled because its transient non-exclusive pidbox queues are rejected by RabbitMQ 4.3 defaults. Readiness uses persisted probes, not `celery inspect`. No result backend, eager execution, implicit queues, or generic Celery retries are enabled.
+
+Consumer diagnostics for unknown messages/tasks, invalid tasks, and decode errors use fixed `consumer_*` codes. The filter removes payload arguments, exception text, and stack details before handlers format the record; unrelated operational logs and Celery's existing acknowledgement/rejection behavior are preserved.
 
 ## Configuration and storage
 
@@ -23,6 +27,8 @@ Only documented SPA routes receive HTML fallback. Unknown API paths, missing ass
 ## Local development and tests
 
 Install uv 0.12.13 into your preferred isolated tool environment. It obtains the pinned Python version from `.python-version`.
+
+The repository pins shell scripts to LF with `.gitattributes`, including Windows checkouts using `core.autocrlf=true`. No global Git setting change is required. The checkout regression uses Git on the authoring host; runtime test images intentionally omit Git and skip that single check.
 
 ```bash
 uv sync --frozen --group api --group mock-worker
@@ -60,6 +66,8 @@ bash scripts/test.sh integration
 
 The Python runner uses a fresh `museforge-foundation-test-<uuid>` Compose project and an automatically allocated loopback API port. It overrides `.env` connection settings and credentials for every test service. It clean-builds the images, runs unit and real-service integration tests, inspects package inventories, and repeats integration checks after an ordinary `down`/`up`. Its `finally` cleanup removes only that generated test project and its volumes. A failed assertion exits nonzero.
 
+The runner also publishes four malformed test messages, checks actual worker logs for the safe diagnostic codes and absence of a unique private sentinel, and confirms worker health afterward. These messages are restricted to the isolated test broker.
+
 Frontend tests in the pinned build runtime can also run with:
 
 ```bash
@@ -77,6 +85,6 @@ These checks cover navigation/refresh, no overflow at 1440/390/320 px, browser e
 
 ## Remote Linux execution
 
-The authoring host has no Docker engine. The user-provided development VM at `10.42.0.42` is reachable as `yolo1` with a key in the ignored `secrets/` directory. Use the same checkout and commands on the VM; do not copy keys, a developer `.env`, weights, or generated audio into the build context. The implementation verification directory is `/home/yolo1/raaglab-foundation-20260913`.
+The original foundation verification used the user-provided VM at `10.42.0.42` as `yolo1`, with a key in the ignored `secrets/` directory. That historical checkout is `/home/yolo1/raaglab-foundation-20260913`; credentials are not present in this checkout. The review corrections use the existing `Ubuntu1` WSL2 distribution and its Linux Docker engine, reachable from PowerShell with `wsl -d Ubuntu1 -- bash scripts/test.sh integration`. Use the same checkout and commands on another Linux engine; do not copy keys, a developer `.env`, weights, or generated audio into the build context.
 
 For browser access to a remote loopback port, forward that port over SSH and point `API_BASE_URL` at the local tunnel. Do not widen the Compose host binding. The evidence record names exact tested engine, Compose, runtime, schema, and verification results.

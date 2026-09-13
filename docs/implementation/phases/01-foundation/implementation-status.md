@@ -1,5 +1,7 @@
 # Phase 01 completion report
 
+Review corrections verified on 2026-09-13 are recorded in a [dated addendum](../../evidence/01/2026-09-13-review-corrections/README.md). The original acceptance record below is preserved.
+
 - State: completed
 - Completed: 2026-09-13T08:36:55+00:00
 - Scope: foundation only; no generation flow or real inference claimed.

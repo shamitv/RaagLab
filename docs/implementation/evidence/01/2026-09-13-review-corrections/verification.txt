@@ -1,0 +1,12 @@
+phase1-review-integration.log
+SKIPPED [1] tests/unit/test_scripts.py:46: Git checkout check runs on the authoring host; runtime images omit Git
+================== 62 passed, 1 skipped, 2 warnings in 6.64s ===================
+============================== 8 passed in 3.00s ===============================
+============================== 8 passed in 2.98s ===============================
+Worker malformed-message diagnostics are redacted; worker remains healthy.
+Persisted PostgreSQL directory: /var/lib/postgresql/18/docker
+Foundation container acceptance passed; workspace, broker message and artifact survive ordinary down/up.
+
+phase1-review-final-unit.log
+SKIPPED [1] tests/unit/test_scripts.py:46: Git checkout check runs on the authoring host; runtime images omit Git
+================== 63 passed, 1 skipped, 2 warnings in 6.60s ===================
