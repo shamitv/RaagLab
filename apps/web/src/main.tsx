@@ -34,9 +34,9 @@ function App() {
   return <>
     <a className="skip-link" href="#main">Skip to content</a>
     <aside className="rail">
-      <NavLink className="brand" to="/create" aria-label="MuseForge AI home"><span aria-hidden="true">▥</span> MuseForge <small>AI</small></NavLink>
+      <NavLink className="brand" to="/create" aria-label="MuseForge AI home"><span aria-hidden="true"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 12v4m5-9v14m6-18v22m6-17v12m5-8v4"/></svg></span> MuseForge <small>AI</small></NavLink>
       <nav aria-label="Main navigation">
-        {destinations.map(item => <NavLink key={item.path} to={item.path} className={({ isActive }) => isActive || (pathname === '/' && item.path === '/create') ? 'active' : ''}>{item.title}</NavLink>)}
+        {destinations.filter(item => ["/create", "/projects"].includes(item.path)).map(item => <NavLink key={item.path} to={item.path} className={({ isActive }) => isActive || (pathname === '/' && item.path === '/create') ? 'active' : ''}>{item.title}</NavLink>)}
       </nav>
       <p className="rail-note">A local space for music and ideas.</p>
     </aside>
