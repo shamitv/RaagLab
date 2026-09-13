@@ -1,0 +1,15 @@
+# Phase 2 architecture
+
+React is built into the API image. The API validates client intent and commits a project/job, execution snapshot, idempotency record, and outbox message in PostgreSQL. It returns 202 without provider or broker waits. The database, broker, dispatcher, API, and mock worker are separate Compose services.
+
+The dispatcher claims due outbox messages with SKIP LOCKED and expiring ownership. A bounded publication subprocess sends a JSON Celery envelope using durable queues, persistent delivery, mandatory routing and publisher confirms. Interrupted claims are reclaimed; duplicate publications preserve the message ID. Publication failures use capped exponential backoff and jitter.
+
+The worker validates envelope identity, route and sequence against durable state. A project/job transaction claims one fenced attempt. Providers initialize in the execution child. A separate thread renews the lease; every checkpoint, progress write and finalization checks ownership and persisted cancellation. Lyrics are checkpointed before music and reused by automatic attempts. The broker carries IDs and routing metadata, never lyrics or audio.
+
+Mock music writes original deterministic stereo PCM WAV in the shared artifact filesystem. Validation measures decoded format/duration, non-silence, bytes and SHA-256. The file is flushed and atomically renamed to an attempt-specific key. A subsequent fenced transaction attaches it to exactly one immutable version and completes the job. Project locking allocates version numbers; selection epoch and latest submission sequence prevent an older completion from replacing a newer selection. Failed/cancelled/timed-out jobs have no completed version.
+
+The dispatcher reconciles queue deadlines, expired execution leases, missing claims and cancellation grace. Transient errors schedule at most three attempts on one logical job; generic Celery retries and result storage remain disabled. A crash after file rename can leave an unreferenced file; guarded orphan garbage collection remains Phase 4 work. Existing applied migrations are unchanged.
+
+The API has read-only artifact access. Browser results reconnect through persistent project URLs and job polling. Unsent controls remain separate from version content and are kept in session storage; full revision-aware IndexedDB draft recovery belongs to the later workspace/recovery phases. Playback source and lyrics change together, stopping prior audio without autoplay.
+
+Tests use an isolated Compose stack and actual HTTP, PostgreSQL and RabbitMQ. Test scenarios are enabled only by explicit `MOCK_TEST_ENABLED`; the isolated API snapshots server-configured seed scenarios under `_test`, which the ordinary worker ignores. The test configuration reserves seeds 4294967201 (fatal validation), 4294967202 (typed timeout), 4294967203 (15-second cooperative delay), and 4294967204 (transient failure until attempts exhaust). No public request field enables test behavior. Production defaults have no scenarios or artificial delay.

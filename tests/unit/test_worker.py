@@ -19,9 +19,9 @@ def test_invalid_message_is_rejected(change):
         GenerationEnvelope.model_validate(envelope() | change)
 
 
-def test_foundation_never_reports_generated_success():
+def test_invalid_envelope_is_quarantined():
     with pytest.raises(Reject) as error:
-        execute_generation.run(envelope())
+        execute_generation.run(envelope() | {'schema_version': 9})
     assert error.value.requeue is False
 
 

@@ -48,10 +48,10 @@ def probe_loop(settings: Settings, role: str, instance: str, stop: threading.Eve
                         connection.execute(text("""
                             INSERT INTO worker_registrations (workspace_id, worker_name, provider_id, provider_revision,
                               provider_route, capability_revision, readiness, last_heartbeat, expires_at)
-                            VALUES (:workspace, :instance, 'mock', 'foundation', :route,
-                              'foundation-no-generation', 'initializing', now(), now() + :lease * interval '1 second')
+                            VALUES (:workspace, :instance, 'mock', '1', :route,
+                              '1', 'ready', now(), now() + :lease * interval '1 second')
                             ON CONFLICT (worker_name) DO UPDATE SET last_heartbeat = now(),
-                              expires_at = EXCLUDED.expires_at, readiness = 'initializing'
+                              expires_at = EXCLUDED.expires_at, readiness = 'ready', provider_revision = '1', capability_revision = '1'
                         """), {"workspace": settings.workspace_id, "instance": instance,
                                "route": settings.mock_queue, "lease": settings.lease_seconds})
                 healthy = True

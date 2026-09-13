@@ -50,11 +50,15 @@ def broker_check():
 @app.task(name=TASK_NAME, bind=True, typing=True)
 def execute_generation(self, envelope):
     try:
-        GenerationEnvelope.model_validate(envelope)
+        validated = GenerationEnvelope.model_validate(envelope)
     except Exception:
         raise Reject("unsupported_generation_envelope", requeue=False) from None
-    # Never claim successful generation before Phase 02 exists. Broker DLX retains it.
-    raise Reject("foundation_generation_not_implemented", requeue=False)
+    from museforge.worker.execution import execute
+    from museforge.domain import ProviderError
+    try:
+        execute(settings, validated)
+    except ProviderError:
+        raise Reject("incompatible_generation_envelope", requeue=False) from None
 
 
 _stop = threading.Event()
