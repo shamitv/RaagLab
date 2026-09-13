@@ -1,0 +1,49 @@
+x-test-env: &test-env
+  DATABASE_URL: postgresql+psycopg://museforge:foundation-test-only@db:5432/museforge
+  BROKER_URL: amqp://museforge:foundation-test-only@broker:5672//
+  WORKSPACE_ID: 00000000-0000-4000-8000-000000000001
+  ARTIFACT_ROOT: /var/lib/museforge/artifacts
+  WEB_DIST: /app/web
+  APP_PORT: "8000"
+  APP_BIND: 127.0.0.1
+  MUSIC_PROVIDER: mock
+  LYRICS_PROVIDER: mock
+
+services:
+  db:
+    environment:
+      POSTGRES_USER: museforge
+      POSTGRES_PASSWORD: foundation-test-only
+      POSTGRES_DB: museforge
+  broker:
+    environment:
+      RABBITMQ_DEFAULT_USER: museforge
+      RABBITMQ_DEFAULT_PASS: foundation-test-only
+  migrate:
+    env_file: !reset []
+    environment: *test-env
+  api:
+    env_file: !reset []
+    environment: *test-env
+  dispatcher:
+    env_file: !reset []
+    environment: *test-env
+  worker-mock:
+    env_file: !reset []
+    environment: *test-env
+  tests:
+    build:
+      context: .
+      dockerfile: packaging/Dockerfile
+      target: test
+    environment:
+      <<: *test-env
+      FOUNDATION_INTEGRATION: "1"
+      API_BASE_URL: http://api:8000
+    networks: [backend]
+    volumes: [artifacts:/var/lib/museforge/artifacts:ro]
+    depends_on:
+      api: {condition: service_healthy}
+      dispatcher: {condition: service_healthy}
+      worker-mock: {condition: service_healthy}
+    command: [/app/.venv/bin/pytest, tests/integration]

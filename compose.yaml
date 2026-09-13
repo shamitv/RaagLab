@@ -1,0 +1,97 @@
+x-app: &app
+  env_file: .env
+  init: true
+  restart: unless-stopped
+  networks: [backend]
+  stop_grace_period: 90s
+
+x-health: &health
+  interval: 5s
+  timeout: 10s
+  retries: 12
+  start_period: 20s
+
+services:
+  db:
+    image: postgres:18.6-bookworm@sha256:1c59e2c3c818eaa0f0628f695b36e7c9e362d6b219b36a54a32df645cbd7e1af
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-museforge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+      POSTGRES_DB: ${POSTGRES_DB:-museforge}
+    volumes:
+      # PostgreSQL 18 stores PGDATA below /var/lib/postgresql/18/docker.
+      - database:/var/lib/postgresql
+    networks: [backend]
+    restart: unless-stopped
+    healthcheck:
+      <<: *health
+      test: [CMD-SHELL, 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+  broker:
+    image: rabbitmq:4.3.5@sha256:078107e036374f4d9bbeab8766799abe474bf252aedb4617ddd2edfa8e2c2c05
+    hostname: broker
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-museforge}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-local-development-only}
+    volumes: [broker:/var/lib/rabbitmq]
+    networks: [backend]
+    restart: unless-stopped
+    healthcheck:
+      <<: *health
+      test: [CMD, rabbitmq-diagnostics, -q, check_running]
+  migrate:
+    <<: *app
+    restart: "no"
+    build:
+      context: .
+      dockerfile: packaging/Dockerfile
+      target: api
+    command: [python, -m, museforge.db.migrate]
+    depends_on:
+      db: {condition: service_healthy}
+  api:
+    <<: *app
+    build:
+      context: .
+      dockerfile: packaging/Dockerfile
+      target: api
+    ports: ["127.0.0.1:${APP_PORT:-8000}:8000"]
+    volumes: [artifacts:/var/lib/museforge/artifacts:ro]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    healthcheck:
+      <<: *health
+      test: [CMD, python, -m, museforge.healthcheck, api]
+  dispatcher:
+    <<: *app
+    build:
+      context: .
+      dockerfile: packaging/Dockerfile
+      target: mock-worker
+    command: [python, -m, museforge.dispatcher]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      broker: {condition: service_healthy}
+    healthcheck:
+      <<: *health
+      test: [CMD, python, -m, museforge.healthcheck, dispatcher]
+  worker-mock:
+    <<: *app
+    profiles: [mock]
+    build:
+      context: .
+      dockerfile: packaging/Dockerfile
+      target: mock-worker
+    volumes: [artifacts:/var/lib/museforge/artifacts]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      broker: {condition: service_healthy}
+    healthcheck:
+      <<: *health
+      test: [CMD, python, -m, museforge.healthcheck, worker-mock]
+
+networks:
+  backend: {}
+volumes:
+  database: {}
+  broker: {}
+  artifacts: {}
