@@ -1,0 +1,10 @@
+======================== 49 passed, 2 warnings in 2.56s ========================
+============================== 8 passed in 5.35s ===============================
+============================== 8 passed in 5.14s ===============================
+api packages: ['alembic', 'annotated-doc', 'annotated-types', 'anyio', 'click', 'fastapi', 'greenlet', 'h11', 'idna', 'mako', 'markupsafe', 'museforge', 'psycopg', 'psycopg-binary', 'pydantic', 'pydantic-settings', 'pydantic_core', 'python-dotenv', 'sqlalchemy', 'starlette', 'typing-inspection', 'typing_extensions', 'uvicorn']
+worker-mock packages: ['alembic', 'amqp', 'annotated-types', 'billiard', 'celery', 'click', 'click-didyoumean', 'click-plugins', 'click-repl', 'greenlet', 'kombu', 'mako', 'markupsafe', 'museforge', 'packaging', 'prompt_toolkit', 'psycopg', 'psycopg-binary', 'pydantic', 'pydantic-settings', 'pydantic_core', 'python-dateutil', 'python-dotenv', 'six', 'sqlalchemy', 'typing-inspection', 'typing_extensions', 'tzdata', 'tzlocal', 'vine', 'wcwidth']
+Persisted PostgreSQL directory: /var/lib/postgresql/18/docker
+Foundation container acceptance passed; workspace, broker message and artifact survive ordinary down/up.
+API runtime contains no Node executable
+Worker runtime contains no Node executable
+["name=seccomp,profile=builtin","name=rootless","name=cgroupns"]

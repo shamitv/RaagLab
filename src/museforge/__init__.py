@@ -1,0 +1,1 @@
+"""MuseForge portable application."""

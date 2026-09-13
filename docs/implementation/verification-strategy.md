@@ -1,8 +1,8 @@
 # Verification strategy and acceptance catalogue
 
 - Date: 2026-09-13
-- Current evidence: [planning verification](evidence/planning-verification.md)
-- Status: application commands/tests below are planned interfaces, not checks executed during planning
+- Current evidence: [planning verification](evidence/planning-verification.md), [Phase 01 implementation](evidence/01/2026-09-13-foundation/README.md)
+- Status: foundation commands/tests implemented and verified; later product acceptance remains planned.
 
 ## Execution environments and evidence discipline
 
@@ -14,7 +14,7 @@ Create evidence under `docs/implementation/evidence/<phase>/<run-id>/` as meanin
 
 ## Planned command interfaces
 
-Phase 01 owns the initial script entry points; extend them as later tests land. These commands are intended to run in a shell with Linux container support and are not available in this documentation-only checkout yet.
+Phase 01 owns the initial script entry points; extend them as later tests land. Foundation commands now run in a shell with Linux container support. Seed/smoke and full e2e/release interfaces still fail explicitly until their later-phase checks are implemented.
 
 | Command | Required behavior |
 | --- | --- |

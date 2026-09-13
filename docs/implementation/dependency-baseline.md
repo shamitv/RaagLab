@@ -1,7 +1,7 @@
 # Dependency and image baseline
 
 - Checked: 2026-09-13
-- State: selected planning pins; temporary resolution checks completed, application manifests/locks and container builds pending Phase 01
+- State: Phase 01 manifests/locks generated; frozen Linux amd64 image builds and runtime checks passed. See [implementation evidence](evidence/01/2026-09-13-foundation/README.md).
 
 ## Selected direct dependencies
 
@@ -54,3 +54,10 @@ Read registry `requires_python`, dependency constraints, npm engines/peers and o
 A temporary `npm install --package-lock-only --ignore-scripts --no-audit --no-fund` resolved the frontend pins. It warned that the authoring Node 25.2.1 is outside Vitest 5's engine range; the selected container Node 24.21.0 is in range. No frontend package scripts or browser tests ran. The pip command first encountered a local virtualenv-required setting; it was rerun successfully inside an isolated temporary virtual environment. No application dependency was installed into the repository or global environment.
 
 See [planning verification](evidence/planning-verification.md) for commands, results and limitations. These checks prove resolvability and declared compatibility, not that the application builds, starts, or works. Phase 01 must generate actual manifests and transitive locks, verify frozen installs, run migrations against PostgreSQL, build images and perform the service/static-hosting checks. Phase 06 rechecks version support and any required update evidence before release.
+
+
+## Phase 01 implementation verification
+
+All selected direct pins and four recorded image digests were retained. `uv.lock` and `apps/web/package-lock.json` freeze transitive dependencies. The build backend additionally pins `hatchling==1.27.0`; it is a build-only dependency, not an API/worker runtime dependency. Python locks were generated with uv 0.12.13 and Python 3.13.15; npm's lock was regenerated in the selected Node 24.21.0/npm 11.19.0 image. Frozen clean image builds and package inventories passed on Linux amd64.
+
+Verified rootless Docker 29.8.0 and Compose 5.5.1 on the user-provided VM. RabbitMQ 4.3.5 required disabling Celery's unused transient remote-control queue; durable application/quarantine queues remain enabled. No compatibility pin change or deprecated broker feature override was needed. See [evidence](evidence/01/2026-09-13-foundation/README.md) for actual acceptance results and the two passing-test upstream deprecation warnings.

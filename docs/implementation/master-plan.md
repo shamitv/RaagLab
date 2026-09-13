@@ -1,10 +1,10 @@
 # MuseForge AI portable application master plan
 
 - Plan date: 2026-09-13
-- Scope: Part 1, portable application; this authoring run is planning only.
+- Scope: Part 1, portable application; Phase 00 planning baseline with Phase 01 implementation now verified.
 - Branch: `planning-docs`
 - Baseline commit: `ac46f5a535e4461250322351e31b3433bbf96988`
-- Execution state: see [overall status](status.md); application implementation has not started.
+- Execution state: see [overall status](status.md); Phase 01 is complete, Phases 02–06 remain pending.
 
 ## Outcome and source of truth
 
@@ -16,9 +16,11 @@ The requirements are [Part 1](../prompts/01-portable-application.md), [design.md
 
 The baseline contains those five reference files only. There is no application code, README, manifest, lockfile, migration, Compose configuration, test suite, or selected model. No applicable `AGENTS.md` was found at the repository, its ancestors, or within the repository. Both images were inspected and remain unchanged. Their older descriptive filenames in `design.md` refer to the two actual files linked above.
 
-The authoring environment is Windows/PowerShell, with Python 3.14.2, Node 25.2.1, and npm 11.6.2 observed. `docker` was not discoverable on this shell's PATH. This does not establish whether another engine or WSL installation exists. Host inventory and changes are Part 2 work. Planning is not blocked; container acceptance will require a Linux container engine in Phase 01. The application runtime is the separately pinned Linux image, not these authoring runtimes.
+The Phase 00 authoring environment was Windows/PowerShell, with Python 3.14.2, Node 25.2.1, and npm 11.6.2 observed. `docker` was not discoverable on this shell's PATH. This does not establish whether another engine or WSL installation exists. Host inventory and changes are Part 2 work. Planning is not blocked; container acceptance will require a Linux container engine in Phase 01. The application runtime is the separately pinned Linux image, not these authoring runtimes.
 
 Assume one trusted local workspace, a loopback application port, no accounts or paid service, CPU mock generation, and persistent named volumes on one host. A real music model, GPU, VRAM budget, deployment distribution, and weights license are intentionally undecided. The repository name does not select a model. Default port 8000 is configurable and is not asserted available on any target machine.
+
+Phase 01 was implemented from Linux and verified on the user-supplied Docker VM at `10.42.0.42`; see its [evidence](evidence/01/2026-09-13-foundation/README.md). The baseline environment observations above are historical.
 
 ## Architecture and stack
 
