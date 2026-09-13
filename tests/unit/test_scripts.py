@@ -27,11 +27,11 @@ def test_setup_preserves_existing_env_even_without_engine(tmp_path):
     assert target.read_text() == '# existing local values\nAPP_PORT=8123\n'
 
 
-def test_future_commands_do_not_report_success():
+def test_demo_commands_fail_when_api_is_unavailable():
     for name in ('seed-demo', 'smoke'):
-        result = subprocess.run(['bash', str(ROOT / f'scripts/{name}.sh')], capture_output=True)
-        assert result.returncode == 2
-        assert b'Not implemented' in result.stderr
+        result = subprocess.run(['bash', str(ROOT / f'scripts/{name}.sh')], capture_output=True, env=dict(os.environ, API_BASE_URL='http://127.0.0.1:1'), timeout=15)
+        assert result.returncode != 0
+        assert b'demo_check_failed' in result.stderr
 
 
 def test_shell_scripts_have_lf_and_valid_bash_syntax():
