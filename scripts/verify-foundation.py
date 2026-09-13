@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import time
 import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,6 +31,23 @@ def inspect_boundaries():
     assert services["db"]["volumes"][0]["target"] == "/var/lib/postgresql"
 
 
+def verify_worker_log_redaction():
+    secret = "foundation-private-sentinel-" + uuid.uuid4().hex
+    run("run", "--rm", "--no-deps", "tests", "/app/.venv/bin/python",
+        "tests/integration/publish_invalid_messages.py", secret)
+    expected = {"consumer_unknown_message", "consumer_unknown_task", "consumer_invalid_task", "consumer_decode_error"}
+    deadline = time.monotonic() + 30
+    while True:
+        logs = run("logs", "--no-color", "worker-mock", capture=True, timeout=10)
+        assert secret not in logs, "Worker logs exposed private message content"
+        if all(code in logs for code in expected):
+            break
+        assert time.monotonic() < deadline, "Worker did not log all safe message diagnostics"
+        time.sleep(0.25)
+    run("exec", "-T", "worker-mock", "python", "-m", "museforge.healthcheck", "worker-mock")
+    print("Worker malformed-message diagnostics are redacted; worker remains healthy.")
+
+
 try:
     subprocess.run(["docker", "version"], check=True, timeout=30)
     subprocess.run(["docker", "compose", "version"], check=True, timeout=30)
@@ -45,6 +63,7 @@ try:
         print(role, "packages:", packages)
     run("run", "--rm", "tests", "/app/.venv/bin/pytest", "tests/unit")
     run("run", "--rm", "tests")
+    verify_worker_log_redaction()
     workspace_before = run("exec", "-T", "db", "sh", "-c", 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Atc "SELECT id FROM workspaces"', capture=True)
     data_directory = run("exec", "-T", "db", "sh", "-c", 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Atc "SHOW data_directory"', capture=True).strip()
     assert data_directory.startswith("/var/lib/postgresql/18/"), data_directory
