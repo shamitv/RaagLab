@@ -1,0 +1,27 @@
+.git
+.env
+.env.*
+.venv
+**/__pycache__
+**/.pytest_cache
+**/node_modules
+**/dist
+**/*.tsbuildinfo
+.cache
+.local
+test-results
+playwright-report
+weights
+models
+artifacts
+service-data
+**/*.wav
+**/*.mp3
+**/*.flac
+**/*.safetensors
+**/*.pt
+**/*.pth
+**/*.ckpt
+docs/ui mockups
+secrets
+!.env.example
