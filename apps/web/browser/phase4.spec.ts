@@ -18,15 +18,15 @@ test("projects, library, duplicate, archive, settings, and templates work", asyn
 
   await page.goto("/settings");
   await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
-  await page.getByLabel("Mood", { exact: true }).selectOption("Happy");
+  await page.getByRole("combobox", { name: "Mood", exact: true }).selectOption("Happy");
   await page.getByLabel("Default volume", { exact: false }).fill("0.65");
-  await page.getByLabel("Repeat", { exact: true }).selectOption("one");
+  await page.getByRole("combobox", { name: "Repeat", exact: true }).selectOption("one");
   await page.getByRole("button", { name: "Save workspace settings" }).click();
   await expect(page.getByRole("status")).toContainText("settings saved");
   await page.getByRole("link", { name: "Create", exact: true }).click();
   await expect(page.getByRole("radio", { name: "Happy" })).toBeChecked();
   await page.getByRole("link", { name: "Settings", exact: true }).click();
-  await page.getByLabel("Mood", { exact: true }).selectOption("Calm");
+  await page.getByRole("combobox", { name: "Mood", exact: true }).selectOption("Calm");
   await page.getByRole("button", { name: "Save workspace settings" }).click();
   await expect(page.getByRole("status")).toContainText("settings saved");
 
@@ -79,16 +79,16 @@ test("projects, library, duplicate, archive, settings, and templates work", asyn
   await page.getByLabel("Search projects").fill("Phase 4 library song");
   const original = page.locator(".record-card").filter({ hasText: "Phase 4 library song" }).first();
   await original.getByRole("button", { name: "Archive" }).click();
-  await page.getByLabel("Project archive filter").selectOption("archived");
+  await page.getByRole("combobox", { name: "Project archive filter" }).selectOption("archived");
   const archived = page.locator(".record-card").filter({ hasText: "Phase 4 library song" }).first();
   await expect(archived).toBeVisible();
   await archived.getByRole("button", { name: "Unarchive" }).click();
-  await page.getByLabel("Project archive filter").selectOption("active");
+  await page.getByRole("combobox", { name: "Project archive filter" }).selectOption("active");
   await expect(page.locator(".record-card").filter({ hasText: "Phase 4 library song" })).toHaveCount(2);
   await page.screenshot({ path: testInfo.outputPath("phase4-projects.png"), fullPage: true });
   await page.getByRole("link", { name: "Settings", exact: true }).click();
   await page.getByLabel("Default volume", { exact: false }).fill("0.8");
-  await page.getByLabel("Repeat", { exact: true }).selectOption("off");
+  await page.getByRole("combobox", { name: "Repeat", exact: true }).selectOption("off");
   await page.getByRole("button", { name: "Save workspace settings" }).click();
   await expect(page.getByRole("status")).toContainText("settings saved");
 });
@@ -146,7 +146,7 @@ test("offline and two-tab draft conflicts keep explicit recovery choices", async
   await page.getByRole("button", { name: "Save Project", exact: true }).click();
   await page.getByRole("button", { name: "Save copy", exact: true }).click();
   await expect(page).toHaveURL(/\/projects\/[0-9a-f-]+$/);
-  await expect(page.getByLabel("Project title", { exact: true })).toHaveValue("Copy of Two tab recovery");
+  await expect(page.getByLabel("Project title", { exact: true })).toHaveValue("Copy of Server tab title");
   await expect(page.getByLabel("Music brief")).toHaveValue("Save this conflict as a copy");
   await secondTab.close();
   await page.screenshot({ path: testInfo.outputPath("phase4-draft-recovery.png"), fullPage: true });
