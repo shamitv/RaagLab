@@ -364,8 +364,8 @@ def test_parallel_completions_allocate_unique_numbers_and_keep_latest_submission
     initial_result, _ = wait(initial)
     project_id = UUID(initial['project_id'])
     requests = [
-        dict(project_id=project_id, seed=4294967205),
-        dict(project_id=project_id, seed=4294967206),
+        dict(project_id=str(project_id), seed=4294967205),
+        dict(project_id=str(project_id), seed=4294967206),
     ]
     with ThreadPoolExecutor(max_workers=2) as pool:
         accepted = list(pool.map(lambda values: submit(**values)[0], requests))
