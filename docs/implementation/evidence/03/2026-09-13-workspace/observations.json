@@ -1,0 +1,493 @@
+{
+  "viewports": [
+    {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "audioCount": 1,
+      "order": [
+        "Generated Lyrics",
+        "Music Preview"
+      ]
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "audioCount": 1,
+      "order": [
+        "Music Preview",
+        "Generated Lyrics"
+      ]
+    },
+    {
+      "width": 360,
+      "scrollWidth": 360,
+      "audioCount": 1,
+      "order": [
+        "Music Preview",
+        "Generated Lyrics"
+      ]
+    },
+    {
+      "width": 320,
+      "scrollWidth": 320,
+      "audioCount": 1,
+      "order": [
+        "Music Preview",
+        "Generated Lyrics"
+      ]
+    },
+    {
+      "width": 768,
+      "scrollWidth": 768,
+      "audioCount": 1,
+      "order": [
+        "Music Preview",
+        "Generated Lyrics"
+      ]
+    },
+    {
+      "width": 1199,
+      "scrollWidth": 1199,
+      "audioCount": 1,
+      "order": [
+        "Music Preview",
+        "Generated Lyrics"
+      ]
+    },
+    {
+      "width": 1200,
+      "scrollWidth": 1200,
+      "audioCount": 1,
+      "order": [
+        "Generated Lyrics",
+        "Music Preview"
+      ]
+    },
+    {
+      "width": 1399,
+      "scrollWidth": 1399,
+      "audioCount": 1,
+      "order": [
+        "Generated Lyrics",
+        "Music Preview"
+      ]
+    },
+    {
+      "width": 1600,
+      "scrollWidth": 1600,
+      "audioCount": 1,
+      "order": [
+        "Generated Lyrics",
+        "Music Preview"
+      ]
+    }
+  ],
+  "keyboard": [
+    {
+      "tag": "TEXTAREA",
+      "label": "Music briefOriginal keyboard and visual verification song",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Try an example",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Guitar",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Piano",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Tabla",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Drums",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Bass",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Strings",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Synth",
+      "outline": "solid"
+    },
+    {
+      "tag": "INPUT",
+      "label": "Calm",
+      "outline": "solid"
+    },
+    {
+      "tag": "INPUT",
+      "label": "English",
+      "outline": "solid"
+    },
+    {
+      "tag": "SELECT",
+      "label": "GenreIndie PopPopFolkAmbientRockElectronic",
+      "outline": "solid"
+    },
+    {
+      "tag": "SELECT",
+      "label": "TempoSlowMediumFast",
+      "outline": "solid"
+    },
+    {
+      "tag": "SELECT",
+      "label": "Lyrics sourceYour exact lyricsOriginal static fixtureGenerated demo ly",
+      "outline": "solid"
+    },
+    {
+      "tag": "TEXTAREA",
+      "label": "Your lyrics",
+      "outline": "solid"
+    },
+    {
+      "tag": "SUMMARY",
+      "label": "Advanced Options",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Generate",
+      "outline": "solid"
+    },
+    {
+      "tag": "INPUT",
+      "label": "Project title",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Save Project",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Copy lyrics",
+      "outline": "solid"
+    },
+    {
+      "tag": "PRE",
+      "label": "[अंतरा]\nहवा और रोशनी 🎵\n\n[பல்லவி]\nவானம் தமிழ் இசை வானம் தமிழ் இசை வானம",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Refine Lyrics",
+      "outline": "solid"
+    },
+    {
+      "tag": "INPUT",
+      "label": "Seek",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Play",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Repeat: off",
+      "outline": "solid"
+    },
+    {
+      "tag": "INPUT",
+      "label": "Volume",
+      "outline": "solid"
+    },
+    {
+      "tag": "A",
+      "label": "Download WAV",
+      "outline": "solid"
+    },
+    {
+      "tag": "TEXTAREA",
+      "label": "Tell us how you’d like to change the song",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Regenerate",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Change Mood",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Try New Instruments",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Create Variation",
+      "outline": "solid"
+    },
+    {
+      "tag": "SUMMARY",
+      "label": "Song Structure",
+      "outline": "solid"
+    },
+    {
+      "tag": "SUMMARY",
+      "label": "Version History (1)",
+      "outline": "solid"
+    },
+    {
+      "tag": "SELECT",
+      "label": "Completed versions1. Version 1",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Version 1 · Version 1",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Favorite",
+      "outline": "solid"
+    },
+    {
+      "tag": "INPUT",
+      "label": "Version label",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Rename version",
+      "outline": "solid"
+    },
+    {
+      "tag": "A",
+      "label": "API documentation",
+      "outline": "solid"
+    },
+    {
+      "tag": "BODY",
+      "label": "Skip to content MuseForge AICreateProjectsA local space for music and ",
+      "outline": "none"
+    },
+    {
+      "tag": "A",
+      "label": "Skip to content",
+      "outline": "solid"
+    },
+    {
+      "tag": "A",
+      "label": "MuseForge AI home",
+      "outline": "solid"
+    },
+    {
+      "tag": "A",
+      "label": "Create",
+      "outline": "solid"
+    },
+    {
+      "tag": "A",
+      "label": "Projects",
+      "outline": "solid"
+    },
+    {
+      "tag": "TEXTAREA",
+      "label": "Music briefOriginal keyboard and visual verification song",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Try an example",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Guitar",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Piano",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Tabla",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Drums",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Bass",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Strings",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Synth",
+      "outline": "solid"
+    },
+    {
+      "tag": "INPUT",
+      "label": "Calm",
+      "outline": "solid"
+    },
+    {
+      "tag": "INPUT",
+      "label": "English",
+      "outline": "solid"
+    },
+    {
+      "tag": "SELECT",
+      "label": "GenreIndie PopPopFolkAmbientRockElectronic",
+      "outline": "solid"
+    },
+    {
+      "tag": "SELECT",
+      "label": "TempoSlowMediumFast",
+      "outline": "solid"
+    },
+    {
+      "tag": "SELECT",
+      "label": "Lyrics sourceYour exact lyricsOriginal static fixtureGenerated demo ly",
+      "outline": "solid"
+    },
+    {
+      "tag": "TEXTAREA",
+      "label": "Your lyrics",
+      "outline": "solid"
+    },
+    {
+      "tag": "SUMMARY",
+      "label": "Advanced Options",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Generate",
+      "outline": "solid"
+    },
+    {
+      "tag": "INPUT",
+      "label": "Project title",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Save Project",
+      "outline": "solid"
+    },
+    {
+      "tag": "BUTTON",
+      "label": "Copy lyrics",
+      "outline": "solid"
+    }
+  ],
+  "projectUrl": "http://127.0.0.1:18033/projects/3b2d8bc0-b57a-4746-a183-5041e680a152",
+  "fonts": [
+    {
+      "familyName": "Noto Sans Devanagari",
+      "postScriptName": "NotoSansDevanagari-Regular",
+      "isCustomFont": true,
+      "glyphCount": 15
+    },
+    {
+      "familyName": "Noto Sans Tamil",
+      "postScriptName": "NotoSansTamil-Regular",
+      "isCustomFont": true,
+      "glyphCount": 885
+    },
+    {
+      "familyName": "Noto Color Emoji",
+      "postScriptName": "NotoColorEmoji",
+      "isCustomFont": false,
+      "glyphCount": 1
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": false,
+      "glyphCount": 250
+    }
+  ],
+  "reducedMotion": true,
+  "clipboardExact": true,
+  "zoom": {
+    "innerWidth": 720,
+    "outerWidth": 1440,
+    "dpr": 2,
+    "scrollWidth": 720
+  },
+  "zoomMetrics": {
+    "layoutViewport": {
+      "pageX": 0,
+      "pageY": 7288,
+      "clientWidth": 1440,
+      "clientHeight": 913
+    },
+    "visualViewport": {
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 3644,
+      "clientWidth": 1440,
+      "clientHeight": 913,
+      "scale": 1,
+      "zoom": 2
+    },
+    "contentSize": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 8570
+    },
+    "cssLayoutViewport": {
+      "pageX": 0,
+      "pageY": 3644,
+      "clientWidth": 720,
+      "clientHeight": 456
+    },
+    "cssVisualViewport": {
+      "offsetX": 0,
+      "offsetY": 0,
+      "pageX": 0,
+      "pageY": 3644,
+      "clientWidth": 720,
+      "clientHeight": 456.5,
+      "scale": 1,
+      "zoom": 2
+    },
+    "cssContentSize": {
+      "x": 0,
+      "y": 0,
+      "width": 720,
+      "height": 4285
+    }
+  }
+}

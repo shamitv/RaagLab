@@ -1,0 +1,84 @@
+{
+  "acceptance_seconds": 0.06592589101637714,
+  "accepted": {
+    "job_id": "8e53abcc-df30-486b-b01e-87d2468b31af",
+    "project_id": "2f474eb8-7cd3-45b6-bf51-53b5590ab94f",
+    "state": "queued",
+    "status_url": "/api/v1/jobs/8e53abcc-df30-486b-b01e-87d2468b31af",
+    "project_url": "/projects/2f474eb8-7cd3-45b6-bf51-53b5590ab94f"
+  },
+  "before_restart": {
+    "id": "8e53abcc-df30-486b-b01e-87d2468b31af",
+    "project_id": "2f474eb8-7cd3-45b6-bf51-53b5590ab94f",
+    "state": "queued",
+    "stage": "awaiting_worker",
+    "progress": null,
+    "attempt_count": 0,
+    "cancellation_requested_at": null,
+    "result_version_id": null,
+    "created_at": "2026-09-13T14:23:30.390248Z",
+    "completed_at": null,
+    "correlation_id": "848d922c-3da9-495b-a3e2-95c0b486795a",
+    "dispatch_sequence": 1,
+    "error": null,
+    "version_url": null,
+    "dispatch_status": "pending",
+    "attempts": [],
+    "provider_readiness": {
+      "state": "ready",
+      "last_observed_at": "2026-09-13T14:23:26.023885Z"
+    }
+  },
+  "after_restart": {
+    "id": "8e53abcc-df30-486b-b01e-87d2468b31af",
+    "project_id": "2f474eb8-7cd3-45b6-bf51-53b5590ab94f",
+    "state": "queued",
+    "stage": "awaiting_worker",
+    "progress": null,
+    "attempt_count": 0,
+    "cancellation_requested_at": null,
+    "result_version_id": null,
+    "created_at": "2026-09-13T14:23:30.390248Z",
+    "completed_at": null,
+    "correlation_id": "848d922c-3da9-495b-a3e2-95c0b486795a",
+    "dispatch_sequence": 1,
+    "error": null,
+    "version_url": null,
+    "dispatch_status": "published",
+    "attempts": [],
+    "provider_readiness": {
+      "state": "ready",
+      "last_observed_at": "2026-09-13T14:23:26.023885Z"
+    }
+  },
+  "completed": {
+    "id": "8e53abcc-df30-486b-b01e-87d2468b31af",
+    "project_id": "2f474eb8-7cd3-45b6-bf51-53b5590ab94f",
+    "state": "succeeded",
+    "stage": "saving_result",
+    "progress": null,
+    "attempt_count": 1,
+    "cancellation_requested_at": null,
+    "result_version_id": "e6c46d15-5a4a-4e5f-9aa3-6e65e137dc98",
+    "created_at": "2026-09-13T14:23:30.390248Z",
+    "completed_at": "2026-09-13T14:23:47.689747Z",
+    "correlation_id": "848d922c-3da9-495b-a3e2-95c0b486795a",
+    "dispatch_sequence": 1,
+    "error": null,
+    "version_url": "/api/v1/versions/e6c46d15-5a4a-4e5f-9aa3-6e65e137dc98",
+    "dispatch_status": "published",
+    "attempts": [
+      {
+        "attempt_number": 1,
+        "worker_id": "c71c77c0-35e7-4b30-8ec6-5b4dd1b40101",
+        "started_at": "2026-09-13T14:23:45.377180Z",
+        "ended_at": "2026-09-13T14:23:47.689747Z",
+        "outcome": "succeeded"
+      }
+    ],
+    "provider_readiness": {
+      "state": "ready",
+      "last_observed_at": "2026-09-13T14:23:49.146254Z"
+    }
+  }
+}
