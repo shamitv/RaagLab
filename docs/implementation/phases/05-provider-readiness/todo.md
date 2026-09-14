@@ -1,6 +1,9 @@
 # Phase 05 to-do
 
-All items are implementation work and remain unchecked. Planning preparation is tracked in Phase 00.
+All items are application implementation work and remain unchecked. Planning
+preparation is tracked in Phase 00. The separate Part 2 D03 record now contains a
+YuE2 standalone image/model checkpoint; that checkpoint supplies evidence for
+05-05/05-08 but does not check these tasks off.
 
 - [ ] 05-01 Audit the capability schema against separate lyrics text, instrumental music, vocals, exact supplied-lyrics singing, audio conditioning/editing and continuation. Record supported/unsupported/unknown values with model/provider revisions and limits, never extrapolating one capability to another.
 - [ ] 05-02 Complete shared provider conformance tests for normalization/validation, deterministic mock behavior, progress/cancellation, typed initialization/transient/resource/capability errors and result/audio metadata validation.

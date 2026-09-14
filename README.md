@@ -30,4 +30,10 @@ bash scripts/test.sh integration   # isolated Docker project, real PostgreSQL/Ra
 
 Integration performs clean image builds, package/service boundary checks, schema and concurrent migration tests, API-hosted static checks, and ordinary stop/start persistence verification. It deletes only its uniquely named test project and volumes. It overrides application connection settings so it cannot use a configured external database.
 
+The portable application remains mock-first and does not require a GPU or model
+weights. A separate YuE2-3B standalone GPU image has been built and tested on the
+Ubuntu1 WSL2 host; it is not wired into the application queue yet. See the
+[Part 2 deployment plan](docs/deployment/master-plan.md), [model integration
+boundary](docs/model-integration.md), and [dated YuE2 evidence](docs/deployment/evidence/2026-09-14-yue2/README.md).
+
 See [development instructions](docs/development.md), [Phase 03 status](docs/implementation/phases/03-complete-responsive-workspace/status.md), and [verification evidence](docs/implementation/evidence/03/2026-09-13-workspace/README.md).

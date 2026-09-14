@@ -1,10 +1,10 @@
 # MuseForge AI portable application master plan
 
 - Plan date: 2026-09-13
-- Scope: Part 1, portable application; Phase 00 planning baseline with Phases 01–03 implementation now verified.
+- Scope: Part 1 portable application plus the current handoff to Part 2 deployment; Phases 01–03 implementation is verified.
 - Branch: `planning-docs`
 - Baseline commit: `ac46f5a535e4461250322351e31b3433bbf96988`
-- Execution state: see [overall status](status.md); Phases 01–03 are complete; Phases 04–06 remain pending.
+- Execution state: see [overall status](status.md); Phases 01–03 are complete; Phases 04–06 remain pending. The Part 2 YuE2 standalone checkpoint is recorded separately.
 
 ## Outcome and source of truth
 
@@ -14,11 +14,19 @@ The requirements are [Part 1](../prompts/01-portable-application.md), [design.md
 
 ## Repository assessment and assumptions
 
-The baseline contains those five reference files only. There is no application code, README, manifest, lockfile, migration, Compose configuration, test suite, or selected model. No applicable `AGENTS.md` was found at the repository, its ancestors, or within the repository. Both images were inspected and remain unchanged. Their older descriptive filenames in `design.md` refer to the two actual files linked above.
+The Phase 00 baseline contained those five reference files only. The portable
+application and its Phase 01–03 records now exist on the implementation branch.
+No applicable `AGENTS.md` was found at the repository, its ancestors, or within
+the repository. Both reference images were inspected and remain unchanged. Their
+older descriptive filenames in `design.md` refer to the two actual files linked above.
 
 The Phase 00 authoring environment was Windows/PowerShell, with Python 3.14.2, Node 25.2.1, and npm 11.6.2 observed. `docker` was not discoverable on this shell's PATH. This does not establish whether another engine or WSL installation exists. Host inventory and changes are Part 2 work. Planning is not blocked; container acceptance will require a Linux container engine in Phase 01. The application runtime is the separately pinned Linux image, not these authoring runtimes.
 
-Assume one trusted local workspace, a loopback application port, no accounts or paid service, CPU mock generation, and persistent named volumes on one host. A real music model, GPU, VRAM budget, deployment distribution, and weights license are intentionally undecided. The repository name does not select a model. Default port 8000 is configurable and is not asserted available on any target machine.
+Assume one trusted local workspace, a loopback application port, no accounts or paid service, CPU mock generation, and persistent named volumes on one host. The
+portable application still defaults to mock generation. YuE2-3B is selected for a
+bounded Part 2 standalone checkpoint, but is not yet the application's active
+provider. The repository name does not select a model. Default port 8000 is
+configurable and is not asserted available on any target machine.
 
 Phase 01 was implemented from Linux and verified on the user-supplied Docker VM at `10.42.0.42`; see its [evidence](evidence/01/2026-09-13-foundation/README.md). The baseline environment observations above are historical.
 
@@ -44,7 +52,12 @@ Use Python/FastAPI/Pydantic, SQLAlchemy/Alembic with psycopg, PostgreSQL, Rabbit
 
 Included: three lyrics modes; composer selections; asynchronous generation; real playable demo WAVs; progress/cancellation/error states; full player; immutable iteration and variation; project/library organization; local draft recovery and server save/reopen; templates and local preferences; capability handling; reproducible containers; tests and operating documentation.
 
-Deferred to Part 2: machine inventory/preparation, WSL/native-Linux startup integration, GPU access, model selection and license/access review, real adapter and worker dependencies, weight acquisition, real inference measurements, host deployment, and verified backup/restore on that host. Part 1 still supplies their contracts, configuration boundary, and handoff checklist.
+Deferred to Part 2: application real-provider integration, WSL/native-Linux startup
+integration for the full stack, queue-routed real inference, browser/API playback,
+and verified backup/restore on the deployment host. The standalone Ubuntu1 host
+inventory, GPU access, YuE2 model selection, immutable weight acquisition, image,
+and short real-inference measurements are now recorded in the [Part 2 deployment
+plan](../deployment/master-plan.md) and [evidence](../deployment/evidence/2026-09-14-yue2/README.md).
 
 Deferred product scope: collaboration/comments, billing/credits/upgrades, notifications, multi-user permissions/authentication, public exposure, DAW stems, and multitrack notation. Omit those controls in Part 1. Keep every required local Create, Library, Projects, Settings, Templates, Advanced Options, and version action accessible. Optional decorative waterfront art is not a release gate. No fixture, example duration, or version count is presented as a measured live result.
 
@@ -115,7 +128,14 @@ Runtime documentation will be delivered as `README.md`, `docs/architecture.md`, 
 
 Part 1 passes on the resolved mock startup command, source/image versions, migration head, internal service names, data and artifact mount contracts, provider routing, effective limits, fixture provenance, and test evidence. It lists exact missing musical capabilities and explains real-image construction without choosing a model by folder name.
 
-Part 2 creates its separate `docs/deployment/` record and D00–D05 phases after inspecting the target: inventory/plan, host preparation, mock deployment, real model, system validation, and operations/handoff. It verifies the actual user-facing browser route, GPU/runtime layers if needed, real queued inference, restart/recovery, measured resources, and an isolated restore. WSL/native-Linux portability is reported separately as verified, configuration checked, documented only, or blocked. No machine deployment files or completion claims are produced by this plan.
+Part 2 creates its separate `docs/deployment/` record and D00–D05 phases after
+inspecting the target. That record now contains the Ubuntu1 inventory and plans,
+the YuE2 model/image manifest, and the standalone verification evidence. It still
+must verify the actual user-facing browser route, real queued inference through the
+MuseForge worker, restart/recovery, measured resources, and an isolated restore.
+WSL/native-Linux portability is reported separately as verified, configuration
+checked, documented only, or blocked. The standalone image is not an application
+deployment completion claim.
 
 ## Working and resumption rules
 
