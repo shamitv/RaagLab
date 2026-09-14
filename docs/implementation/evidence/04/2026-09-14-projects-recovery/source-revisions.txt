@@ -1,0 +1,11 @@
+Final implementation and acceptance harness source: 0b717d4
+
+Real-service integration suite: 15e4b03 (42 passed; 265.57 seconds).
+The src/museforge and migrations trees are unchanged between 15e4b03 and 0b717d4. The only later integration-test file added is publish_ambiguous_confirm.py, exercised separately by the final recovery harness.
+
+API-served browser and ordinary broker/dispatcher/worker/full-volume restart suite: 9be2e0d.
+The apps/web tree is unchanged between 9be2e0d and 0b717d4. Later changes only extend the isolated verification harness and add the explicit publisher-confirm ambiguity helper.
+
+Final recovery-only harness, including confirmed-publish ambiguity: 0b717d4.
+Pinned Python unit suite: 0b717d4 (102 passed, 1 expected Git-only skip).
+Pinned frontend build/typecheck and unit suite: 0b717d4 (3 passed; source layers cached from the identical apps/web tree at 9be2e0d).

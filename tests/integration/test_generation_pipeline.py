@@ -110,6 +110,123 @@ def test_typed_failure_has_no_result(seed, state, engine):
         assert c.scalar(sa.select(sa.func.count()).select_from(db.versions).where(db.versions.c.generation_job_id==UUID(job['job_id']))) == 0
 
 
+def test_resource_exhaustion_is_terminal_without_an_automatic_retry(engine):
+    accepted, _ = submit(seed=4294967207)
+    result, _ = wait(accepted, 'failed')
+    assert result['attempt_count'] == 1
+    assert result['error']['code'] == 'resource_exhaustion'
+    assert result['result_version_id'] is None
+    with engine.connect() as connection:
+        assert connection.scalar(sa.select(sa.func.count()).select_from(db.versions).where(
+            db.versions.c.generation_job_id == UUID(accepted['job_id']),
+        )) == 0
+
+
+def test_artifact_permission_failure_is_bounded_and_leaves_no_version(settings, engine):
+    import os
+    import stat
+    root = settings.artifact_root
+    original_mode = stat.S_IMODE(root.stat().st_mode)
+    os.chmod(root, 0o500)
+    try:
+        accepted, _ = submit(seed=8119)
+        result, _ = wait(accepted, 'failed')
+        assert result['attempt_count'] == settings.max_attempts
+        assert result['result_version_id'] is None
+        with engine.connect() as connection:
+            assert connection.scalar(sa.select(sa.func.count()).select_from(db.versions).where(
+                db.versions.c.generation_job_id == UUID(accepted['job_id']),
+            )) == 0
+    finally:
+        os.chmod(root, original_mode)
+
+
+def test_explicit_retry_is_a_new_linked_idempotent_job_with_snapshot(engine):
+    original, _ = submit(seed=4294967201)
+    original_result, _ = wait(original, 'failed')
+    original_id = UUID(original['job_id'])
+    with engine.connect() as c:
+        original_row = c.execute(sa.select(db.jobs).where(db.jobs.c.id == original_id)).mappings().one()
+        snapshot = original_row['execution_snapshot']
+        checkpoint = original_row['lyrics_checkpoint']
+    assert checkpoint is not None
+    key = str(uuid4())
+    path = BASE + f'/api/v1/jobs/{original_id}/retry'
+    response = httpx.post(path, headers={'Idempotency-Key': key})
+    assert response.status_code == 202, response.text
+    accepted_retry = response.json()
+    replay = httpx.post(path, headers={'Idempotency-Key': key})
+    assert replay.status_code == 202
+    assert replay.json()['job_id'] == accepted_retry['job_id']
+    retry_id = UUID(accepted_retry['job_id'])
+    with engine.connect() as c:
+        retry_row = c.execute(sa.select(db.jobs).where(db.jobs.c.id == retry_id)).mappings().one()
+        assert retry_row['retry_of_job_id'] == original_id
+        assert retry_row['operation'] == 'retry'
+        assert retry_row['execution_snapshot'] == snapshot
+        assert retry_row['lyrics_checkpoint'] == checkpoint
+        assert retry_row['provider_route'] == original_row['provider_route']
+        assert retry_row['attempt_count'] == 0
+    retry_view = httpx.get(BASE + accepted_retry['status_url']).json()
+    assert retry_view['retry_of_job_id'] == str(original_id)
+    retried, _ = wait(accepted_retry, 'failed')
+    assert retried['attempt_count'] == 1
+    assert retried['result_version_id'] is None
+    assert httpx.get(BASE + original['status_url']).json()['result_version_id'] == original_result['result_version_id'] is None
+    assert httpx.post(BASE + f'/api/v1/jobs/{retry_id}/retry', headers={'Idempotency-Key': str(uuid4())}).status_code == 409
+
+
+def test_explicit_retry_keeps_lyrics_only_operation_and_reuses_its_source_audio(engine):
+    source_acceptance, _ = submit(seed=8912)
+    source_job, _ = wait(source_acceptance)
+    source = httpx.get(BASE + source_job['version_url']).json()
+    inputs = {
+        name: source['inputs'][name]
+        for name in ('brief', 'instruments', 'mood', 'language', 'genre', 'tempo',
+                     'vocal_type', 'lyrics', 'duration_seconds', 'seed', 'iteration_instruction')
+    }
+    exact_edit = TEXT + '  retry checkpoint stays exact\n'
+    inputs.update(project_id=source['project_id'], lyrics={'mode': 'user', 'text': exact_edit})
+    response = httpx.post(
+        BASE + f"/api/v1/versions/{source['id']}/iterations",
+        json={'operation': 'lyrics_edit', 'inputs': inputs},
+        headers={'Idempotency-Key': str(uuid4())},
+    )
+    assert response.status_code == 202, response.text
+    failed_acceptance = response.json()
+    with engine.begin() as connection:
+        source_link = dict(connection.execute(sa.select(db.links).where(
+            db.links.c.version_id == UUID(source['id']), db.links.c.role == 'audio',
+        )).mappings().one())
+        connection.execute(db.links.delete().where(db.links.c.version_id == UUID(source['id']), db.links.c.role == 'audio'))
+    original_result, _ = wait(failed_acceptance, 'failed')
+    original_id = UUID(failed_acceptance['job_id'])
+    with engine.begin() as connection:
+        original = connection.execute(sa.select(db.jobs).where(db.jobs.c.id == original_id)).mappings().one()
+        snapshot = original['execution_snapshot']
+        checkpoint = original['lyrics_checkpoint']
+        connection.execute(db.links.insert().values(**source_link))
+    assert snapshot['operation'] == 'lyrics_edit'
+    assert snapshot['source_version_id'] == source['id']
+    assert checkpoint['text'] == exact_edit
+    assert original_result['result_version_id'] is None
+
+    retry_response = httpx.post(
+        BASE + f'/api/v1/jobs/{original_id}/retry',
+        headers={'Idempotency-Key': str(uuid4())},
+    )
+    assert retry_response.status_code == 202, retry_response.text
+    retry_acceptance = retry_response.json()
+    retried, _ = wait(retry_acceptance)
+    assert retried['state'] == 'succeeded'
+    retry_version = httpx.get(BASE + retried['version_url']).json()
+    assert retry_version['parent_version_id'] == source['id']
+    assert retry_version['lyrics'] == exact_edit
+    assert retry_version['audio_recomposed'] is False
+    assert retry_version['audio']['id'] == source['audio']['id']
+    assert retried['retry_of_job_id'] == str(original_id)
+
+
 def test_running_and_queued_cancellation():
     running, _ = submit(seed=4294967203)
     deadline = time.monotonic()+20
@@ -126,7 +243,41 @@ def test_running_and_queued_cancellation():
     assert httpx.post(BASE+running['status_url']+'/cancel').json()['state']=='cancelled'
 
 
-def test_artifact_ranges_and_missing(engine):
+def test_cancel_completion_race_has_one_terminal_outcome(engine):
+    accepted, _ = submit(seed=4294967205)
+    deadline = time.monotonic() + 30
+    cancel_response = None
+    while time.monotonic() < deadline:
+        observed = httpx.get(BASE + accepted['status_url']).json()
+        if observed['state'] in ('succeeded', 'failed', 'cancelled', 'timed_out'):
+            break
+        if observed['state'] == 'running' and observed['stage'] == 'saving_result':
+            cancel_response = httpx.post(BASE + accepted['status_url'] + '/cancel')
+            break
+        time.sleep(.005)
+    final = None
+    terminal = {'succeeded', 'failed', 'cancelled', 'timed_out'}
+    deadline = time.monotonic() + 60
+    while time.monotonic() < deadline:
+        final = httpx.get(BASE + accepted['status_url']).json()
+        if final['state'] in terminal:
+            break
+        time.sleep(.05)
+    assert final and final['state'] in ('succeeded', 'cancelled')
+    if cancel_response:
+        assert cancel_response.status_code in (200, 202)
+    with engine.connect() as connection:
+        count = connection.scalar(sa.select(sa.func.count()).select_from(db.versions).where(
+            db.versions.c.generation_job_id == UUID(accepted['job_id']),
+        ))
+    assert count == (1 if final['state'] == 'succeeded' else 0)
+    if final['state'] == 'succeeded':
+        assert final['result_version_id'] is not None
+    else:
+        assert final['result_version_id'] is None
+
+
+def test_artifact_ranges_and_missing(engine, settings):
     job, _ = submit()
     result, _ = wait(job)
     version = httpx.get(BASE+result['version_url']).json()
@@ -142,12 +293,27 @@ def test_artifact_ranges_and_missing(engine):
     identifier = UUID(version['audio']['id'])
     with engine.begin() as c:
         key = c.scalar(sa.select(db.artifacts.c.storage_key).where(db.artifacts.c.id==identifier))
-        c.execute(db.artifacts.update().where(db.artifacts.c.id==identifier).values(storage_key='../etc/passwd'))
+    stored = settings.artifact_root / key
+    missing = settings.artifact_root / f'{key}.missing'
+    stored.replace(missing)
     try:
         assert httpx.get(url).status_code==410
         assert httpx.get(BASE+result['version_url']).status_code==200
+        library = httpx.get(BASE + '/api/v1/library?q=Original%20morning%20demo').json()['items']
+        assert next(item for item in library if item['version_id'] == version['id'])['available'] is False
     finally:
-        with engine.begin() as c: c.execute(db.artifacts.update().where(db.artifacts.c.id==identifier).values(storage_key=key))
+        missing.replace(stored)
+    assert httpx.get(url).status_code==200
+    library = httpx.get(BASE + '/api/v1/library?q=Original%20morning%20demo').json()['items']
+    assert next(item for item in library if item['version_id'] == version['id'])['available'] is True
+    with engine.begin() as c:
+        c.execute(db.artifacts.update().where(db.artifacts.c.id==identifier).values(storage_key='../etc/passwd'))
+    try:
+        assert httpx.get(url).status_code==410
+    finally:
+        with engine.begin() as c:
+            c.execute(db.artifacts.update().where(db.artifacts.c.id==identifier).values(storage_key=key))
+    assert httpx.get(url).status_code==200
 
 
 def test_validation_and_resource_routes():
@@ -191,6 +357,39 @@ def test_latest_submission_selection_is_fenced():
     versions=httpx.get(BASE+'/api/v1/projects/'+first['project_id']+'/versions').json()['items']
     assert [v['number'] for v in versions]==[1,2]
     assert one['result_version_id'] != two['result_version_id']
+
+
+def test_parallel_completions_allocate_unique_numbers_and_keep_latest_submission_active(engine):
+    initial, _ = submit(seed=8101)
+    initial_result, _ = wait(initial)
+    project_id = UUID(initial['project_id'])
+    requests = [
+        dict(project_id=str(project_id), seed=4294967205),
+        dict(project_id=str(project_id), seed=4294967206),
+    ]
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        accepted = list(pool.map(lambda values: submit(**values)[0], requests))
+        completed = list(pool.map(wait, accepted))
+    results = [result for result, _ in completed]
+    assert all(result['state'] == 'succeeded' for result in results)
+    assert len({result['result_version_id'] for result in results}) == 2
+    with engine.connect() as connection:
+        jobs = connection.execute(sa.select(db.jobs.c.id, db.jobs.c.submission_seq).where(
+            db.jobs.c.id.in_([UUID(item['job_id']) for item in accepted]),
+        )).all()
+        assert len({row.submission_seq for row in jobs}) == 2
+        latest_job = max(jobs, key=lambda row: row.submission_seq).id
+        latest_result = connection.scalar(sa.select(db.jobs.c.result_version_id).where(db.jobs.c.id == latest_job))
+        current = connection.execute(sa.select(db.projects.c.active_version_id, db.projects.c.next_version_number).where(
+            db.projects.c.id == project_id,
+        )).one()
+        numbers = connection.execute(sa.select(db.versions.c.number).where(
+            db.versions.c.project_id == project_id,
+        ).order_by(db.versions.c.number)).scalars().all()
+    assert current.active_version_id == latest_result
+    assert current.next_version_number == 4
+    assert numbers == [1, 2, 3]
+    assert initial_result['result_version_id'] not in {item['result_version_id'] for item in results}
 
 
 def test_interrupted_outbox_claim_is_reclaimed(engine, settings):

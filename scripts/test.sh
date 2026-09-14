@@ -11,13 +11,15 @@ case "${1:-}" in
   integration)
     require_env
     require_engine
-    python3 scripts/verify-phase2.py
+    MUSEFORGE_TEST_PROJECT_PREFIX=museforge-phase4-test- python3 scripts/verify-phase2.py
     ;;
   e2e)
-    (cd apps/web; npm run test:browser)
+    require_env
+    require_engine
+    python3 scripts/verify-phase4.py
     ;;
   release)
-    fail 'Full release acceptance belongs to Phase 06. Use unit, integration, or e2e for Phase 02.'
+    fail 'Full release acceptance belongs to Phase 06. Use unit, integration, or e2e for implementation checks.'
     ;;
   *) fail 'Usage: bash scripts/test.sh unit|integration|e2e|release' ;;
 esac

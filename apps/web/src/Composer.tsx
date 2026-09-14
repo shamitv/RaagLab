@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import type { components } from "./api.generated";
 import {
   api,
+  ApiError,
   defaults,
+  newId,
   validDraft,
   versionInputs,
   type Generation,
@@ -18,6 +20,7 @@ type Caps = components["schemas"]["CapabilitiesResponse"];
 type Summary = components["schemas"]["VersionView"];
 export function Composer() {
   const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const [draft, setDraft] = useState<Generation>(defaults),
     [caps, setCaps] = useState<Caps | null>(null),
@@ -33,7 +36,10 @@ export function Composer() {
   const [reload, setReload] = useState(0);
   const [loaded, setLoaded] = useState(false),
     [dirty, setDirty] = useState(false),
-    [conflict, setConflict] = useState<LocalDraft | null>(null);
+    [conflict, setConflict] = useState<{
+      local: LocalDraft;
+      server: Project | null;
+    } | null>(null);
   const [instruction, setInstruction] = useState(""),
     [editing, setEditing] = useState(false),
     [lyrics, setLyrics] = useState(""),
@@ -48,12 +54,14 @@ export function Composer() {
     draftRef = useRef(draft),
     dirtyRef = useRef(dirty);
   const versionRef = useRef(version);
+  const recoveryMessage = useRef("");
   versionRef.current = version;
   projectRef.current = project;
   draftRef.current = draft;
   dirtyRef.current = dirty;
   const baseRevision = useRef<number | null>(null),
-    transfer = useRef<Generation | null>(null);
+    transfer = useRef<Generation | null>(null),
+    appliedLocation = useRef("");
   const submission = useRef<{ path: string; body: string; key: string } | null>(
     null,
   );
@@ -101,22 +109,39 @@ export function Composer() {
     setJob(null);
     setProject(null);
     setConflict(null);
-    setError("");
+    if (!recoveryMessage.current) setError("");
     async function load() {
       try {
-        const [cap, local, p] = await Promise.all([
+        const [cap, local, p, settings] = await Promise.all([
           api<Caps>("/api/v1/capabilities"),
           readDraft(id ?? "create").catch(() => {
-            setError(
-              "Local draft storage unavailable; save to the server to retain edits.",
-            );
+            recoveryMessage.current ||= "Local draft storage unavailable; save to the server to retain edits.";
+            setError(recoveryMessage.current);
             return undefined;
           }),
           id ? api<Project>(`/api/v1/projects/${id}`) : Promise.resolve(null),
+          api<{
+            generation_defaults: {
+              instruments: Generation["instruments"];
+              mood: Generation["mood"];
+              language: Generation["language"];
+              genre: Generation["genre"];
+              tempo: Generation["tempo"];
+              vocal_type: "Instrumental";
+              duration_seconds: number;
+              lyrics_mode: "user" | "static" | "mock";
+            };
+          }>("/api/v1/settings"),
         ]);
         const list = p ? await versions(p.id) : [];
-        const v = p?.active_version_id
-          ? await api<Version>(`/api/v1/versions/${p.active_version_id}`)
+        const requestedVersion = new URLSearchParams(location.search).get(
+          "version",
+        );
+        const selectedVersion = requestedVersion
+          ? list.find((item) => item.id === requestedVersion)?.id
+          : p?.active_version_id;
+        const v = selectedVersion
+          ? await api<Version>(`/api/v1/versions/${selectedVersion}`)
           : null;
         if (token !== generation.current) return;
         setCaps(cap);
@@ -127,31 +152,51 @@ export function Composer() {
           p?.jobs.find((j) => !terminal.has(j.state)) ?? p?.jobs[0] ?? null,
         );
         if (v) adopt(v);
+        const { lyrics_mode: lyricsMode, ...generationDefaults } =
+          settings.generation_defaults;
+        const preferred: Generation = {
+          ...defaults,
+          ...generationDefaults,
+          lyrics: { mode: lyricsMode },
+        };
         const server =
           p && Object.keys(p.draft).length
             ? (p.draft as Generation)
-            : {
-                ...defaults,
-                lyrics: { mode: cap.default_lyrics_mode },
-                duration_seconds: cap.duration.default,
-              };
+            : preferred;
         baseRevision.current = p?.revision ?? null;
         if (transfer.current) {
           setDraft(transfer.current);
           transfer.current = null;
           setDirty(true);
         } else if (
+          location.state?.applyTemplate &&
+          appliedLocation.current !== location.key
+        ) {
+          const templateDraft = location.state.applyTemplate as Generation;
+          appliedLocation.current = location.key;
+          setDraft(templateDraft);
+          setDirty(true);
+          setNotice("Template applied to your draft. Generate when you are ready.");
+        } else if (
           local?.dirty &&
           local.baseRevision === (p?.revision ?? null)
         ) {
           setDraft(local.draft);
+          if (local.title !== undefined) setTitle(local.title);
           setDirty(true);
         } else {
           setDraft(server);
           setDirty(false);
-          if (local?.dirty) setConflict(local);
+          if (local?.dirty) setConflict({ local, server: p });
         }
-        setSaveState(p ? "Saved project" : "Local draft");
+        setSaveState(
+          recoveryMessage.current
+            ? "Saved to server · local recovery unavailable"
+            : p
+              ? "Saved project"
+              : "Local draft",
+        );
+        if (recoveryMessage.current) setError(recoveryMessage.current);
         setLoaded(true);
         setOnline(true);
       } catch (e) {
@@ -165,26 +210,28 @@ export function Composer() {
     return () => {
       ++generation.current;
     };
-  }, [id, reload]);
+  }, [id, location.key, location.search, location.state, reload]);
   useEffect(() => {
-    if (!loaded) return;
+    if (!loaded || conflict) return;
     const timer = setTimeout(() => {
       void writeDraft(id ?? "create", {
         draft,
         baseRevision: baseRevision.current,
         editedAt: Date.now(),
         dirty,
-      }).catch(() =>
-        setError(
-          "Local draft storage failed. Keep this tab open and save the project.",
-        ),
-      );
+        title,
+      }).catch(() => {
+        recoveryMessage.current =
+          "Local draft storage failed. Keep this tab open and save the project.";
+        setSaveState("Local recovery unavailable");
+        setError(recoveryMessage.current);
+      });
     }, 200);
     return () => clearTimeout(timer);
-  }, [draft, dirty, id, loaded, project?.revision]);
+  }, [conflict, draft, dirty, id, loaded, project?.revision, title]);
   useEffect(() => {
     const leave = (e: BeforeUnloadEvent) => {
-      if (dirtyRef.current && saveState === "Save failed") {
+      if (dirtyRef.current) {
         e.preventDefault();
         e.returnValue = "";
       }
@@ -322,20 +369,53 @@ export function Composer() {
               title: title || draft.brief.slice(0, 120) || "Untitled project",
               draft,
             }),
-          });
-      baseRevision.current = p.revision;
-      await writeDraft(p.id, {
-        draft,
-        baseRevision: p.revision,
-        editedAt: Date.now(),
-        dirty: false,
       });
+      baseRevision.current = p.revision;
+      let localStored = true;
+      try {
+        await writeDraft(p.id, {
+          draft,
+          title: p.title,
+          baseRevision: p.revision,
+          editedAt: Date.now(),
+          dirty: false,
+        });
+      } catch {
+        localStored = false;
+        recoveryMessage.current =
+          "Project saved to the server, but local recovery could not be updated. Keep this tab open until your edits are safe.";
+        setError(recoveryMessage.current);
+      }
       setDirty(false);
-      setSaveState("Saved to server");
+      setSaveState(
+        localStored
+          ? "Saved to server"
+          : "Saved to server · local recovery unavailable",
+      );
       if (!id) navigate(`/projects/${p.id}`);
     } catch (e) {
       setSaveState("Save failed");
       setError((e as Error).message);
+      if (e instanceof ApiError && e.status === 412 && id) {
+        try {
+          const server = await api<Project>(`/api/v1/projects/${id}`);
+          setConflict({
+            local: {
+              draft,
+              title,
+              baseRevision: baseRevision.current,
+              editedAt: Date.now(),
+              dirty: true,
+            },
+            server,
+          });
+          setSaveState("Resolve the save conflict");
+        } catch (refreshError) {
+          setError(
+            `Save conflict. Your local draft is still in this tab, but the latest server version could not be loaded: ${(refreshError as Error).message}`,
+          );
+        }
+      }
     } finally {
       setBusy(false);
     }
@@ -352,18 +432,26 @@ export function Composer() {
         submission.current = {
           path,
           body: serialized,
-          key: crypto.randomUUID(),
+          key: newId(),
         };
       sessionStorage.setItem(
         "museforge-submission",
         JSON.stringify(submission.current),
       );
-      await writeDraft(id ?? "create", {
-        draft,
-        baseRevision: baseRevision.current,
-        editedAt: Date.now(),
-        dirty,
-      });
+      try {
+        await writeDraft(id ?? "create", {
+          draft,
+          baseRevision: baseRevision.current,
+          editedAt: Date.now(),
+          dirty,
+          title,
+        });
+      } catch {
+        recoveryMessage.current =
+          "Local draft storage failed. Your edits remain in this tab; continuing without a local recovery copy.";
+        setSaveState("Local recovery unavailable");
+        setError(recoveryMessage.current);
+      }
       const result = await api<components["schemas"]["Accepted"]>(path, {
         method: "POST",
         body: serialized,
@@ -527,27 +615,69 @@ export function Composer() {
         <section className="card">
           <h2>Recovered draft needs review</h2>
           <p>
-            The server revision changed. Keep your local edits or use the loaded
-            server draft.
+            The server revision changed. Choose which version to continue with;
+            your local title and draft remain available here.
           </p>
-          <pre className="lyrics">{conflict.draft.brief}</pre>
+          <p>Local title: {conflict.local.title || "Untitled project"}</p>
+          <pre className="lyrics">{conflict.local.draft.brief}</pre>
           <button
             onClick={() => {
-              setDraft(conflict.draft);
+              setDraft(conflict.local.draft);
+              setTitle(conflict.local.title ?? title);
+              if (conflict.server) {
+                projectRef.current = conflict.server;
+                setProject(conflict.server);
+                baseRevision.current = conflict.server.revision;
+              }
               setDirty(true);
               setConflict(null);
               setSaveState("Unsaved changes");
             }}
           >
-            Keep local edits
+            Keep local
           </button>
           <button
+            disabled={!conflict.server}
             onClick={() => {
+              if (!conflict.server) return;
+              projectRef.current = conflict.server;
+              setProject(conflict.server);
+              baseRevision.current = conflict.server.revision;
+              setTitle(conflict.server.title);
+              setDraft(
+                Object.keys(conflict.server.draft).length
+                  ? (conflict.server.draft as Generation)
+                  : defaults,
+              );
               setConflict(null);
               setDirty(false);
+              setSaveState("Server version loaded");
             }}
           >
-            Use server draft
+            Use server
+          </button>
+          <button
+            disabled={busy || !conflict.local.draft.brief.trim()}
+            onClick={() => {
+              setBusy(true);
+              void api<Project>("/api/v1/projects", {
+                method: "POST",
+                body: JSON.stringify({
+                  title: `Copy of ${conflict.local.title || title || "Untitled project"}`,
+                  draft: conflict.local.draft,
+                }),
+              })
+                .then((copy) => {
+                  transfer.current = conflict.local.draft;
+                  setConflict(null);
+                  setDirty(false);
+                  navigate(`/projects/${copy.id}`);
+                })
+                .catch((e) => setError((e as Error).message))
+                .finally(() => setBusy(false));
+            }}
+          >
+            Save copy
           </button>
         </section>
       )}
@@ -800,6 +930,31 @@ export function Composer() {
                 {job.provider_readiness.state}
               </p>
               {job.error && <p role="alert">{job.error.message}</p>}
+              {job.attempts.length > 0 && (
+                <details>
+                  <summary>Attempt history ({job.attempts.length})</summary>
+                  <ul>
+                    {job.attempts.map((attempt) => (
+                      <li key={`${attempt.worker_id}-${attempt.attempt_number}`}>
+                        Attempt {attempt.attempt_number} · {attempt.outcome ?? "running"}
+                        {attempt.ended_at
+                          ? ` · ${new Date(attempt.ended_at).toLocaleString()}`
+                          : ""}
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              )}
+              {(job as Job & { retry_of_job_id?: string | null })
+                .retry_of_job_id && (
+                <p>
+                  Explicit retry of job{" "}
+                  {
+                    (job as Job & { retry_of_job_id?: string | null })
+                      .retry_of_job_id
+                  }
+                </p>
+              )}
               {!terminal.has(job.state) && (
                 <button
                   disabled={blocked || job.state === "cancellation_requested"}
@@ -814,17 +969,32 @@ export function Composer() {
                   Cancel generation
                 </button>
               )}
-              {["failed", "cancelled", "timed_out"].includes(job.state) && (
+              {["failed", "timed_out"].includes(job.state) && (
                 <button
-                  disabled={blocked || !validDraft(draft)}
-                  onClick={() =>
-                    void submit("/api/v1/generations", {
-                      ...draft,
-                      project_id: id,
-                    })
-                  }
+                  disabled={blocked}
+                  onClick={() => {
+                    const storageKey = `museforge-retry:${job.id}`;
+                    let key = sessionStorage.getItem(storageKey);
+                    if (!key) {
+                      key = newId();
+                      sessionStorage.setItem(storageKey, key);
+                    }
+                    void api<components["schemas"]["Accepted"]>(
+                      `/api/v1/jobs/${job.id}/retry`,
+                      {
+                        method: "POST",
+                        headers: { "Idempotency-Key": key },
+                      },
+                    )
+                      .then(async (accepted) => {
+                        sessionStorage.removeItem(storageKey);
+                        setJob(await api<Job>(accepted.status_url));
+                        setNotice("Retry queued as a new linked job.");
+                      })
+                      .catch((e) => setError((e as Error).message));
+                  }}
                 >
-                  Generate again
+                  Retry failed job
                 </button>
               )}
             </section>
@@ -1022,28 +1192,6 @@ export function Composer() {
           )}
         </div>
       </div>
-    </>
-  );
-}
-export function Projects() {
-  const [projects, setProjects] = useState<Project[]>([]),
-    [error, setError] = useState("");
-  useEffect(() => {
-    api<{ items: Project[] }>("/api/v1/projects?limit=100")
-      .then((r) => setProjects(r.items))
-      .catch((e) => setError(e.message));
-  }, []);
-  return (
-    <>
-      {error && <p role="alert">{error}</p>}
-      <ul className="project-list">
-        {projects.map((p) => (
-          <li key={p.id}>
-            <Link to={`/projects/${p.id}`}>{p.title}</Link>
-          </li>
-        ))}
-      </ul>
-      <Link to="/create">Create music</Link>
     </>
   );
 }

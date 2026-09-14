@@ -1,0 +1,58 @@
+
+> museforge-web@0.1.0 test:browser
+> playwright test
+
+
+Running 48 tests using 1 worker
+
+  ✓   1 [desktop] › browser/generation.spec.ts:4:1 › real generation plays, seeks, downloads and survives refresh (13.0s)
+  ✓   2 [desktop] › browser/generation.spec.ts:50:39 › real static lyrics (6.3s)
+  ✓   3 [desktop] › browser/generation.spec.ts:50:39 › real mock lyrics (6.9s)
+  ✓   4 [desktop] › browser/phase4.spec.ts:15:1 › projects, library, duplicate, archive, settings, and templates work (10.8s)
+  ✓   5 [desktop] › browser/phase4.spec.ts:96:1 › offline and two-tab draft conflicts keep explicit recovery choices (3.7s)
+  ✓   6 [desktop] › browser/phase4.spec.ts:155:1 › IndexedDB failure keeps edits in memory and reports unsaved local recovery (527ms)
+  ✓   7 [desktop] › browser/phase4.spec.ts:175:1 › failed jobs can be retried explicitly as linked jobs (6.3s)
+  ✓   8 [desktop] › browser/routing.spec.ts:4:1 › API-served workspace supports navigation, refresh, and accessible pages (3.2s)
+  ✓   9 [desktop] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection (19.9s)
+  ✓  10 [desktop] › browser/workspace.spec.ts:87:1 › breakpoint and zoom layout keeps controls and semantic order (1.7s)
+  ✓  11 [desktop] › browser/workspace.spec.ts:120:1 › focused actions, clipboard failure, offline draft and conditional save (24.9s)
+  ✓  12 [desktop] › browser/workspace.spec.ts:227:1 › cancellation and stale save keep the editable draft (6.8s)
+  ✓  13 [mobile] › browser/generation.spec.ts:4:1 › real generation plays, seeks, downloads and survives refresh (9.0s)
+  ✓  14 [mobile] › browser/generation.spec.ts:50:39 › real static lyrics (6.5s)
+  ✓  15 [mobile] › browser/generation.spec.ts:50:39 › real mock lyrics (6.6s)
+  -  16 [mobile] › browser/phase4.spec.ts:15:1 › projects, library, duplicate, archive, settings, and templates work
+  -  17 [mobile] › browser/phase4.spec.ts:96:1 › offline and two-tab draft conflicts keep explicit recovery choices
+  -  18 [mobile] › browser/phase4.spec.ts:155:1 › IndexedDB failure keeps edits in memory and reports unsaved local recovery
+  -  19 [mobile] › browser/phase4.spec.ts:175:1 › failed jobs can be retried explicitly as linked jobs
+  ✓  20 [mobile] › browser/routing.spec.ts:4:1 › API-served workspace supports navigation, refresh, and accessible pages (3.6s)
+  ✓  21 [mobile] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection (20.2s)
+  ✓  22 [mobile] › browser/workspace.spec.ts:87:1 › breakpoint and zoom layout keeps controls and semantic order (1.4s)
+  -  23 [mobile] › browser/workspace.spec.ts:120:1 › focused actions, clipboard failure, offline draft and conditional save
+  -  24 [mobile] › browser/workspace.spec.ts:227:1 › cancellation and stale save keep the editable draft
+  ✓  25 [small] › browser/generation.spec.ts:4:1 › real generation plays, seeks, downloads and survives refresh (9.6s)
+  ✓  26 [small] › browser/generation.spec.ts:50:39 › real static lyrics (6.9s)
+  ✓  27 [small] › browser/generation.spec.ts:50:39 › real mock lyrics (6.8s)
+  -  28 [small] › browser/phase4.spec.ts:15:1 › projects, library, duplicate, archive, settings, and templates work
+  -  29 [small] › browser/phase4.spec.ts:96:1 › offline and two-tab draft conflicts keep explicit recovery choices
+  -  30 [small] › browser/phase4.spec.ts:155:1 › IndexedDB failure keeps edits in memory and reports unsaved local recovery
+  -  31 [small] › browser/phase4.spec.ts:175:1 › failed jobs can be retried explicitly as linked jobs
+  ✓  32 [small] › browser/routing.spec.ts:4:1 › API-served workspace supports navigation, refresh, and accessible pages (3.9s)
+  ✓  33 [small] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection (20.7s)
+  ✓  34 [small] › browser/workspace.spec.ts:87:1 › breakpoint and zoom layout keeps controls and semantic order (1.3s)
+  -  35 [small] › browser/workspace.spec.ts:120:1 › focused actions, clipboard failure, offline draft and conditional save
+  -  36 [small] › browser/workspace.spec.ts:227:1 › cancellation and stale save keep the editable draft
+  ✓  37 [narrow] › browser/generation.spec.ts:4:1 › real generation plays, seeks, downloads and survives refresh (10.8s)
+  ✓  38 [narrow] › browser/generation.spec.ts:50:39 › real static lyrics (6.2s)
+  ✓  39 [narrow] › browser/generation.spec.ts:50:39 › real mock lyrics (5.5s)
+  -  40 [narrow] › browser/phase4.spec.ts:15:1 › projects, library, duplicate, archive, settings, and templates work
+  -  41 [narrow] › browser/phase4.spec.ts:96:1 › offline and two-tab draft conflicts keep explicit recovery choices
+  -  42 [narrow] › browser/phase4.spec.ts:155:1 › IndexedDB failure keeps edits in memory and reports unsaved local recovery
+  -  43 [narrow] › browser/phase4.spec.ts:175:1 › failed jobs can be retried explicitly as linked jobs
+  ✓  44 [narrow] › browser/routing.spec.ts:4:1 › API-served workspace supports navigation, refresh, and accessible pages (3.5s)
+  ✓  45 [narrow] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection (20.9s)
+  ✓  46 [narrow] › browser/workspace.spec.ts:87:1 › breakpoint and zoom layout keeps controls and semantic order (1.3s)
+  -  47 [narrow] › browser/workspace.spec.ts:120:1 › focused actions, clipboard failure, offline draft and conditional save
+  -  48 [narrow] › browser/workspace.spec.ts:227:1 › cancellation and stale save keep the editable draft
+
+  18 skipped
+  30 passed (4.4m)

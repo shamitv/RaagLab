@@ -83,6 +83,30 @@ Browser generation and navigation checks use the actual API origin (start the mo
 
 These checks cover all lyrics modes, actual playback/seek/download, refresh, navigation, no overflow at 1440/390/320 px, browser errors, and automated axe checks. They do not claim the full Phase 03 accessibility or Phase 06 browser acceptance.
 
+## Phase 04 acceptance and artifact maintenance
+
+Run the full isolated Phase 04 gate on a Linux Docker engine with:
+
+```bash
+python3 scripts/verify-phase4.py
+```
+
+The runner uses a unique `museforge-phase4-test-<id>` Compose project, builds the pinned API/dispatcher/worker/Python-test/browser-test images, runs Python unit and real-service integration tests, and executes Playwright against the API-served SPA. It then verifies a queued job across API restart, publisher-confirm ambiguity, dispatcher and broker restart, whole-worker loss and lease recovery, full Compose stop/start with database/broker/artifact volumes preserved, and a decoded smoke artifact. It saves JSON/browser evidence to `test-results/` before removing only that unique test project's containers and volumes. Do not point this destructive cleanup step at a normal deployment.
+
+The Python and frontend tests use pinned Python 3.13.15 and Node 24.21.0/npm 11.19.0 images. Browser/Playwright dependencies exist only in the test image and are not copied into API or worker runtime images. To run only the frontend production build/typecheck and unit tests, use `docker build -f packaging/Dockerfile --target web-test .`. Browser projects cover 1440, 390, 360 and 320 px; stateful shared-library/recovery flows run once at desktop width, while route/playback/layout checks repeat at all four widths.
+
+The API's artifact mount is read-only. Run maintenance inside the mock-worker service, which has writable access to the same artifact volume; inspection is read-only by default:
+
+```bash
+docker compose --env-file .env --profile mock run --rm --no-deps worker-mock python -m museforge.maintenance
+```
+
+Deletion requires `--apply`, retains a minimum 24-hour grace period, and rechecks version references and live worker attempts. A longer period is selected with `--grace-hours <hours>`; lower values are rejected. Inspect the report before enabling apply on the deployment workspace.
+
+```bash
+docker compose --env-file .env --profile mock run --rm --no-deps worker-mock python -m museforge.maintenance --apply --grace-hours 24
+```
+
 ## Remote Linux execution
 
 The original foundation verification used the user-provided VM at `10.42.0.42` as `yolo1`, with a key in the ignored `secrets/` directory. That historical checkout is `/home/yolo1/raaglab-foundation-20260913`; credentials are not present in this checkout. The review corrections use the existing `Ubuntu1` WSL2 distribution and its Linux Docker engine, reachable from PowerShell with `wsl -d Ubuntu1 -- bash scripts/test.sh integration`. Use the same checkout and commands on another Linux engine; do not copy keys, a developer `.env`, weights, or generated audio into the build context.
@@ -91,12 +115,12 @@ For browser access to a remote loopback port, forward that port over SSH and poi
 
 ## Responsive workspace (Phase 03)
 
-The API serves the compiled React workspace at `/create` and `/projects/{id}`. Create and Projects are the working navigation destinations. Library, Settings, Templates, duplicate and archive remain Phase 04 work and are omitted from navigation.
+The API serves the compiled React workspace at `/create`, `/projects`, `/projects/{id}`, `/library`, `/settings`, and `/templates`. Each navigation destination uses server-backed project/version state and can be reopened by its persistent route.
 
 The workspace provides capability-derived composer choices, explicit lyrics sources, duration/seed under Advanced Options, a single HTML audio element, seek/volume/repeat/project collection controls, exact lyrics editing, favorite/rename, version selection and four iteration operations. Native browser playback failures and clipboard failures are reported in the page. No synthetic waveform or invented song structure is displayed. A measured artifact duration appears with structure availability; player elapsed/total time comes from the audio element.
 
-IndexedDB stores editable Generation inputs, base server revision, dirty state and edit timestamp after a 200 ms debounce and before submissions. Save Project is a conditional server save. An initial recovery conflict offers local/server choices; stale saves retain the local draft and expose Reload server state for review. Full multi-tab reconciliation and library organization remain Phase 04. Audio is never stored as authoritative IndexedDB data. The composer stays disabled until the initial draft and server context are loaded.
+IndexedDB stores editable Generation inputs, base server revision, dirty state, edit timestamp, project key, and per-tab identity after a 200 ms debounce and before submissions. Save Project is a conditional server save. A stale `If-Match` conflict keeps the local edit and offers Keep local, Use server, and Save copy. Reconnect reconciles local/server revisions without duplicate generation; IndexedDB failures keep in-memory edits and report that local recovery was not written. Audio is never stored as authoritative IndexedDB data. The composer stays disabled until the initial draft and server context are loaded.
 
-Run `bash scripts/test.sh unit`, `bash scripts/test.sh integration`, and `API_BASE_URL=<API-origin> bash scripts/test.sh e2e`. Integration includes `test_version_lineage.py`; browser tests cover 1440, 390, 360 and 320 px, intermediate breakpoints, actual playback, native-script lyrics and axe. The isolated integration runner retains the Phase 02 queued/API-restart checkpoint. See the Phase 03 evidence directory for the exact tested environment and results; the existing runtime-version guidance above still applies.
+Run the Phase 04 acceptance command above to check projects, completed-version library, settings/templates, draft recovery, retries, API-served playback, and runtime recovery together. Its evidence and acceptance mapping are in `docs/implementation/evidence/04/2026-09-14-projects-recovery/`.
 
 For reproducible visual evidence, run `API_BASE_URL=<API-origin> node scripts/verify-workspace-browser.mjs` after installing Playwright Chromium. It creates a dedicated original demo and writes viewport, clipboard, keyboard, local-font and native 200% zoom observations under `test-results/workspace-inspection`. Set `EVIDENCE_DIR` to change that directory. Concurrent Playwright CLI invocations need distinct `--output` directories to avoid trace-file collisions. Indic font sources and SIL licenses are in `apps/web/src/fonts`; Vite emits hashed font assets served through the API's existing `/assets` route.

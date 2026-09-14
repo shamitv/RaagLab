@@ -44,7 +44,7 @@ Implement remaining routes and tables from ../../contracts.md; add immutable mig
 
 ## Verification
 
-Planned: bash scripts/test.sh integration for test_persistence_restart.py, test_idempotency.py, test_version_lineage.py, test_concurrent_completion.py, test_dispatch_recovery.py, test_worker_recovery.py, test_job_lifecycle.py, test_cancellation_races.py and test_artifacts.py; bash scripts/test.sh e2e for reopen.spec.ts and library/settings/offline/save-conflict scenarios. Run the barrier-controlled failures in ../../verification-strategy.md and inspect terminal rows, attempt counts, outbox states, version IDs and artifact checksums. Record bounds using shortened test configuration and verify production limit ordering. Evidence goes under docs/implementation/evidence/04/<run-id>/.
+Passed: the isolated [Phase 04 evidence run](../../evidence/04/2026-09-14-projects-recovery/README.md) records 102 Python unit passes plus one expected Git-only skip, 42 real-service integration passes, 3 pinned frontend tests, 30 API-served Playwright passes and 18 intentional viewport skips. Real PostgreSQL/RabbitMQ/dispatcher/worker checks covered migration upgrade from 0002 to 0003, project/library/settings, artifact GC/missing objects, lineage/concurrency, retries, cancellation and bounded recovery. The runner also exercised confirmed publisher ambiguity, dispatcher/broker restart, a killed worker, API restart and full Compose stop/start with named volumes retained. Phase evidence is under `docs/implementation/evidence/04/2026-09-14-projects-recovery/`.
 
 ## Risks, assumptions, and deferred work
 

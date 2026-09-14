@@ -1,0 +1,90 @@
+{
+  "acceptance_seconds": 0.04384537698933855,
+  "accepted": {
+    "job_id": "9e00e48f-b5dc-4487-8a2e-fc37872f592a",
+    "project_id": "483da2ef-bb94-45be-b594-afc511d0db87",
+    "state": "queued",
+    "status_url": "/api/v1/jobs/9e00e48f-b5dc-4487-8a2e-fc37872f592a",
+    "project_url": "/projects/483da2ef-bb94-45be-b594-afc511d0db87"
+  },
+  "before_restart": {
+    "id": "9e00e48f-b5dc-4487-8a2e-fc37872f592a",
+    "project_id": "483da2ef-bb94-45be-b594-afc511d0db87",
+    "operation": "generate",
+    "retry_of_job_id": null,
+    "state": "queued",
+    "stage": "awaiting_worker",
+    "progress": null,
+    "attempt_count": 0,
+    "cancellation_requested_at": null,
+    "result_version_id": null,
+    "created_at": "2026-09-14T07:48:24.427163Z",
+    "completed_at": null,
+    "correlation_id": "d0c93fc5-9bac-4b32-b8df-8995f272f75a",
+    "dispatch_sequence": 1,
+    "error": null,
+    "version_url": null,
+    "dispatch_status": "pending",
+    "attempts": [],
+    "provider_readiness": {
+      "state": "ready",
+      "last_observed_at": "2026-09-14T07:48:23.449076Z"
+    }
+  },
+  "after_restart": {
+    "id": "9e00e48f-b5dc-4487-8a2e-fc37872f592a",
+    "project_id": "483da2ef-bb94-45be-b594-afc511d0db87",
+    "operation": "generate",
+    "retry_of_job_id": null,
+    "state": "queued",
+    "stage": "awaiting_worker",
+    "progress": null,
+    "attempt_count": 0,
+    "cancellation_requested_at": null,
+    "result_version_id": null,
+    "created_at": "2026-09-14T07:48:24.427163Z",
+    "completed_at": null,
+    "correlation_id": "d0c93fc5-9bac-4b32-b8df-8995f272f75a",
+    "dispatch_sequence": 1,
+    "error": null,
+    "version_url": null,
+    "dispatch_status": "published",
+    "attempts": [],
+    "provider_readiness": {
+      "state": "ready",
+      "last_observed_at": "2026-09-14T07:48:23.449076Z"
+    }
+  },
+  "completed": {
+    "id": "9e00e48f-b5dc-4487-8a2e-fc37872f592a",
+    "project_id": "483da2ef-bb94-45be-b594-afc511d0db87",
+    "operation": "generate",
+    "retry_of_job_id": null,
+    "state": "succeeded",
+    "stage": "saving_result",
+    "progress": null,
+    "attempt_count": 1,
+    "cancellation_requested_at": null,
+    "result_version_id": "88d5be63-79fe-431e-ab01-56eada544b20",
+    "created_at": "2026-09-14T07:48:24.427163Z",
+    "completed_at": "2026-09-14T07:48:35.983228Z",
+    "correlation_id": "d0c93fc5-9bac-4b32-b8df-8995f272f75a",
+    "dispatch_sequence": 1,
+    "error": null,
+    "version_url": "/api/v1/versions/88d5be63-79fe-431e-ab01-56eada544b20",
+    "dispatch_status": "published",
+    "attempts": [
+      {
+        "attempt_number": 1,
+        "worker_id": "5431cf21-5ea8-4ea4-bbfd-2c1150a6deab",
+        "started_at": "2026-09-14T07:48:34.577454Z",
+        "ended_at": "2026-09-14T07:48:35.983228Z",
+        "outcome": "succeeded"
+      }
+    ],
+    "provider_readiness": {
+      "state": "ready",
+      "last_observed_at": "2026-09-14T07:48:36.363642Z"
+    }
+  }
+}

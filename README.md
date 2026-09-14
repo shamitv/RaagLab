@@ -1,6 +1,6 @@
 # MuseForge AI
 
-A portable local music workspace. Phase 03 provides a responsive composer, real audio controls, exact lyrics editing and immutable version iterations, served by FastAPI with durable PostgreSQL jobs, RabbitMQ dispatch and a separate CPU mock worker. Save, favorite, rename and version selection persist through the API; drafts recover locally in IndexedDB. Demo audio does not sing the supplied lyrics.
+A portable local music workspace. Phases 03–04 provide a responsive composer, real audio controls, exact lyrics editing, immutable iterations, searchable Projects and Library, revisioned workspace settings, and multi-tab draft recovery. FastAPI serves the compiled UI with durable PostgreSQL jobs, RabbitMQ dispatch and a separate CPU mock worker. Demo audio does not sing the supplied lyrics or faithfully implement musical controls.
 
 ## Start the foundation
 
@@ -26,6 +26,7 @@ The `mock` profile selects the CPU worker. Real adapters are not implemented. Ru
 ```bash
 bash scripts/test.sh unit          # local uv 0.12.13, Python 3.13.15, Node 24/npm 11
 bash scripts/test.sh integration   # isolated Docker project, real PostgreSQL/RabbitMQ
+bash scripts/test.sh e2e           # pinned API-served browser plus recovery/restart acceptance
 ```
 
 Integration performs clean image builds, package/service boundary checks, schema and concurrent migration tests, API-hosted static checks, and ordinary stop/start persistence verification. It deletes only its uniquely named test project and volumes. It overrides application connection settings so it cannot use a configured external database.
@@ -36,4 +37,4 @@ Ubuntu1 WSL2 host; it is not wired into the application queue yet. See the
 [Part 2 deployment plan](docs/deployment/master-plan.md), [model integration
 boundary](docs/model-integration.md), and [dated YuE2 evidence](docs/deployment/evidence/2026-09-14-yue2/README.md).
 
-See [development instructions](docs/development.md), [Phase 03 status](docs/implementation/phases/03-complete-responsive-workspace/status.md), and [verification evidence](docs/implementation/evidence/03/2026-09-13-workspace/README.md).
+See [development instructions](docs/development.md), [Phase 04 status](docs/implementation/phases/04-projects-versions-and-recovery/status.md), and [Phase 04 evidence](docs/implementation/evidence/04/2026-09-14-projects-recovery/README.md). Release certification and real-provider readiness remain Phase 05/06 work.

@@ -1,0 +1,80 @@
+{
+  "last_observed_before_kill": {
+    "id": "d4029b45-ec0b-4984-aa1d-be03fb7968c5",
+    "project_id": "7ebb10e3-2b18-4775-ad00-c32467a0fd69",
+    "operation": "generate",
+    "retry_of_job_id": null,
+    "state": "running",
+    "stage": "composing_music",
+    "progress": null,
+    "attempt_count": 1,
+    "cancellation_requested_at": null,
+    "result_version_id": null,
+    "created_at": "2026-09-14T07:49:33.803056Z",
+    "completed_at": null,
+    "correlation_id": "f4bcfd9b-cd40-4dc2-b33e-eaf7c0995281",
+    "dispatch_sequence": 1,
+    "error": null,
+    "version_url": null,
+    "dispatch_status": "published",
+    "attempts": [
+      {
+        "attempt_number": 1,
+        "worker_id": "dbff931b-9d95-4ec4-892b-58df55e2d36e",
+        "started_at": "2026-09-14T07:49:36.400965Z",
+        "ended_at": null,
+        "outcome": null
+      }
+    ],
+    "provider_readiness": {
+      "state": "busy",
+      "last_observed_at": "2026-09-14T07:49:36.433280Z"
+    }
+  },
+  "accepted": {
+    "job_id": "d4029b45-ec0b-4984-aa1d-be03fb7968c5",
+    "project_id": "7ebb10e3-2b18-4775-ad00-c32467a0fd69",
+    "state": "queued",
+    "status_url": "/api/v1/jobs/d4029b45-ec0b-4984-aa1d-be03fb7968c5",
+    "project_url": "/projects/7ebb10e3-2b18-4775-ad00-c32467a0fd69"
+  },
+  "completed_after_worker_recovery": {
+    "id": "d4029b45-ec0b-4984-aa1d-be03fb7968c5",
+    "project_id": "7ebb10e3-2b18-4775-ad00-c32467a0fd69",
+    "operation": "generate",
+    "retry_of_job_id": null,
+    "state": "succeeded",
+    "stage": "saving_result",
+    "progress": null,
+    "attempt_count": 2,
+    "cancellation_requested_at": null,
+    "result_version_id": "820efeec-5f68-462b-a629-df66c6d53d14",
+    "created_at": "2026-09-14T07:49:33.803056Z",
+    "completed_at": "2026-09-14T07:50:30.917926Z",
+    "correlation_id": "f4bcfd9b-cd40-4dc2-b33e-eaf7c0995281",
+    "dispatch_sequence": 2,
+    "error": null,
+    "version_url": "/api/v1/versions/820efeec-5f68-462b-a629-df66c6d53d14",
+    "dispatch_status": "published",
+    "attempts": [
+      {
+        "attempt_number": 1,
+        "worker_id": "dbff931b-9d95-4ec4-892b-58df55e2d36e",
+        "started_at": "2026-09-14T07:49:36.400965Z",
+        "ended_at": "2026-09-14T07:50:09.886029Z",
+        "outcome": "retrying"
+      },
+      {
+        "attempt_number": 2,
+        "worker_id": "8d3fb3f5-1a42-42b1-bb68-64a8594da462",
+        "started_at": "2026-09-14T07:50:15.391353Z",
+        "ended_at": "2026-09-14T07:50:30.917926Z",
+        "outcome": "succeeded"
+      }
+    ],
+    "provider_readiness": {
+      "state": "ready",
+      "last_observed_at": "2026-09-14T07:50:30.891605Z"
+    }
+  }
+}

@@ -1,27 +1,33 @@
 # Phase 04 status
 
-- State: not_started
-- Started: not started
-- Last updated: 2026-09-13T07:27:05Z
-- Completed: not completed
-- Current focus: planned; awaiting dependency phases and an implementation run
+- State: completed
+- Started: 2026-09-14
+- Last updated: 2026-09-14
+- Completed: 2026-09-14
+- Current focus: Phase 04 acceptance gates passed; Phase 05 provider readiness is next
 
 ## Completed work
 
-Planning preparation by Phase 00: [phase plan](plan.md) and [stable task list](todo.md) specify this phase's work, contracts, exit criteria and evidence. No application implementation or runtime acceptance work in this phase has been performed.
+All 12 tasks in [todo.md](todo.md) and all eight acceptance criteria in [plan.md](plan.md) are complete. Project/library APIs, conditional archive/duplicate, revisioned settings/templates, multi-tab draft recovery, linked retry, outbox/worker recovery, cancellation/version races, and reference-safe artifact maintenance are implemented. Migration `0003_workspace_settings` is forward-only. See the [Phase 04 completion report](implementation-status.md) and [saved verification evidence](../../evidence/04/2026-09-14-projects-recovery/README.md).
 
 ## Remaining work
 
-All 12 tasks in [todo.md](todo.md) and all 8 acceptance criteria in [plan.md](plan.md) remain open. Complete the entry dependencies before dependent execution.
+No Phase 04 work remains. Phase 05 provider readiness and Phase 06 release verification and handoff are separate phases. This completion does not certify real-model inference, a real provider route, or deployment backup/restore.
 
 ## Blockers and decisions needed
 
-No unresolved product decision blocks this plan. Required entry phases are unfinished. Container/browser verification needs a suitable execution environment; Docker was not discoverable on the authoring shell's PATH. This is an execution prerequisite, not a planning failure. No real-model decision is required for the mock phase sequence.
+None for Phase 04. Pinned container targets supplied Python, Node, npm and browser tools because the authoring host did not have the pinned `uv` and Node runtimes.
 
 ## Latest verification
 
-Planning structure, links and task/acceptance records passed the documentation audit; see [planning evidence](../../evidence/planning-verification.md). Application builds, migrations, service tests and browser checks for this phase have not run. Planned commands in the phase plan are not execution evidence.
+- Python unit tests: 102 passed, one expected Git-only check skipped, two upstream deprecation warnings.
+- Real PostgreSQL/RabbitMQ/dispatcher/worker integration: 42 passed; migration upgrade from `0002_version_favorites` to `0003_workspace_settings` passed.
+- Pinned frontend build/typecheck and Vitest: 3 passed.
+- API-served Playwright: 30 passed, 18 intentional skips for stateful flows restricted to desktop; layout, playback and routing checks covered 1440, 390, 360 and 320 px.
+- Isolated service faults passed: confirmed publish ambiguity, dispatcher restart, broker outage/restart, killed-worker lease recovery, queued/API restart, full Compose stop/start with volumes preserved, and decoded mock smoke.
+
+See the linked report for test source revisions, exact evidence files, and the Phase 05/06 boundary.
 
 ## Next action
 
-04-01: finish server-backed project/library navigation and stable searchable result lists.
+Start Phase 05 provider capability/readiness audit.

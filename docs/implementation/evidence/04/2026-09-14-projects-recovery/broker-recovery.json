@@ -1,0 +1,65 @@
+{
+  "queued_while_broker_stopped": {
+    "id": "e666a67c-4a04-4064-8ee0-c9e7ce893247",
+    "project_id": "b49bceab-9071-4788-94c1-63d778f2bace",
+    "operation": "generate",
+    "retry_of_job_id": null,
+    "state": "queued",
+    "stage": "awaiting_worker",
+    "progress": null,
+    "attempt_count": 0,
+    "cancellation_requested_at": null,
+    "result_version_id": null,
+    "created_at": "2026-09-14T07:49:24.105146Z",
+    "completed_at": null,
+    "correlation_id": "4a783122-d1f6-4e40-8642-cce9433b8ded",
+    "dispatch_sequence": 1,
+    "error": null,
+    "version_url": null,
+    "dispatch_status": "pending",
+    "attempts": [],
+    "provider_readiness": {
+      "state": "ready",
+      "last_observed_at": "2026-09-14T07:49:22.231042Z"
+    }
+  },
+  "accepted": {
+    "job_id": "e666a67c-4a04-4064-8ee0-c9e7ce893247",
+    "project_id": "b49bceab-9071-4788-94c1-63d778f2bace",
+    "state": "queued",
+    "status_url": "/api/v1/jobs/e666a67c-4a04-4064-8ee0-c9e7ce893247",
+    "project_url": "/projects/b49bceab-9071-4788-94c1-63d778f2bace"
+  },
+  "completed": {
+    "id": "e666a67c-4a04-4064-8ee0-c9e7ce893247",
+    "project_id": "b49bceab-9071-4788-94c1-63d778f2bace",
+    "operation": "generate",
+    "retry_of_job_id": null,
+    "state": "succeeded",
+    "stage": "saving_result",
+    "progress": null,
+    "attempt_count": 1,
+    "cancellation_requested_at": null,
+    "result_version_id": "27f1db0c-d322-4c13-b3e8-eebe3e6c73fa",
+    "created_at": "2026-09-14T07:49:24.105146Z",
+    "completed_at": "2026-09-14T07:49:33.669641Z",
+    "correlation_id": "4a783122-d1f6-4e40-8642-cce9433b8ded",
+    "dispatch_sequence": 1,
+    "error": null,
+    "version_url": "/api/v1/versions/27f1db0c-d322-4c13-b3e8-eebe3e6c73fa",
+    "dispatch_status": "published",
+    "attempts": [
+      {
+        "attempt_number": 1,
+        "worker_id": "963efa13-7f2f-4f46-b052-bad061ed0c1f",
+        "started_at": "2026-09-14T07:49:32.287465Z",
+        "ended_at": "2026-09-14T07:49:33.669641Z",
+        "outcome": "succeeded"
+      }
+    ],
+    "provider_readiness": {
+      "state": "ready",
+      "last_observed_at": "2026-09-14T07:49:33.664897Z"
+    }
+  }
+}

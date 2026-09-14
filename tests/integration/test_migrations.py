@@ -2,10 +2,13 @@ import subprocess
 import sys
 import time
 from uuid import uuid4
+from pathlib import Path
 
 import pytest
 import sqlalchemy as sa
 from sqlalchemy.exc import IntegrityError
+from alembic import command
+from alembic.config import Config
 
 from museforge.db.migrate import MIGRATION_LOCK, SCHEMA_HEAD, migrate
 from museforge.db.schema import metadata, projects, versions, workspaces
@@ -38,6 +41,42 @@ def test_rerun_and_concurrent_migrations(engine, settings):
             assert process.returncode == 0, (stdout, stderr)
     with engine.connect() as connection:
         assert connection.scalar(sa.text('SELECT count(*) FROM workspaces')) == 1
+
+
+def test_forward_upgrade_from_current_pre_phase4_head(engine, settings):
+    schema = 'phase4_upgrade_' + uuid4().hex
+    with engine.begin() as connection:
+        connection.exec_driver_sql(f'CREATE SCHEMA "{schema}"')
+    try:
+        with engine.connect() as connection:
+            try:
+                connection.exec_driver_sql(f'SET search_path TO "{schema}"')
+                connection.commit()
+                config = Config(str(Path(__file__).resolve().parents[2] / 'alembic.ini'))
+                config.attributes['connection'] = connection
+                command.upgrade(config, '0002_version_favorites')
+                assert connection.scalar(sa.text('SELECT version_num FROM alembic_version')) == '0002_version_favorites'
+                connection.commit()
+                assert 'workspace_settings' not in sa.inspect(connection).get_table_names()
+                connection.commit()
+                command.upgrade(config, '0003_workspace_settings')
+                connection.commit()
+                tables = set(sa.inspect(connection).get_table_names())
+                assert 'workspace_settings' in tables
+                assert 'version_favorites' in tables
+                assert 'ix_versions_library_created' in {
+                    index['name'] for index in sa.inspect(connection).get_indexes('song_versions')
+                }
+                assert connection.scalar(sa.text('SELECT version_num FROM alembic_version')) == SCHEMA_HEAD
+                connection.commit()
+            finally:
+                # SET persists when committed; restore the pooled session before reuse.
+                connection.rollback()
+                connection.exec_driver_sql('RESET search_path')
+                connection.commit()
+    finally:
+        with engine.begin() as connection:
+            connection.exec_driver_sql(f'DROP SCHEMA "{schema}" CASCADE')
 
 
 def test_singleton_and_project_constraints(engine, settings):

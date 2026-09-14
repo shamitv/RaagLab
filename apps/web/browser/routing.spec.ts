@@ -1,13 +1,13 @@
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-test('API-served shell supports navigation, refresh, and accessible placeholders', async ({ page }) => {
+test('API-served workspace supports navigation, refresh, and accessible pages', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Create', exact: true })).toBeVisible();
   await expect(page.getByRole('status').filter({hasText:'Storage is ready.'})).toBeVisible();
-  for (const name of ['Projects', 'Create']) {
+  for (const name of ['Library', 'Projects', 'Templates', 'Settings', 'Create']) {
     await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name, exact: true }).click();
     await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
     await page.reload();

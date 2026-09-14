@@ -3,7 +3,7 @@ import hashlib
 import json
 import secrets
 from datetime import timedelta
-from uuid import uuid4
+from uuid import UUID, uuid4
 import sqlalchemy as sa
 from sqlalchemy.exc import IntegrityError
 from museforge.db import schema as db
@@ -93,7 +93,8 @@ def submit(engine, settings, request, key, operation="generate", source_id=None)
             if settings.mock_test_enabled:
                 snapshot['_test'] = settings.mock_test_scenarios.get(str(snapshot['seed']), {})
             job = dict(id=uuid4(), workspace_id=settings.workspace_id, project_id=project_id, operation=operation,
-                intent_hash=digest, execution_snapshot=snapshot, provider_route=settings.mock_queue, state='queued',
+                source_version_id=source_id, intent_hash=digest, execution_snapshot=snapshot,
+                provider_route=settings.mock_queue, state='queued',
                 selection_epoch=project['selection_epoch'], submission_seq=sequence, dispatch_sequence=1,
                 queue_deadline=now(c) + timedelta(seconds=settings.queue_deadline_seconds), correlation_id=uuid4())
             c.execute(db.jobs.insert().values(**job))
@@ -106,6 +107,98 @@ def submit(engine, settings, request, key, operation="generate", source_id=None)
         with engine.begin() as c:
             existing = replay(c)
             if existing: return existing
+        raise
+
+
+def retry(engine, settings, identifier, key):
+    """Create one explicitly linked job while preserving its execution snapshot."""
+    namespace = f'retry:{identifier}'
+
+    def replay(c, digest):
+        record = c.execute(sa.select(db.idempotency).where(
+            scoped(db.idempotency, settings),
+            db.idempotency.c.operation_namespace == namespace,
+            db.idempotency.c.key == key,
+        )).mappings().first()
+        if record:
+            if record['intent_hash'] != digest:
+                raise ProviderError('idempotency_conflict')
+            return accepted(row(c, db.jobs, record['job_id'], settings))
+        return None
+
+    try:
+        with engine.begin() as c:
+            project, original = lock_job(c, identifier, settings)
+            snapshot = json.loads(json.dumps(original['execution_snapshot']))
+            digest = hashlib.sha256(json.dumps(
+                {'retry_of_job_id': str(identifier), 'snapshot': snapshot},
+                sort_keys=True, ensure_ascii=False, separators=(',', ':')
+            ).encode()).hexdigest()
+            prior = replay(c, digest)
+            if prior:
+                return prior
+            if original['state'] not in ('failed', 'timed_out'):
+                raise ProviderError('retry_not_allowed')
+            if original['operation'] == 'retry':
+                raise ProviderError('retry_not_allowed')
+            if project['archived_at']:
+                raise ProviderError('project_archived')
+            if snapshot.get('schema_version') != original['snapshot_schema_version']:
+                raise ProviderError('retry_not_allowed')
+            source_id = original['source_version_id'] or (
+                UUID(snapshot['source_version_id'])
+                if snapshot.get('source_version_id') else None
+            )
+            timestamp = now(c)
+            sequence = project['latest_submission_seq'] + 1
+            c.execute(db.projects.update().where(db.projects.c.id == project['id']).values(
+                latest_submission_seq=sequence,
+            ))
+            job = dict(
+                id=uuid4(),
+                workspace_id=settings.workspace_id,
+                project_id=original['project_id'],
+                source_version_id=source_id,
+                retry_of_job_id=original['id'],
+                operation='retry',
+                intent_hash=digest,
+                execution_snapshot=snapshot,
+                lyrics_checkpoint=original['lyrics_checkpoint'],
+                snapshot_schema_version=original['snapshot_schema_version'],
+                provider_route=original['provider_route'],
+                state='queued',
+                stage='awaiting_worker',
+                selection_epoch=project['selection_epoch'],
+                submission_seq=sequence,
+                dispatch_sequence=1,
+                queue_deadline=timestamp + timedelta(
+                    seconds=snapshot['limits']['queue_deadline_seconds'],
+                ),
+                correlation_id=uuid4(),
+            )
+            c.execute(db.jobs.insert().values(**job))
+            response = accepted(job)
+            c.execute(db.idempotency.insert().values(
+                workspace_id=settings.workspace_id,
+                operation_namespace=namespace,
+                key=key,
+                intent_hash=digest,
+                job_id=job['id'],
+                response_identity={k: str(v) for k, v in response.items()},
+            ))
+            insert_outbox(c, job, settings)
+            return response
+    except IntegrityError:
+        with engine.begin() as c:
+            original = row(c, db.jobs, identifier, settings)
+            snapshot = json.loads(json.dumps(original['execution_snapshot']))
+            digest = hashlib.sha256(json.dumps(
+                {'retry_of_job_id': str(identifier), 'snapshot': snapshot},
+                sort_keys=True, ensure_ascii=False, separators=(',', ':')
+            ).encode()).hexdigest()
+            prior = replay(c, digest)
+            if prior:
+                return prior
         raise
 
 

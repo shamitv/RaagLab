@@ -1,8 +1,8 @@
 # Verification strategy and acceptance catalogue
 
-- Date: 2026-09-13
-- Current evidence: [planning verification](evidence/planning-verification.md), [Phase 01 implementation](evidence/01/2026-09-13-foundation/README.md)
-- Status: foundation commands/tests implemented and verified; later product acceptance remains planned.
+- Date: 2026-09-14
+- Current evidence: [planning verification](evidence/planning-verification.md), [Phase 01 implementation](evidence/01/2026-09-13-foundation/README.md), [Phase 04 projects and recovery](evidence/04/2026-09-14-projects-recovery/README.md)
+- Status: Phases 01–04 are implemented and verified; Phase 05 provider readiness and Phase 06 release verification remain planned.
 
 ## Execution environments and evidence discipline
 
@@ -12,9 +12,15 @@ Use a unique Compose project and fixture namespace for integration/e2e fault tes
 
 Create evidence under `docs/implementation/evidence/<phase>/<run-id>/` as meaningful summaries with commands, environment, revision, results and links. Keep verbose logs, traces/screenshots/audio in ignored test-output directories; preserve relevant reviewable evidence as small attachments or designated CI artifacts. Completion reports must link to accessible evidence and name tests that did not run. Never turn a missing Docker/browser environment into an all-green result.
 
-## Planned command interfaces
+## Phase 04 completed gate
 
-Phase 01 owns the initial script entry points; extend them as later tests land. Foundation commands now run in a shell with Linux container support. Seed/smoke and full e2e/release interfaces still fail explicitly until their later-phase checks are implemented.
+Phase 04 passed on the user-authorized isolated runner at `yolo1@10.42.0.42` with Docker 29.8.0, Compose 5.5.1, Python 3.13.15, PostgreSQL 18.6, RabbitMQ 4.3.5, Node 24.21.0 and npm 11.19.0. Python unit tests had 102 passes and one expected Git-only skip; real-service integration had 42 passes, including upgrade from `0002_version_favorites` to `0003_workspace_settings`; the pinned frontend target passed build/typecheck and 3 unit tests. API-served Playwright ran 48 cases: 30 passed and 18 were intentionally skipped because shared stateful scenarios run once at desktop width. Playback, routing and responsive checks passed at 1440, 390, 360 and 320 px.
+
+Separate uniquely named Compose runs proved confirmed-publish ambiguity/reclaim, dispatcher restart, broker outage recovery, whole-worker loss with a bounded second attempt, queued acceptance through API restart, and full Compose stop/start preserving projects, settings and playable artifacts. Evidence and test outputs are linked from the Phase 04 report. These tests use the mock provider; real-model inference/provider readiness and release certification remain Phase 05/06 work.
+
+## Command interfaces
+
+Phase 01 owns the initial script entry points; subsequent phases extend them. Phase 04 adds a real isolated end-to-end runner; full release certification still belongs to Phase 06.
 
 | Command | Required behavior |
 | --- | --- |
@@ -29,6 +35,7 @@ Phase 01 owns the initial script entry points; extend them as later tests land. 
 | `bash scripts/test.sh unit` | Run pytest domain/provider checks and frontend type/component checks with frozen dependencies |
 | `bash scripts/test.sh integration` | Start/validate isolated real-service stack and run pytest integration cases |
 | `bash scripts/test.sh e2e` | Build API SPA, start isolated stack and run Playwright/axe at the API origin |
+| `python3 scripts/verify-phase4.py` | Run pinned Python/frontend/API-served browser checks plus isolated dispatch, worker, and volume-restart recovery evidence |
 | `bash scripts/test.sh release` | Clean-build mock acceptance, integration/e2e suites and persistence smoke in an isolated project |
 | `bash scripts/stop.sh` | Stop/remove containers while preserving data, broker and artifact volumes |
 
