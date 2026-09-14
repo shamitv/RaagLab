@@ -28,6 +28,28 @@ def run(*args, capture=False, timeout=600):
 def get(path):
     with urllib.request.urlopen(origin+path,timeout=10) as response: return json.load(response)
 
+
+def submit_probe(brief, seed=None):
+    body={'brief':brief,'instruments':['Piano'],'mood':'Calm',
+          'lyrics':{'mode':'user','text':'[Verse]\nAn isolated recovery check\n'},'duration_seconds':5}
+    if seed is not None: body['seed']=seed
+    request=urllib.request.Request(origin+'/api/v1/generations',data=json.dumps(body).encode(),
+        headers={'Content-Type':'application/json','Idempotency-Key':str(uuid.uuid4())})
+    with urllib.request.urlopen(request,timeout=10) as response:
+        assert response.status==202
+        return json.load(response)
+
+
+def wait_success(accepted, timeout=120):
+    deadline=time.monotonic()+timeout
+    while True:
+        result=get(accepted['status_url'])
+        if result['state'] in ('succeeded','failed','cancelled','timed_out'):
+            assert result['state']=='succeeded', result
+            return result
+        assert time.monotonic()<deadline, f"Recovery job did not finish: {result}"
+        time.sleep(.25)
+
 try:
     run('build','api','dispatcher','worker-mock','tests',timeout=1800)
     if os.environ.get('PHASE4_BROWSER')=='1':
@@ -101,6 +123,68 @@ try:
             with urllib.request.urlopen(origin+version['audio']['url'],timeout=10) as response:
                 assert len(response.read())==version['audio']['byte_size']
     (evidence/'restart.json').write_text(json.dumps({'projects_preserved':len(after['items']), 'origin_before':origin_before_restart, 'origin_after':origin}))
+    if prefix.startswith('museforge-phase4-test-'):
+        # Exercise real dispatcher and broker restarts while accepting new work.
+        run('restart','dispatcher')
+        dispatcher_job=submit_probe('Phase four dispatcher restart')
+        dispatcher_result=wait_success(dispatcher_job)
+        (evidence/'dispatcher-restart.json').write_text(json.dumps({
+            'accepted':dispatcher_job,'completed':dispatcher_result},indent=2))
+
+        run('stop','broker')
+        broker_job=submit_probe('Phase four broker outage recovery')
+        before_broker=get(broker_job['status_url'])
+        assert before_broker['state']=='queued', before_broker
+        run('up','-d','--wait','--wait-timeout','180','broker')
+        broker_result=wait_success(broker_job)
+        (evidence/'broker-recovery.json').write_text(json.dumps({
+            'queued_while_broker_stopped':before_broker,'accepted':broker_job,
+            'completed':broker_result},indent=2))
+
+        # Kill every mock worker while a deliberately slow job owns a lease.
+        worker_job=submit_probe('Phase four worker loss recovery',seed=4294967203)
+        deadline=time.monotonic()+30
+        while True:
+            worker_state=get(worker_job['status_url'])
+            if worker_state['state']=='running': break
+            assert time.monotonic()<deadline, f"Slow recovery job did not start: {worker_state}"
+            time.sleep(.05)
+        run('kill','--signal','SIGKILL','worker-mock')
+        run('up','-d','--scale','worker-mock=2','--wait','--wait-timeout','180','worker-mock')
+        worker_result=wait_success(worker_job,timeout=120)
+        assert 2 <= worker_result['attempt_count'] <= 3, worker_result
+        (evidence/'worker-loss.json').write_text(json.dumps({
+            'last_observed_before_kill':worker_state,'accepted':worker_job,
+            'completed_after_worker_recovery':worker_result},indent=2))
+
+        # Stop/start runtime services without deleting their named volumes.
+        before_full_restart=get('/api/v1/projects?limit=100')
+        settings_before_restart=get('/api/v1/settings')
+        run('stop')
+        run('up','-d','--scale','worker-mock=2','--wait','--wait-timeout','180',
+            'db','broker','api','dispatcher','worker-mock')
+        origin='http://'+run('port','api','8000',capture=True).strip()
+        deadline=time.monotonic()+60
+        while True:
+            try:
+                after_full_restart=get('/api/v1/projects?limit=100')
+                break
+            except Exception:
+                assert time.monotonic()<deadline, 'API did not return after full Compose restart'
+                time.sleep(.5)
+        settings_after_restart=get('/api/v1/settings')
+        assert before_full_restart==after_full_restart
+        assert settings_before_restart==settings_after_restart
+        for item in after_full_restart['items']:
+            detail=get('/api/v1/projects/'+item['id'])
+            if detail['active_version_id']:
+                version=get('/api/v1/versions/'+detail['active_version_id'])
+                with urllib.request.urlopen(origin+version['audio']['url'],timeout=10) as response:
+                    assert len(response.read())==version['audio']['byte_size']
+        (evidence/'full-restart.json').write_text(json.dumps({
+            'projects_preserved':len(after_full_restart['items']),
+            'settings_revision':settings_after_restart['revision'],
+            'active_audio_checked':True},indent=2))
     subprocess.run(['python3','scripts/demo.py','smoke','--base-url',origin],cwd=ROOT,check=True,timeout=120)
     if os.environ.get('PHASE2_BROWSER')=='1':
         subprocess.run(['npm','run','test:browser'],cwd=ROOT/'apps/web',env=dict(os.environ,API_BASE_URL=origin),check=True,timeout=600)
