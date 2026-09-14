@@ -1,4 +1,5 @@
 import ast
+import re
 import importlib.util
 from pathlib import Path
 import sqlalchemy as sa
@@ -52,6 +53,11 @@ def test_yue2_worker_isolated_and_hash_locked():
     assert '--require-hashes' in dockerfile
     assert 'requirements.museforge.lock' in dockerfile
     assert 'museforge.yue2.v1' in compose and 'yue2_weights:/weights:ro' in compose
-    assert lock.count('==') == lock.count('--hash=sha256:')
+    entries = re.split(r'(?m)^(?=[a-zA-Z0-9_-]+==)', lock)[1:]
+    assert entries and all('--hash=sha256:' in entry for entry in entries)
+    for dependency in ('python-dateutil', 'tzlocal', 'prompt-toolkit', 'tzdata', 'typing-inspection', 'six', 'wcwidth'):
+        assert dependency + '==' in lock
+    assert 'driver: nvidia' in compose and 'count: 1' in compose
+    assert 'env_file: .env' in compose and 'DATABASE_URL:' not in compose
     assert 'torch' not in (ROOT / 'pyproject.toml').read_text()
     assert 'transformers' not in (ROOT / 'pyproject.toml').read_text()

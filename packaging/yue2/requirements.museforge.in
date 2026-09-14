@@ -1,0 +1,8 @@
+# Application runtime only; inference versions are constrained by requirements.lock.
+alembic==1.20.0
+celery==5.6.3
+greenlet==3.2.4
+psycopg[binary]==3.3.5
+pydantic==2.13.5
+pydantic-settings==2.15.0
+SQLAlchemy==2.0.52

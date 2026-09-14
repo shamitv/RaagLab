@@ -62,7 +62,7 @@ RUN uv sync --frozen --group api --group mock-worker --no-editable
 COPY alembic.ini ./
 COPY migrations/ migrations/
 COPY tests/ tests/
-COPY compose.yaml ./
+COPY compose.yaml compose.yue2.yaml ./
 COPY packaging/ packaging/
 COPY scripts/ scripts/
 COPY .gitattributes .gitignore .dockerignore .env.example ./
