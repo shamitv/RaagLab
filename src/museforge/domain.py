@@ -8,6 +8,9 @@ MOODS = ['Happy', 'Melancholic', 'Romantic', 'Energetic', 'Calm', 'Epic']
 LANGUAGES = ['Hindi', 'English', 'Hinglish', 'Punjabi', 'Tamil']
 GENRES = ['Indie Pop', 'Pop', 'Folk', 'Ambient', 'Rock', 'Electronic']
 WARNING = 'Original instrumental demo; does not faithfully implement musical controls or sing lyrics.'
+YUE2_WARNING = ('YuE2 real output is validated technical audio; it may contain vocals even when the '
+                'accepted request field is Instrumental. Lyric adherence, language coverage, and '
+                'requested duration are not guaranteed.')
 
 class StrictModel(BaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -83,14 +86,33 @@ class ProviderError(Exception):
         super().__init__(code)
 
 
-def capabilities():
+def capabilities(provider='mock', *, model_id=None, model_revision=None, decoder_revision=None):
+    if provider == 'yue2':
+        return dict(provider_id='yue2', provider_revision='yue2-infer-0.1.5', model_id=model_id,
+                    model_revision=model_revision, decoder_revision=decoder_revision, is_demo=False,
+                    lyrics_modes=['user'], lyrics_text=True, text_to_instrumental=False,
+                    vocals=False, exact_lyrics_vocals=False, instruments=INSTRUMENTS,
+                    moods=MOODS, languages=['English'], genres=GENRES, vocal_types=['Instrumental'],
+                    operations=['generate'], duration={'min': 5, 'max': 30, 'default': 8},
+                    sample_rates=[48000], channels=[2],
+                    seed_behavior='seed is passed to YuE2; cross-runtime determinism is unverified',
+                    cooperative_cancel=True, progress_mode='stage', warnings=[YUE2_WARNING,
+                    'YuE2 duration is model-determined and may exceed the requested duration.',
+                    'Only English user lyrics have been exercised through the application route.',
+                    'Refinement, variation, regeneration, audio editing, and continuation are unsupported.'])
     return dict(provider_id='mock', provider_revision='1', model_id=None, model_revision=None,
-                is_demo=True, lyrics_modes=['user', 'static', 'mock'], lyrics_text=True,
+                decoder_revision=None, is_demo=True, lyrics_modes=['user', 'static', 'mock'], lyrics_text=True,
                 text_to_instrumental=False, vocals=False, exact_lyrics_vocals=False,
                 instruments=INSTRUMENTS, moods=MOODS, languages=LANGUAGES, genres=GENRES,
                 vocal_types=['Instrumental'], operations=['generate', 'refine', 'variation', 'regenerate', 'lyrics_edit'], duration={'min': 5, 'max': 30, 'default': 8},
                 sample_rates=[44100], channels=[2], seed_behavior='deterministic PCM for identical snapshot',
                 cooperative_cancel=True, progress_mode='stage', warnings=[WARNING])
+
+
+def provider_capabilities(settings):
+    return capabilities(settings.music_provider, model_id=settings.model_id,
+                         model_revision=settings.model_revision,
+                         decoder_revision=settings.decoder_revision) | {'provider_route': settings.provider_route}
 
 # Response contracts are generated into the browser client from OpenAPI.
 from datetime import datetime
@@ -227,8 +249,10 @@ class LyricsCheckpoint(StrictModel):
 class CapabilitiesView(StrictModel):
     provider_id: str
     provider_revision: str
+    provider_route: str | None = None
     model_id: str | None
     model_revision: str | None
+    decoder_revision: str | None = None
     is_demo: bool
     lyrics_modes: list[str]
     lyrics_text: bool
@@ -255,6 +279,7 @@ class CapabilitiesResponse(CapabilitiesView):
 
 class Provenance(CapabilitiesView):
     lyrics: LyricsCheckpoint
+    runtime: dict[str, Any] = Field(default_factory=dict)
 
 class VersionView(StrictModel):
     favorite: bool = False

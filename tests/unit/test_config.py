@@ -26,3 +26,17 @@ def test_documented_environment_defaults_load():
     settings = Settings(_env_file=Path(__file__).resolve().parents[2] / '.env.example')
     assert settings.worker_concurrency == 1
     assert settings.app_port == 8000
+
+
+def test_yue2_configuration_selects_real_route():
+    settings = Settings(_env_file=None, music_provider='yue2', lyrics_provider='user', device='cuda',
+                        precision='bfloat16', model_id='m-a-p/YuE2-3B', model_revision='model',
+                        decoder_revision='vae')
+    assert settings.provider_route == 'museforge.yue2.v1'
+    assert settings.worker_role == 'worker-yue2'
+
+
+def test_yue2_requires_explicit_user_lyrics_mode():
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None, music_provider='yue2', device='cuda', precision='bfloat16',
+                 model_id='m-a-p/YuE2-3B', model_revision='model', decoder_revision='vae')
