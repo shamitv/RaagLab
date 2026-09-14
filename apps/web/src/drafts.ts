@@ -1,9 +1,12 @@
 import type { Generation } from "./client";
 export type LocalDraft = {
   draft: Generation;
+  title?: string;
   baseRevision: number | null;
   editedAt: number;
   dirty: boolean;
+  projectKey?: string;
+  tabId?: string;
 };
 function open(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -16,17 +19,39 @@ function open(): Promise<IDBDatabase> {
 export async function readDraft(key: string): Promise<LocalDraft | undefined> {
   const db = await open();
   return new Promise((resolve, reject) => {
-    const r = db.transaction("drafts").objectStore("drafts").get(key);
-    r.onsuccess = () => resolve(r.result);
-    r.onerror = () => reject(r.error);
-    r.transaction!.oncomplete = () => db.close();
+    const tx = db.transaction("drafts");
+    const store = tx.objectStore("drafts");
+    const values = store.getAll();
+    const keys = store.getAllKeys();
+    tx.oncomplete = () => {
+      const records = values.result
+        .map((value: LocalDraft, index) => ({
+          value,
+          storageKey: String(keys.result[index]),
+        }))
+        .filter(
+          ({ value, storageKey }) =>
+            value.projectKey === key || storageKey === key,
+        )
+        .sort((a, b) => b.value.editedAt - a.value.editedAt);
+      db.close();
+      resolve(records[0]?.value);
+    };
+    tx.onerror = () => {
+      db.close();
+      reject(tx.error);
+    };
   });
 }
 export async function writeDraft(key: string, value: LocalDraft) {
   const db = await open();
   return new Promise<void>((resolve, reject) => {
     const tx = db.transaction("drafts", "readwrite");
-    tx.objectStore("drafts").put(value, key);
+    const tabId = getTabId();
+    tx.objectStore("drafts").put(
+      { ...value, projectKey: key, tabId },
+      `${key}:${tabId}`,
+    );
     tx.oncomplete = () => {
       db.close();
       resolve();
@@ -36,4 +61,14 @@ export async function writeDraft(key: string, value: LocalDraft) {
       reject(tx.error);
     };
   });
+}
+
+function getTabId() {
+  const key = "museforge-draft-tab-id";
+  let id = sessionStorage.getItem(key);
+  if (!id) {
+    id = crypto.randomUUID();
+    sessionStorage.setItem(key, id);
+  }
+  return id;
 }

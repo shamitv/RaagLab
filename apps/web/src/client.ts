@@ -3,6 +3,16 @@ export type Generation = components["schemas"]["Generation"];
 export type Version = components["schemas"]["VersionDetail"];
 export type Project = components["schemas"]["ProjectDetail"];
 export type Job = components["schemas"]["JobView"];
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+    readonly data: Record<string, unknown> = {},
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
 export const defaults: Generation = {
   brief: "",
   instruments: ["Piano"],
@@ -20,12 +30,14 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
     ...init,
     headers: { "Content-Type": "application/json", ...init?.headers },
   });
-  const data = await response.json();
+  const data = await response.json().catch(() => ({}));
   if (!response.ok)
-    throw new Error(
+    throw new ApiError(
       response.status === 412
-        ? "Save conflict: the server changed. Reload server state before saving again; your local draft is retained."
+        ? "Save conflict: the server changed. Choose how to resolve your local draft."
         : (data.message ?? "Request failed"),
+      response.status,
+      data,
     );
   return data;
 }

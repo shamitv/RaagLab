@@ -24,11 +24,38 @@ export function Player({
     [shuffle, setShuffle] = useState<string[] | null>(null),
     [error, setError] = useState("");
   useEffect(() => {
+    let disposed = false;
+    fetch("/api/v1/settings", { cache: "no-store" })
+      .then(async (response) => {
+        const settings = await response.json();
+        if (!response.ok) throw new Error("Playback defaults are unavailable.");
+        if (disposed) return;
+        setError("");
+        setVolume(settings.volume);
+        setRepeat(
+          settings.repeat_mode === "one"
+            ? 1
+            : settings.repeat_mode === "all"
+              ? 2
+              : 0,
+        );
+      })
+      .catch(() => {
+        if (!disposed) setError("Could not load playback defaults.");
+      });
+    return () => {
+      disposed = true;
+    };
+  }, []);
+  useEffect(() => {
     setElapsed(0);
     setDuration(0);
     setPlaying(false);
     setError("");
   }, [version.id]);
+  useEffect(() => {
+    if (audio.current) audio.current.volume = volume;
+  }, [volume]);
   const order =
     shuffle &&
     shuffle.length === collection.length &&

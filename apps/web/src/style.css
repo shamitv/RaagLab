@@ -456,6 +456,118 @@ h3 {
   min-height: 44px;
   align-items: center;
 }
+.data-page {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(180px, 240px) auto;
+  align-items: end;
+  gap: 12px;
+  padding: 16px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.library-toolbar {
+  grid-template-columns: minmax(220px, 1.5fr) repeat(3, minmax(140px, 1fr)) auto;
+}
+.check-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  white-space: nowrap;
+}
+.check-filter input {
+  width: 20px;
+  min-height: 20px;
+  accent-color: var(--brand);
+}
+.record-list {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+}
+.record-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: white;
+  min-width: 0;
+}
+.record-main {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.record-title {
+  font-size: 17px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.record-card .actions {
+  flex-shrink: 0;
+  margin: 0;
+}
+.record-card .actions a,
+.button-link {
+  padding: 8px 12px;
+  border: 1px solid #7184a3;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+.record-card .actions a:hover,
+.button-link:hover {
+  background: #eaf3ff;
+}
+.button-link.primary {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: white;
+}
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.template-list {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+}
+.template-list .card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.template-list .card button {
+  margin-top: auto;
+}
+.search-field {
+  max-width: 520px;
+}
+.settings-page > .card {
+  display: grid;
+  gap: 12px;
+}
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  align-items: end;
+}
+.settings-page input[type="range"] {
+  width: 100%;
+}
 .nav-icon {
   width: 22px;
   height: 22px;
@@ -511,6 +623,7 @@ h3 {
   .rail nav {
     flex-direction: row;
     margin-top: 12px;
+    overflow-x: auto;
   }
   .rail-note {
     display: none;
@@ -551,6 +664,11 @@ h3 {
   .rail nav a {
     justify-content: center;
     flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    padding: 4px 2px;
+    font-size: 10px;
+    min-width: 56px;
   }
   .rail {
     padding: 12px 16px;
@@ -582,6 +700,27 @@ h3 {
   }
   .actions button {
     flex-grow: 1;
+  }
+  .toolbar,
+  .library-toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+  .toolbar label:first-child {
+    grid-column: 1 / -1;
+  }
+  .toolbar > a {
+    grid-column: 1 / -1;
+    justify-content: center;
+  }
+  .record-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .record-card .actions {
+    width: 100%;
+  }
+  .record-card .actions > * {
+    flex: 1;
   }
 }
 @media (max-width: 359px) {
