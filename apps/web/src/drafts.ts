@@ -1,4 +1,4 @@
-import type { Generation } from "./client";
+import { newId, type Generation } from "./client";
 export type LocalDraft = {
   draft: Generation;
   title?: string;
@@ -67,7 +67,7 @@ function getTabId() {
   const key = "museforge-draft-tab-id";
   let id = sessionStorage.getItem(key);
   if (!id) {
-    id = crypto.randomUUID();
+    id = newId();
     sessionStorage.setItem(key, id);
   }
   return id;

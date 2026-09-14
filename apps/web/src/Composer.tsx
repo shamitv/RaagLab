@@ -5,6 +5,7 @@ import {
   api,
   ApiError,
   defaults,
+  newId,
   validDraft,
   versionInputs,
   type Generation,
@@ -151,10 +152,12 @@ export function Composer() {
           p?.jobs.find((j) => !terminal.has(j.state)) ?? p?.jobs[0] ?? null,
         );
         if (v) adopt(v);
+        const { lyrics_mode: lyricsMode, ...generationDefaults } =
+          settings.generation_defaults;
         const preferred: Generation = {
           ...defaults,
-          ...settings.generation_defaults,
-          lyrics: { mode: settings.generation_defaults.lyrics_mode },
+          ...generationDefaults,
+          lyrics: { mode: lyricsMode },
         };
         const server =
           p && Object.keys(p.draft).length
@@ -429,7 +432,7 @@ export function Composer() {
         submission.current = {
           path,
           body: serialized,
-          key: crypto.randomUUID(),
+          key: newId(),
         };
       sessionStorage.setItem(
         "museforge-submission",
@@ -973,7 +976,7 @@ export function Composer() {
                     const storageKey = `museforge-retry:${job.id}`;
                     let key = sessionStorage.getItem(storageKey);
                     if (!key) {
-                      key = crypto.randomUUID();
+                      key = newId();
                       sessionStorage.setItem(storageKey, key);
                     }
                     void api<components["schemas"]["Accepted"]>(
