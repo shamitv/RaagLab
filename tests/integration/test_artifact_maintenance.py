@@ -104,6 +104,7 @@ def test_gc_is_inspection_first_and_protects_references_and_live_attempts(engine
     assert not pending_path.exists()
 
     job_id, worker_id, project_id = uuid4(), uuid4(), uuid4()
+    correlation_id = uuid4()
     live_name = f"{job_id}-7-{uuid4()}.wav"
     live_path = settings.artifact_root / live_name
     old_file(live_path)
@@ -137,7 +138,14 @@ def test_gc_is_inspection_first_and_protects_references_and_live_attempts(engine
                 submission_seq=1,
                 queue_deadline=live_until,
                 attempt_deadline=live_until,
-                correlation_id=uuid4(),
+                correlation_id=correlation_id,
+            ))
+            # Keep the durable fixture API-readable during subsequent restart
+            # sweeps; every application job has a matching dispatch record.
+            connection.execute(db.outbox.insert().values(
+                workspace_id=settings.workspace_id, job_id=job_id,
+                correlation_id=correlation_id, provider_route=settings.mock_queue,
+                dispatch_sequence=1, state="published", confirmed_at=now,
             ))
             connection.execute(db.registrations.insert().values(
                 id=worker_id,
