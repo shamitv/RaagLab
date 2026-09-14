@@ -1,9 +1,11 @@
 """Broker and database routing checks; synthetic audio is not D03 acceptance."""
 from datetime import datetime, timezone
 import wave
+import os
 from uuid import UUID, uuid4
 
 import pytest
+import httpx
 import sqlalchemy as sa
 
 from museforge.db import schema as db
@@ -67,6 +69,9 @@ def test_incompatible_worker_preserves_job_for_compatible_worker(settings, engin
             with wave.open(str(self.output), 'wb') as audio:
                 audio.setparams((2, 2, 48000, 0, 'NONE', 'not compressed'))
                 audio.writeframes(b'\x01\x00\x01\x00' * 48000 * 6)
+            # This test executes in the root-owned test image rather than the
+            # runtime worker UID shared with the API. Keep its fixture readable.
+            self.output.chmod(0o644)
             return self.output
     monkeypatch.setattr('museforge.worker.execution.YuE2Music', SyntheticProvider)
     execute(real, envelope)
@@ -75,6 +80,11 @@ def test_incompatible_worker_preserves_job_for_compatible_worker(settings, engin
         assert job['state'] == 'succeeded' and job['attempt_count'] == 1
         version = connection.execute(sa.select(db.versions).where(db.versions.c.id == job['result_version_id'])).mappings().one()
         assert version['lyrics'] == checkpoint['text']
+        version_id = version['id']
+    base = os.environ['API_BASE_URL']
+    response = httpx.get(base + '/api/v1/versions/' + str(version_id))
+    assert response.status_code == 200
+    assert httpx.get(base + response.json()['audio']['url']).status_code == 200
 
 
 def test_readiness_ignores_incompatible_registrations(settings, engine):
