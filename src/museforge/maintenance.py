@@ -36,7 +36,9 @@ def has_live_attempt(connection, name, workspace_id, timestamp):
     if not parsed:
         return False
     job_id, fence = parsed
-    return bool(connection.scalar(sa.select(sa.exists().where(
+    attempt = sa.exists(sa.select(sa.literal(1)).select_from(
+        db.attempts.join(db.jobs, db.jobs.c.id == db.attempts.c.job_id)
+    ).where(
         db.jobs.c.id == job_id,
         db.jobs.c.workspace_id == workspace_id,
         db.jobs.c.fence_token == fence,
@@ -45,7 +47,8 @@ def has_live_attempt(connection, name, workspace_id, timestamp):
         db.attempts.c.fence_token == fence,
         db.attempts.c.ended_at.is_(None),
         db.attempts.c.lease_expires_at > timestamp,
-    ))))
+    ))
+    return bool(connection.scalar(sa.select(attempt)))
 
 
 def artifact_path(root: Path, storage_key: str):
