@@ -8,17 +8,27 @@ import platform
 import torch
 
 
+def validate_configured_identity(lock):
+    for name, expected in (('MODEL_ID', lock['model']['repo']),
+                           ('MODEL_REVISION', lock['model']['revision']),
+                           ('DECODER_REVISION', lock['vae']['revision'])):
+        if os.environ.get(name) != expected:
+            raise RuntimeError('Configured identity does not match pinned weights: ' + name)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--require-weights', action='store_true')
     parser.add_argument('--load-model', action='store_true')
     args = parser.parse_args()
+    lock = json.loads(Path(__file__).with_name('model-lock.json').read_text())
+    if args.require_weights:
+        validate_configured_identity(lock)
     assert torch.cuda.is_available(), 'CUDA is required; no CPU fallback'
     assert torch.cuda.is_bf16_supported(), 'BF16 is required'
     x = torch.ones((256, 256), device='cuda', dtype=torch.bfloat16)
     assert torch.isfinite(x @ x).all().item()
     torch.cuda.synchronize()
-    lock = json.loads(Path(__file__).with_name('model-lock.json').read_text())
     weights_root = Path(os.environ.get('WEIGHTS_DIR', '/weights'))
     manifest_path = weights_root / 'verified.json'
     if args.require_weights:
@@ -44,7 +54,7 @@ def main():
         pipe = YuE2Pipeline.from_pretrained(os.environ.get('YUE2_MODEL_DIR', '/weights/model'),
             vae=os.environ.get('YUE2_VAE_DIR', '/weights/vae'), local_files_only=True, device='cuda',
             memory_budget_gib=int(os.environ.get('YUE2_MEMORY_BUDGET_GIB', '16')),
-            backend='torch', quantization='none')
+            backend='torch', quantization='none', offload_ar=os.environ.get('YUE2_OFFLOAD_AR') == '1')
         pipe.close()
         result['model_initialized'] = True
     print(json.dumps(result, indent=2))

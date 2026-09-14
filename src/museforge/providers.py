@@ -104,17 +104,56 @@ class YuE2Music:
 
     @staticmethod
     def preflight(settings):
+        process = None
+        try:
+            process = YuE2Music._spawn(
+                [sys.executable, str(settings.yue2_preflight), '--require-weights', '--load-model'], settings,
+                cwd=str(settings.yue2_preflight.parent))
+            if process.wait(timeout=settings.yue2_warmup_timeout_seconds) != 0:
+                raise ProviderError('initialization_failure')
+        except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+            raise ProviderError('initialization_failure') from None
+        finally:
+            if process is not None:
+                YuE2Music._terminate(process)
+                with YuE2Music._process_lock:
+                    YuE2Music._active_processes.discard(process)
+
+    @staticmethod
+    def child_environment(settings):
         env = os.environ.copy()
         env.update(HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1', HF_HOME=str(settings.cache_dir),
                    WEIGHTS_DIR=str(settings.weights_dir), YUE2_MODEL_DIR=str(settings.yue2_model_dir),
                    YUE2_VAE_DIR=str(settings.yue2_vae_dir),
-                   YUE2_MEMORY_BUDGET_GIB=str(settings.yue2_memory_budget_gib))
-        try:
-            subprocess.run([sys.executable, str(settings.yue2_preflight), '--require-weights', '--load-model'],
-                           check=True, timeout=settings.yue2_warmup_timeout_seconds, env=env,
-                           cwd=str(settings.yue2_preflight.parent))
-        except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
-            raise ProviderError('initialization_failure') from None
+                   YUE2_MEMORY_BUDGET_GIB=str(settings.yue2_memory_budget_gib),
+                   YUE2_OFFLOAD_AR='1' if settings.yue2_offload_ar else '0',
+                   MODEL_ID=settings.model_id, MODEL_REVISION=settings.model_revision,
+                   DECODER_REVISION=settings.decoder_revision)
+        return env
+
+    @staticmethod
+    def _spawn(command, settings, **kwargs):
+        env = YuE2Music.child_environment(settings)
+        if sys.platform == 'linux':
+            control_read, control_write = os.pipe()
+            try:
+                process = subprocess.Popen(
+                    [sys.executable, '-m', 'museforge.worker.inference_supervisor',
+                     '--control-fd', str(control_read),
+                     '--lock-path', '/tmp/museforge-yue2.inference.lock', '--', *command],
+                    env=env, start_new_session=True, pass_fds=(control_read,), **kwargs)
+                process._yue2_control_fd = control_write
+                process._yue2_supervised = True
+            except BaseException:
+                os.close(control_write)
+                raise
+            finally:
+                os.close(control_read)
+        else:
+            process = subprocess.Popen(command, env=env, start_new_session=os.name != 'nt', **kwargs)
+        with YuE2Music._process_lock:
+            YuE2Music._active_processes.add(process)
+        return process
 
     @classmethod
     def shutdown(cls):
@@ -147,6 +186,15 @@ class YuE2Music:
 
     @staticmethod
     def _terminate(process, grace=5):
+        with YuE2Music._process_lock:
+            control_fd = getattr(process, '_yue2_control_fd', None)
+            process._yue2_control_fd = None
+        if control_fd is not None:
+            os.close(control_fd)
+        if getattr(process, '_yue2_supervised', False):
+            # The guardian retains the GPU lock until inference has been reaped.
+            process.wait(timeout=15)
+            return
         if process.poll() is not None:
             return
         try:
@@ -200,10 +248,7 @@ class YuE2Music:
         process = None
         try:
             with log_path.open('w', encoding='utf-8') as log:
-                process = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT,
-                                           start_new_session=os.name != 'nt')
-                with self._process_lock:
-                    self._active_processes.add(process)
+                process = self._spawn(command, self.settings, stdout=log, stderr=subprocess.STDOUT)
                 while process.poll() is None:
                     cancellation_token()
                     if time.monotonic() - started >= self.settings.yue2_process_timeout_seconds:
@@ -263,9 +308,8 @@ class YuE2Music:
                                 exc.errno not in (2, 13)) from None
         finally:
             if process is not None:
+                self._terminate(process)
                 with self._process_lock:
                     self._active_processes.discard(process)
-            if process is not None and process.poll() is None:
-                self._terminate(process)
             import shutil
             shutil.rmtree(work_dir, ignore_errors=True)
