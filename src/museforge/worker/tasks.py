@@ -14,4 +14,4 @@ class GenerationEnvelope(BaseModel):
     correlation_id: UUID
     dispatch_sequence: int = Field(gt=0)
     dispatched_at: AwareDatetime
-    provider_route: Literal["museforge.mock.v1"]
+    provider_route: str = Field(min_length=1, max_length=128)

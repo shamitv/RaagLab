@@ -7,6 +7,7 @@ from kombu import Exchange, Queue
 
 from museforge.config import Settings
 from museforge.observability import probe_loop
+from museforge.providers import YuE2Music
 from museforge.worker.broker_probe import check_broker
 from museforge.worker.tasks import GenerationEnvelope, TASK_NAME
 
@@ -14,19 +15,20 @@ settings = Settings()
 app = Celery("museforge", broker=settings.broker_url.get_secret_value())
 exchange = Exchange("museforge", type="direct", durable=True)
 quarantine = Exchange("museforge.quarantine", type="direct", durable=True)
+provider_queue = Queue(settings.provider_route, exchange, routing_key=settings.provider_route, durable=True,
+                       queue_arguments={"x-queue-type": "classic", "x-dead-letter-exchange": quarantine.name,
+                                        "x-dead-letter-routing-key": settings.quarantine_queue})
 app.conf.update(
     task_serializer="json", accept_content=["json"], result_serializer="json",
     task_acks_late=True, task_acks_on_failure_or_timeout=True,
     task_reject_on_worker_lost=False, worker_prefetch_multiplier=1,
     task_ignore_result=True, result_backend=None, task_always_eager=False,
-    task_create_missing_queues=False, task_default_queue=settings.mock_queue,
-    task_default_exchange="museforge", task_default_routing_key=settings.mock_queue,
+    task_create_missing_queues=False, task_default_queue=settings.provider_route,
+    task_default_exchange="museforge", task_default_routing_key=settings.provider_route,
     task_default_delivery_mode="persistent",
-    task_routes={TASK_NAME: {"queue": settings.mock_queue, "routing_key": settings.mock_queue}},
+    task_routes={TASK_NAME: {"queue": settings.provider_route, "routing_key": settings.provider_route}},
     task_queues=(
-        Queue(settings.mock_queue, exchange, routing_key=settings.mock_queue, durable=True,
-              queue_arguments={"x-queue-type": "classic", "x-dead-letter-exchange": quarantine.name,
-                               "x-dead-letter-routing-key": settings.quarantine_queue}),
+        provider_queue,
         Queue(settings.quarantine_queue, quarantine, routing_key=settings.quarantine_queue, durable=True,
               queue_arguments={"x-message-ttl": 86400000, "x-max-length": 1000}),
     ),
@@ -69,12 +71,19 @@ _thread = None
 def worker_ready(**kwargs):
     global _thread
     _stop.clear()
-    _thread = threading.Thread(target=probe_loop, args=(settings, "worker-mock", socket.gethostname(), _stop, broker_check), daemon=True)
+    _thread = threading.Thread(target=probe_loop, args=(settings, "worker-mock", socket.gethostname(), _stop, broker_check),
+                                kwargs={"provider_role": settings.worker_role}, daemon=True)
     _thread.start()
 
 
 @signals.worker_shutdown.connect
 def worker_shutdown(**kwargs):
     _stop.set()
+    YuE2Music.shutdown()
     if _thread:
         _thread.join(timeout=settings.broker_timeout_seconds + 5)
+
+
+@signals.worker_process_shutdown.connect
+def worker_process_shutdown(**kwargs):
+    YuE2Music.shutdown()

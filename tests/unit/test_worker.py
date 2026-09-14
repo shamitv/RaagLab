@@ -12,7 +12,7 @@ def envelope():
                 dispatch_sequence=1, dispatched_at=datetime.now(timezone.utc).isoformat(), provider_route='museforge.mock.v1')
 
 
-@pytest.mark.parametrize('change', [{'schema_version': 2}, {'lyrics': 'not allowed'}, {'provider_route': 'real'},
+@pytest.mark.parametrize('change', [{'schema_version': 2}, {'lyrics': 'not allowed'}, {'provider_route': ''},
                                     {'dispatch_sequence': 0}, {'dispatched_at': '2026-09-13T10:00:00'}])
 def test_invalid_message_is_rejected(change):
     with pytest.raises(ValidationError):

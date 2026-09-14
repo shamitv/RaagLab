@@ -7,7 +7,7 @@ from uuid import UUID, uuid4
 import sqlalchemy as sa
 from sqlalchemy.exc import IntegrityError
 from museforge.db import schema as db
-from museforge.domain import ProviderError, capabilities
+from museforge.domain import ProviderError, provider_capabilities
 
 TERMINAL = {'succeeded', 'failed', 'cancelled', 'timed_out'}
 
@@ -43,6 +43,11 @@ def insert_outbox(c, job, settings, at=None):
 
 
 def submit(engine, settings, request, key, operation="generate", source_id=None):
+    if settings.music_provider == 'yue2':
+        if operation != 'generate' or request.language != 'English' or request.iteration_instruction is not None:
+            raise ProviderError('unsupported_capability')
+        if request.lyrics.mode != 'user' or not request.lyrics.text or not request.lyrics.text.strip():
+            raise ProviderError('invalid_request')
     intent = request.model_dump(mode='json')
     # Configurable defaults must not change an already accepted replay's hash.
     if 'lyrics' not in request.model_fields_set: intent['lyrics'] = None
@@ -83,9 +88,13 @@ def submit(engine, settings, request, key, operation="generate", source_id=None)
             c.execute(db.projects.update().where(db.projects.c.id == project_id).values(latest_submission_seq=sequence))
             limits = {name: getattr(settings, name) for name in ('heartbeat_seconds', 'lease_seconds', 'attempt_deadline_seconds',
                 'hard_watchdog_seconds', 'max_attempts', 'queue_deadline_seconds', 'cancellation_grace_seconds')}
+            provider_snapshot = provider_capabilities(settings)
             snapshot = dict(execution_intent, schema_version=1, workspace_id=str(settings.workspace_id), project_id=str(project_id),
                 operation=operation, source_version_id=str(source_id) if source_id else None, seed=request.seed if request.seed is not None else secrets.randbits(32),
-                providers={'lyrics': mode, 'music': 'mock', 'revision': '1'}, capabilities=capabilities(),
+                providers={'lyrics': mode, 'music': settings.provider_id, 'provider_revision': settings.provider_revision,
+                           'route': settings.provider_route, 'model_id': settings.model_id,
+                           'model_revision': settings.model_revision, 'decoder_revision': settings.decoder_revision},
+                capabilities=provider_snapshot,
                 requested_duration_seconds=duration, effective_duration_seconds=duration,
                 tempo_bounds={'Slow': [60,90], 'Medium': [100,120], 'Fast': [130,160]}[request.tempo], limits=limits,
                 fixture_id='morning-spark' if mode == 'static' else None,
@@ -94,7 +103,7 @@ def submit(engine, settings, request, key, operation="generate", source_id=None)
                 snapshot['_test'] = settings.mock_test_scenarios.get(str(snapshot['seed']), {})
             job = dict(id=uuid4(), workspace_id=settings.workspace_id, project_id=project_id, operation=operation,
                 source_version_id=source_id, intent_hash=digest, execution_snapshot=snapshot,
-                provider_route=settings.mock_queue, state='queued',
+                provider_route=settings.provider_route, state='queued',
                 selection_epoch=project['selection_epoch'], submission_seq=sequence, dispatch_sequence=1,
                 queue_deadline=now(c) + timedelta(seconds=settings.queue_deadline_seconds), correlation_id=uuid4())
             c.execute(db.jobs.insert().values(**job))

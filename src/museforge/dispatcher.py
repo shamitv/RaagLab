@@ -30,8 +30,9 @@ def publish_child(envelope, settings, result):
         with app.connection_for_write() as connection:
             connection.ensure_connection(max_retries=0)
             producer = app.amqp.Producer(connection, on_return=lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError('unroutable')))
+            route = envelope['provider_route']
             app.send_task(TASK_NAME, args=[envelope], task_id=envelope['message_id'], producer=producer,
-                queue=settings.mock_queue, routing_key=settings.mock_queue, mandatory=True, retry=False,
+                queue=route, routing_key=route, mandatory=True, retry=False,
                 delivery_mode=2, timeout=settings.broker_timeout_seconds,
                 confirm_timeout=settings.broker_timeout_seconds)
         result.send(True)
