@@ -5,7 +5,7 @@ from museforge.config import Settings
 
 
 class Engine:
-    def __init__(self, settings, head='0002_version_favorites', workspace=True):
+    def __init__(self, settings, head='0003_workspace_settings', workspace=True):
         self.settings, self.head, self.workspace = settings, head, workspace
 
     @contextmanager

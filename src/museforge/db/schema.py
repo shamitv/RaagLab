@@ -195,6 +195,7 @@ sa.Index("ix_jobs_due", jobs.c.state, jobs.c.next_action_at)
 sa.Index("ix_jobs_queue_deadline", jobs.c.state, jobs.c.queue_deadline)
 sa.Index("ix_jobs_attempt_deadline", jobs.c.state, jobs.c.attempt_deadline)
 sa.Index("ix_jobs_project_created", jobs.c.project_id, jobs.c.created_at, jobs.c.id)
+sa.Index("ix_versions_library_created", versions.c.workspace_id, versions.c.created_at, versions.c.id)
 sa.Index("ix_outbox_due", outbox.c.state, outbox.c.next_publication_at)
 sa.Index("ix_outbox_claim_expiry", outbox.c.state, outbox.c.claim_expires_at)
 sa.Index("ix_attempts_lease", attempts.c.lease_expires_at)
@@ -214,4 +215,19 @@ process_heartbeats = sa.Table("process_heartbeats", metadata,
 favorites = sa.Table("version_favorites", metadata, workspace(),
     sa.Column("version_id", UUID(as_uuid=True), primary_key=True),
     sa.ForeignKeyConstraint(["workspace_id", "version_id"], ["song_versions.workspace_id", "song_versions.id"]),
+)
+
+workspace_settings = sa.Table("workspace_settings", metadata,
+    sa.Column("workspace_id", UUID(as_uuid=True), sa.ForeignKey("workspaces.id"), primary_key=True),
+    sa.Column("revision", sa.BigInteger, nullable=False, server_default="1"),
+    json_column("generation_defaults"),
+    sa.Column("volume", sa.Float, nullable=False, server_default="0.8"),
+    sa.Column("repeat_mode", sa.String(8), nullable=False, server_default="off"),
+    sa.Column("export_format", sa.String(8), nullable=False, server_default="wav"),
+    sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.func.now()),
+    sa.CheckConstraint("revision > 0", name="revision_positive"),
+    sa.CheckConstraint("volume >= 0 AND volume <= 1", name="volume_range"),
+    sa.CheckConstraint("repeat_mode IN ('off','one','all')", name="repeat_mode"),
+    sa.CheckConstraint("export_format = 'wav'", name="export_format"),
+    sa.CheckConstraint("jsonb_typeof(generation_defaults) = 'object'", name="defaults_object"),
 )

@@ -2,6 +2,7 @@
 import base64
 import os
 import json
+import hashlib
 from datetime import datetime
 from uuid import UUID
 import sqlalchemy as sa
@@ -11,7 +12,10 @@ from starlette.background import BackgroundTask
 from museforge.db import schema as db
 from museforge.domain import Accepted, Generation, ProjectCreate, ProjectPatch, VersionPatch, Iteration, ProviderError, capabilities
 from museforge.domain import ErrorResponse, CapabilitiesResponse, ProjectView, ProjectDetail, ProjectPage, JobView, VersionPage, VersionDetail
+from museforge.domain import LibraryPage, SettingsPatch, SettingsView, TemplatePage, TemplateView
 from museforge.jobs import accepted, cancel, row, scoped, submit
+from museforge.projects import duplicate, set_archived
+from museforge.workspace import DEFAULT_GENERATION_DEFAULTS, TEMPLATES, ensure_settings, settings_view, updated_at
 from museforge.storage import open_artifact, range_bounds
 
 router = APIRouter(prefix='/api/v1', responses={status: {'model': ErrorResponse}
@@ -21,19 +25,100 @@ router = APIRouter(prefix='/api/v1', responses={status: {'model': ErrorResponse}
 def context(request): return request.app.state.engine, request.app.state.settings
 
 
-def page(c, table, settings, limit, cursor, *conditions):
+def page(c, table, settings, limit, cursor, *conditions, descending=False, filter_context=''):
     query = sa.select(table).where(scoped(table, settings), *conditions)
     if cursor:
         try:
-            stamp, identifier = json.loads(base64.urlsafe_b64decode(cursor.encode()))
-            query = query.where(sa.tuple_(table.c.created_at, table.c.id) > sa.tuple_(datetime.fromisoformat(stamp), UUID(identifier)))
+            raw = json.loads(base64.urlsafe_b64decode(cursor.encode() + b'=' * (-len(cursor) % 4)))
+            if len(raw) == 3:
+                stamp, identifier, context = raw
+                if context != hashlib.sha256(filter_context.encode()).hexdigest(): raise ValueError
+            elif len(raw) == 2 and not filter_context:
+                stamp, identifier = raw
+            else:
+                raise ValueError
+            cursor_value = sa.tuple_(datetime.fromisoformat(stamp), UUID(identifier))
+            current_value = sa.tuple_(table.c.created_at, table.c.id)
+            query = query.where(current_value < cursor_value if descending else current_value > cursor_value)
         except Exception: raise ProviderError('invalid_cursor') from None
-    rows = [dict(r) for r in c.execute(query.order_by(table.c.created_at, table.c.id).limit(limit + 1)).mappings()]
+    order = (table.c.created_at.desc(), table.c.id.desc()) if descending else (table.c.created_at, table.c.id)
+    rows = [dict(r) for r in c.execute(query.order_by(*order).limit(limit + 1)).mappings()]
     next_cursor = None
     if len(rows) > limit:
         last = rows[limit - 1]
-        next_cursor = base64.urlsafe_b64encode(json.dumps([last['created_at'].isoformat(), str(last['id'])]).encode()).decode()
+        next_cursor = base64.urlsafe_b64encode(json.dumps([
+            last['created_at'].isoformat(), str(last['id']),
+            hashlib.sha256(filter_context.encode()).hexdigest(),
+        ]).encode()).decode()
     return dict(items=rows[:limit], next_cursor=next_cursor)
+
+
+def escaped_like(value):
+    return '%' + value.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_') + '%'
+
+
+def library_page(c, settings, limit, cursor, q, favorite_only, genre, language, sort):
+    favorite = sa.exists(sa.select(1).select_from(db.favorites).where(
+        db.favorites.c.version_id == db.versions.c.id,
+        scoped(db.favorites, settings),
+    ))
+    statement = sa.select(
+        db.versions.c.project_id,
+        db.projects.c.title.label('project_title'),
+        db.versions.c.id.label('version_id'),
+        db.versions.c.number.label('version_number'),
+        db.versions.c.label.label('version_label'),
+        favorite.label('favorite'),
+        db.versions.c.created_at,
+        db.versions.c.inputs['genre'].astext.label('genre'),
+        db.versions.c.inputs['language'].astext.label('language'),
+        db.artifacts.c.duration_seconds,
+        db.artifacts.c.available_at,
+    ).select_from(db.versions).join(
+        db.projects, sa.and_(db.projects.c.id == db.versions.c.project_id,
+                             db.projects.c.workspace_id == db.versions.c.workspace_id)
+    ).outerjoin(
+        db.links, sa.and_(db.links.c.version_id == db.versions.c.id, db.links.c.role == 'audio')
+    ).outerjoin(
+        db.artifacts, sa.and_(db.artifacts.c.id == db.links.c.artifact_id,
+                              db.artifacts.c.workspace_id == settings.workspace_id)
+    ).where(
+        db.versions.c.workspace_id == settings.workspace_id,
+        db.projects.c.archived_at.is_(None),
+    )
+    if q:
+        pattern = escaped_like(q)
+        statement = statement.where(sa.or_(db.projects.c.title.ilike(pattern, escape='\\'),
+                                           db.versions.c.label.ilike(pattern, escape='\\')))
+    if favorite_only:
+        statement = statement.where(favorite)
+    if genre:
+        statement = statement.where(db.versions.c.inputs['genre'].astext == genre)
+    if language:
+        statement = statement.where(db.versions.c.inputs['language'].astext == language)
+    filter_context = json.dumps([q, favorite_only, genre, language, sort], ensure_ascii=False, separators=(',', ':'))
+    if cursor:
+        try:
+            raw = json.loads(base64.urlsafe_b64decode(cursor.encode() + b'=' * (-len(cursor) % 4)))
+            if len(raw) != 3 or raw[2] != hashlib.sha256(filter_context.encode()).hexdigest(): raise ValueError
+            stamp, identifier = datetime.fromisoformat(raw[0]), UUID(raw[1])
+            cursor_value = sa.tuple_(stamp, identifier)
+            current_value = sa.tuple_(db.versions.c.created_at, db.versions.c.id)
+            statement = statement.where(current_value < cursor_value if sort == 'recent' else current_value > cursor_value)
+        except Exception: raise ProviderError('invalid_cursor') from None
+    ordering = (db.versions.c.created_at.desc(), db.versions.c.id.desc()) if sort == 'recent' else (db.versions.c.created_at, db.versions.c.id)
+    rows = [dict(item) for item in c.execute(statement.order_by(*ordering).limit(limit + 1)).mappings()]
+    next_cursor = None
+    if len(rows) > limit:
+        last = rows[limit - 1]
+        next_cursor = base64.urlsafe_b64encode(json.dumps([
+            last['created_at'].isoformat(), str(last['version_id']),
+            hashlib.sha256(filter_context.encode()).hexdigest(),
+        ]).encode()).decode()
+    items = [{key: value for key, value in item.items() if key != 'available_at'} | {
+        'available': item['available_at'] is not None,
+    } for item in rows[:limit]]
+    return {'items': items, 'next_cursor': next_cursor}
 
 
 def job_detail(c, settings, identifier):
@@ -65,6 +150,60 @@ def get_capabilities(request: Request):
                     readiness=readiness(c, settings))
 
 
+@router.get('/settings', response_model=SettingsView)
+def get_settings(request: Request, response: Response):
+    engine, settings = context(request)
+    with engine.begin() as c:
+        record = ensure_settings(c, settings)
+    response.headers['ETag'] = f'"{record["revision"]}"'
+    return settings_view(record)
+
+
+@router.patch('/settings', response_model=SettingsView)
+def patch_settings(body: SettingsPatch, request: Request, response: Response,
+                   if_match: str | None = Header(None)):
+    engine, settings = context(request)
+    with engine.begin() as c:
+        ensure_settings(c, settings)
+        current = c.execute(sa.select(db.workspace_settings).where(
+            db.workspace_settings.c.workspace_id == settings.workspace_id
+        ).with_for_update()).mappings().one()
+        require_revision(if_match, current)
+        values = body.model_dump(mode='json', exclude_unset=True)
+        values.update(revision=current['revision'] + 1, updated_at=sa.func.now())
+        record = c.execute(db.workspace_settings.update().where(
+            db.workspace_settings.c.workspace_id == settings.workspace_id
+        ).values(**values).returning(db.workspace_settings)).mappings().one()
+    response.headers['ETag'] = f'"{record["revision"]}"'
+    return settings_view(record)
+
+
+@router.get('/templates', response_model=TemplatePage)
+def templates():
+    return {'items': TEMPLATES}
+
+
+@router.get('/templates/{template_id}', response_model=TemplateView)
+def template(template_id: str):
+    selected = next((item for item in TEMPLATES if item['id'] == template_id), None)
+    if selected is None: raise ProviderError('not_found')
+    return selected
+
+
+@router.get('/library', response_model=LibraryPage)
+def library(request: Request, q: str | None = Query(None, max_length=120),
+            favorite_only: bool = False, genre: str | None = None, language: str | None = None,
+            sort: str = Query('recent', pattern='^(recent|oldest)$'),
+            limit: int = Query(20, ge=1, le=100), cursor: str | None = None):
+    engine, settings = context(request)
+    if genre is not None and genre not in ('Indie Pop', 'Pop', 'Folk', 'Ambient', 'Rock', 'Electronic'):
+        raise ProviderError('invalid_request')
+    if language is not None and language not in ('Hindi', 'English', 'Hinglish', 'Punjabi', 'Tamil'):
+        raise ProviderError('invalid_request')
+    with engine.connect() as c:
+        return library_page(c, settings, limit, cursor, q, favorite_only, genre, language, sort)
+
+
 @router.post('/projects', status_code=201, response_model=ProjectView)
 def create_project(body: ProjectCreate, request: Request, response: Response):
     engine, settings = context(request)
@@ -77,9 +216,26 @@ def create_project(body: ProjectCreate, request: Request, response: Response):
 
 
 @router.get('/projects', response_model=ProjectPage)
-def projects(request: Request, limit: int = Query(20, ge=1, le=100), cursor: str | None = None):
+def projects(request: Request, q: str | None = Query(None, max_length=120),
+             archived: str = Query('active', pattern='^(active|archived|all)$'),
+             limit: int = Query(20, ge=1, le=100), cursor: str | None = None):
     engine, settings = context(request)
-    with engine.connect() as c: return page(c, db.projects, settings, limit, cursor, db.projects.c.archived_at.is_(None))
+    conditions = []
+    if archived == 'active': conditions.append(db.projects.c.archived_at.is_(None))
+    elif archived == 'archived': conditions.append(db.projects.c.archived_at.is_not(None))
+    if q: conditions.append(db.projects.c.title.ilike(escaped_like(q), escape='\\'))
+    filter_context = json.dumps([q, archived], ensure_ascii=False, separators=(',', ':'))
+    with engine.connect() as c:
+        return page(c, db.projects, settings, limit, cursor, *conditions, descending=True, filter_context=filter_context)
+
+
+@router.post('/projects/{identifier}/duplicate', status_code=201, response_model=ProjectView)
+def duplicate_project(identifier: UUID, request: Request, response: Response):
+    engine, settings = context(request)
+    result = duplicate(engine, settings, identifier)
+    response.headers['Location'] = f"/api/v1/projects/{result['id']}"
+    response.headers['ETag'] = f'"{result["revision"]}"'
+    return result
 
 
 @router.get('/projects/{identifier}', response_model=ProjectDetail)
@@ -199,6 +355,10 @@ def patch_project(identifier: UUID, body: ProjectPatch, request: Request, respon
         require_revision(if_match, current)
         values = body.model_dump(mode='python', exclude_unset=True)
         if body.draft: values['draft'] = body.draft.model_dump(mode='json')
+        if 'archived' in values:
+            archived = values.pop('archived')
+            if archived != (current['archived_at'] is not None):
+                values['archived_at'] = set_archived(c, current, archived)
         if 'active_version_id' in values:
             if body.active_version_id:
                 selected = row(c, db.versions, body.active_version_id, settings)
