@@ -37,8 +37,10 @@ try:
     else:
         run('up','-d','--wait','--wait-timeout','180','api','dispatcher','worker-mock')
     origin='http://'+run('port','api','8000',capture=True).strip()
-    run('run','--rm','tests','/app/.venv/bin/pytest','tests/unit')
-    output=run('run','--rm','tests',capture=True)
+    # Services are already healthy; avoid Compose reconciling away the extra
+    # worker replicas used by the phase-four concurrency coverage.
+    run('run','--rm','--no-deps','tests','/app/.venv/bin/pytest','tests/unit')
+    output=run('run','--rm','--no-deps','tests',capture=True)
     (evidence/'integration.txt').write_text(output)
     if os.environ.get('PHASE4_BROWSER')=='1':
         browser=run('run','--rm','-e',f'PLAYWRIGHT_OUTPUT_DIR=/test-results/{project}/browser',
