@@ -10,7 +10,7 @@ x-test-env: &test-env
   LYRICS_PROVIDER: mock
   MOCK_TEST_ENABLED: "true"
   MOCK_TEST_DELAY_SECONDS: "1"
-  MOCK_TEST_SCENARIOS: '{"4294967201":{"outcome":"invalid_request"},"4294967202":{"outcome":"deadline_exceeded"},"4294967203":{"delay":15},"4294967204":{"outcome":"transient_failure"}}'
+  MOCK_TEST_SCENARIOS: '{"4294967201":{"outcome":"invalid_request"},"4294967202":{"outcome":"deadline_exceeded"},"4294967203":{"delay":15},"4294967204":{"outcome":"transient_failure"},"4294967205":{"delay":3},"4294967206":{"delay":3},"4294967207":{"outcome":"resource_exhaustion"}}'
 
 services:
   db:
@@ -44,9 +44,20 @@ services:
       FOUNDATION_INTEGRATION: "1"
       API_BASE_URL: http://api:8000
     networks: [backend]
-    volumes: [artifacts:/var/lib/museforge/artifacts:ro]
+    volumes: [artifacts:/var/lib/museforge/artifacts]
     depends_on:
       api: {condition: service_healthy}
       dispatcher: {condition: service_healthy}
       worker-mock: {condition: service_healthy}
     command: [/app/.venv/bin/pytest, tests/integration]
+  browser-tests:
+    build:
+      context: .
+      dockerfile: packaging/Dockerfile
+      target: browser-test
+    environment:
+      API_BASE_URL: http://api:8000
+    networks: [backend]
+    volumes: [./test-results:/test-results]
+    depends_on:
+      api: {condition: service_healthy}
