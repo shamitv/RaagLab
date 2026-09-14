@@ -210,3 +210,8 @@ process_heartbeats = sa.Table("process_heartbeats", metadata,
     sa.CheckConstraint("role IN ('dispatcher','worker-mock')", name="role"),
     sa.CheckConstraint("expires_at > last_heartbeat", name="freshness"),
 )
+
+favorites = sa.Table("version_favorites", metadata, workspace(),
+    sa.Column("version_id", UUID(as_uuid=True), primary_key=True),
+    sa.ForeignKeyConstraint(["workspace_id", "version_id"], ["song_versions.workspace_id", "song_versions.id"]),
+)

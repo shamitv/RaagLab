@@ -10,6 +10,7 @@ test('real generation plays, seeks, downloads and survives refresh', async ({ pa
   await page.getByLabel('Music brief').fill('Original browser checkpoint');
   await page.getByLabel('Lyrics source').selectOption('user');
   await page.getByLabel('Your lyrics', {exact:true}).fill(lyrics);
+  await page.getByText('Advanced Options', {exact:true}).click();
   await page.getByLabel('Duration (seconds)').fill('5');
   const accepted = page.waitForResponse(r => r.url().endsWith('/api/v1/generations') && r.request().method() === 'POST');
   await page.getByRole('button', {name:'Generate',exact:true}).click();
@@ -50,6 +51,7 @@ for (const mode of ['static','mock']) test(`real ${mode} lyrics`, async ({page})
   await page.goto('/create');
   await page.getByLabel('Music brief').fill(`Original ${mode} demo`);
   await page.getByLabel('Lyrics source').selectOption(mode);
+  await page.getByText('Advanced Options', {exact:true}).click();
   await page.getByLabel('Duration (seconds)').fill('5');
   await page.getByRole('button',{name:'Generate',exact:true}).click();
   await expect(page.getByRole('region',{name:'Generated result'})).toBeVisible({timeout:45000});

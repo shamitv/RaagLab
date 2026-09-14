@@ -1,0 +1,10 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: /app
+configfile: pyproject.toml
+plugins: anyio-4.15.1
+collected 5 items
+
+tests/integration/test_version_lineage.py .....                          [100%]
+
+============================== 5 passed in 44.49s ==============================

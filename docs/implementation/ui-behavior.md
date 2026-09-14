@@ -1,7 +1,7 @@
 # Responsive workspace and interaction decisions
 
 - Date: 2026-09-13
-- State: planned; visual and browser acceptance has not run
+- State: Phase 03 workspace verified; Phase 04 organization/reconciliation remains pending. See [evidence](evidence/03/2026-09-13-workspace/README.md).
 - Sources: [design](../../design.md), [desktop mockup](../ui%20mockups/mockup_desktop.png), [mobile mockup](../ui%20mockups/mockup_mobile.png)
 - Implementation: basic composer in 02, full workspace in 03, organization/recovery in 04, capability audit in 05
 

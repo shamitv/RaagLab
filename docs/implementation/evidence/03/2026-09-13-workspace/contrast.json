@@ -1,0 +1,44 @@
+[
+  {
+    "element": "body",
+    "foreground": "#142b57",
+    "background": "#ffffff",
+    "ratio": 13.88,
+    "minimum": 4.5
+  },
+  {
+    "element": "supporting",
+    "foreground": "#4e6488",
+    "background": "#ffffff",
+    "ratio": 6.0,
+    "minimum": 4.5
+  },
+  {
+    "element": "primary white label",
+    "foreground": "#ffffff",
+    "background": "#175bd8",
+    "ratio": 5.96,
+    "minimum": 4.5
+  },
+  {
+    "element": "input boundary",
+    "foreground": "#7184a3",
+    "background": "#ffffff",
+    "ratio": 3.8,
+    "minimum": 3
+  },
+  {
+    "element": "focus ring",
+    "foreground": "#175bd8",
+    "background": "#f7faff",
+    "ratio": 5.7,
+    "minimum": 3
+  },
+  {
+    "element": "error",
+    "foreground": "#a11c24",
+    "background": "#f7faff",
+    "ratio": 7.42,
+    "minimum": 4.5
+  }
+]

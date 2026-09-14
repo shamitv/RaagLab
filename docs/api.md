@@ -17,3 +17,15 @@ Identical key and validated intent returns the same job even after completion; a
 Errors contain a safe code/message, retryability, correlation ID, and optional validation field locations. Database failures return 503. An offline worker does not prevent acceptance into a configured queue. No storage key, secret, database URL, or broker address is returned.
 
 Project editing, user retry, iterations, archive/duplicate, settings, and library operations are reserved for later phases.
+
+## Phase 03 workspace endpoints
+
+`PATCH /api/v1/projects/{id}` accepts any nonempty subset of `title`, `draft` (the validated Generation contract), and `active_version_id` (a version in the same project, or null). Supply `If-Match: "<revision>"`. Each successful patch returns the next revision and ETag; manual selection also increments the selection epoch, including reselecting the same version. Omitted revision headers return 428 and stale revisions return 412. Generated content is never rewritten by these patches.
+
+`PATCH /api/v1/versions/{id}` accepts `label` and/or boolean `favorite`, with the same revision-header requirements. Favorites live in the workspace/version relation. Both version detail and version listing expose the favorite state. Version detail includes its ETag.
+
+`POST /api/v1/versions/{id}/iterations` accepts `{ "operation": "refine|variation|regenerate|lyrics_edit", "inputs": <Generation> }` and requires `Idempotency-Key`. It returns the ordinary 202 Accepted job identity and Location. The source determines project and parentage. Refine requires a nonblank `inputs.iteration_instruction`; lyrics_edit requires user lyrics. Reusing an operation/source/key with changed intent returns 409. Each operation uses the transactional outbox, separate worker, leases, cancellation and terminal commit pipeline.
+
+For lyrics_edit, musical inputs are preserved from the immutable source; only submitted user lyrics and the instruction change. The worker links the original audio artifact and emits `audio_recomposed: false`. Other operations publish new audio artifacts. Variation from the UI requests a new seed; regeneration retains the source seed. The mock provider records musical intent without promising semantic audio edits or sung lyrics. Structure remains null because this provider supplies no timed sections.
+
+Migration `0002_version_favorites` adds the favorite relation without modifying the frozen foundation migration. Existing projects and version content remain intact.

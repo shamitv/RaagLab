@@ -1,0 +1,14 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: /app
+configfile: pyproject.toml
+plugins: anyio-4.15.1
+collected 29 items
+
+tests/integration/test_generation_pipeline.py ................           [ 55%]
+tests/integration/test_migrations.py .....                               [ 72%]
+tests/integration/test_packaging.py ..                                   [ 79%]
+tests/integration/test_static_hosting.py .                               [ 82%]
+tests/integration/test_version_lineage.py .....                          [100%]
+
+======================== 29 passed in 299.78s (0:04:59) ========================
