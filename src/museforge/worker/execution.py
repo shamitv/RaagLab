@@ -12,9 +12,9 @@ import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import insert
 from museforge.db import schema as db
 from museforge.db.connection import engine_for
-from museforge.domain import ProviderError, capabilities
+from museforge.domain import ProviderError, provider_capabilities
 from museforge.jobs import lock_job, now, owned, finish_error
-from museforge.providers import DemoLyrics, MockMusic
+from museforge.providers import DemoLyrics, MockMusic, YuE2Music
 from museforge.storage import publish
 
 log = logging.getLogger('museforge')
@@ -38,7 +38,20 @@ def execute(settings, envelope):
             message = c.execute(sa.select(db.outbox).where(db.outbox.c.id == envelope.message_id,
                 db.outbox.c.job_id == job['id'], db.outbox.c.dispatch_sequence == envelope.dispatch_sequence)).mappings().first()
             if not message: raise ProviderError('incompatible_envelope')
-            if job['snapshot_schema_version'] != 1 or job['execution_snapshot'].get('providers', {}).get('music') != 'mock':
+            provider_snapshot = job['execution_snapshot'].get('providers', {})
+            snapshot_revision = provider_snapshot.get('provider_revision', provider_snapshot.get('revision'))
+            snapshot_route = provider_snapshot.get('route', settings.mock_queue if settings.provider_id == 'mock' else None)
+            if (job['snapshot_schema_version'] != 1 or
+                    provider_snapshot.get('music') != settings.provider_id or
+                    snapshot_revision != settings.provider_revision or
+                    snapshot_route != settings.provider_route or
+                    provider_snapshot.get('model_id') != settings.model_id or
+                    provider_snapshot.get('model_revision') != settings.model_revision or
+                    provider_snapshot.get('decoder_revision') != settings.decoder_revision or
+                    envelope.provider_route != settings.provider_route):
+                finish_error(c, job, settings, 'unsupported_capability')
+                return
+            if settings.music_provider == 'yue2' and job['execution_snapshot'].get('operation') != 'generate':
                 finish_error(c, job, settings, 'unsupported_capability')
                 return
             timestamp = now(c)
@@ -53,10 +66,16 @@ def execute(settings, envelope):
             worker_id = uuid4()
             name = f'{socket.gethostname()}:{os.getpid()}'
             statement = insert(db.registrations).values(id=worker_id, workspace_id=settings.workspace_id, worker_name=name,
-                provider_id='mock', provider_revision='1', provider_route=settings.mock_queue, capability_revision='1',
+                provider_id=settings.provider_id, provider_revision=settings.provider_revision,
+                model_id=settings.model_id, model_revision=settings.model_revision,
+                provider_route=settings.provider_route, capability_revision=settings.provider_revision,
                 readiness='busy', last_heartbeat=timestamp, expires_at=timestamp + timedelta(seconds=limits['lease_seconds']))
             worker_id = c.scalar(statement.on_conflict_do_update(index_elements=['worker_name'], set_={
-                'readiness': 'busy', 'last_heartbeat': timestamp, 'expires_at': statement.excluded.expires_at}).returning(db.registrations.c.id))
+                'readiness': 'busy', 'last_heartbeat': timestamp, 'expires_at': statement.excluded.expires_at,
+                'provider_id': statement.excluded.provider_id, 'provider_revision': statement.excluded.provider_revision,
+                'model_id': statement.excluded.model_id, 'model_revision': statement.excluded.model_revision,
+                'provider_route': statement.excluded.provider_route,
+                'capability_revision': statement.excluded.capability_revision}).returning(db.registrations.c.id))
             fence = job['fence_token'] + 1
             c.execute(db.jobs.update().where(db.jobs.c.id == job['id']).values(state='running', stage='writing_lyrics',
                 attempt_count=job['attempt_count'] + 1, fence_token=fence, error_code=None,
@@ -100,6 +119,7 @@ def execute(settings, envelope):
 
         request = job['execution_snapshot']
         checkpoint = job['lyrics_checkpoint'] or DemoLyrics().generate(request, update, check)
+        provider_request = dict(request, lyrics=dict(request['lyrics'], text=checkpoint['text']))
         update('composing_music', checkpoint)
         if settings.mock_test_enabled:
             scenario = request.get('_test', {})
@@ -117,9 +137,15 @@ def execute(settings, envelope):
             fd, name = tempfile.mkstemp(prefix=f'.{job["id"]}-{fence}-', suffix='.tmp', dir=settings.artifact_root)
             os.close(fd)
             temporary = Path(name)
-            MockMusic(temporary).generate(request, update, check)
+            provider = MockMusic(temporary) if settings.music_provider == 'mock' else YuE2Music(settings, temporary)
+            provider.generate(provider_request, update, check)
             update('validating_audio')
-            artifact = publish(settings.artifact_root, temporary, job['id'], fence, request['duration_seconds'])
+            artifact = publish(settings.artifact_root, temporary, job['id'], fence,
+                               request['duration_seconds'] if settings.music_provider == 'mock' else None,
+                               expected_sample_rate=44100 if settings.music_provider == 'mock' else 48000)
+            provider_metadata = getattr(provider, 'metadata', {})
+        else:
+            provider_metadata = {}
         update('saving_result')
         with engine.begin() as c:
             project, current = lock_job(c, job['id'], settings)
@@ -132,7 +158,9 @@ def execute(settings, envelope):
                     **artifact, published_at=timestamp, available_at=timestamp))
             c.execute(db.versions.insert().values(id=version_id, workspace_id=settings.workspace_id, project_id=project['id'],
                 generation_job_id=job['id'], number=project['next_version_number'], label=f"Version {project['next_version_number']}",
-                parent_version_id=request['source_version_id'], inputs=request, lyrics=checkpoint['text'], provenance=dict(capabilities(), lyrics=checkpoint), audio_recomposed=not reuse_audio))
+                parent_version_id=request['source_version_id'], inputs=request, lyrics=checkpoint['text'],
+                provenance=dict(provider_capabilities(settings), lyrics=checkpoint, runtime=provider_metadata),
+                audio_recomposed=not reuse_audio))
             c.execute(db.links.insert().values(workspace_id=settings.workspace_id, version_id=version_id, artifact_id=artifact_id, role='audio'))
             values = {'next_version_number': project['next_version_number'] + 1}
             if project['selection_epoch'] == current['selection_epoch'] and project['latest_submission_seq'] == current['submission_seq']:
