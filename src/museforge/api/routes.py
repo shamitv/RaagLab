@@ -13,7 +13,7 @@ from museforge.db import schema as db
 from museforge.domain import Accepted, Generation, ProjectCreate, ProjectPatch, VersionPatch, Iteration, ProviderError, capabilities
 from museforge.domain import ErrorResponse, CapabilitiesResponse, ProjectView, ProjectDetail, ProjectPage, JobView, VersionPage, VersionDetail
 from museforge.domain import LibraryPage, SettingsPatch, SettingsView, TemplatePage, TemplateView
-from museforge.jobs import accepted, cancel, row, scoped, submit
+from museforge.jobs import accepted, cancel, retry as retry_job, row, scoped, submit
 from museforge.projects import duplicate, set_archived
 from museforge.workspace import DEFAULT_GENERATION_DEFAULTS, TEMPLATES, ensure_settings, settings_view, updated_at
 from museforge.storage import open_artifact, range_bounds
@@ -123,7 +123,7 @@ def library_page(c, settings, limit, cursor, q, favorite_only, genre, language, 
 
 def job_detail(c, settings, identifier):
     job = row(c, db.jobs, identifier, settings)
-    result = {k: job[k] for k in ('id', 'project_id', 'state', 'stage', 'progress', 'attempt_count', 'cancellation_requested_at',
+    result = {k: job[k] for k in ('id', 'project_id', 'operation', 'retry_of_job_id', 'state', 'stage', 'progress', 'attempt_count', 'cancellation_requested_at',
         'result_version_id', 'created_at', 'completed_at', 'correlation_id', 'dispatch_sequence')}
     result['error'] = {'code': job['error_code'], 'message': job['error_code'].replace('_', ' '), 'retryable': job['state'] == 'retrying'} if job['error_code'] else None
     result['version_url'] = f"/api/v1/versions/{job['result_version_id']}" if job['result_version_id'] else None
@@ -276,6 +276,15 @@ def cancel_job(identifier: UUID, request: Request, response: Response):
     with engine.connect() as c: return job_detail(c, settings, identifier)
 
 
+@router.post('/jobs/{identifier}/retry', status_code=202, response_model=Accepted)
+def retry_generation(identifier: UUID, request: Request, response: Response,
+                     idempotency_key: str = Header(min_length=16, max_length=128)):
+    engine, settings = context(request)
+    result = retry_job(engine, settings, identifier, idempotency_key)
+    response.headers['Location'] = result['status_url']
+    return result
+
+
 @router.get('/projects/{identifier}/versions', response_model=VersionPage)
 def versions(identifier: UUID, request: Request, limit: int = Query(20, ge=1, le=100), cursor: str | None = None):
     engine, settings = context(request)
@@ -307,11 +316,30 @@ def version(identifier: UUID, request: Request, response: Response):
 def artifact(identifier: UUID, request: Request):
     engine, settings = context(request)
     with engine.connect() as c: result = row(c, db.artifacts, identifier, settings)
-    file = open_artifact(settings.artifact_root, result['storage_key'])
+    try:
+        file = open_artifact(settings.artifact_root, result['storage_key'])
+    except ProviderError:
+        with engine.begin() as c:
+            c.execute(db.artifacts.update().where(
+                db.artifacts.c.id == identifier,
+                db.artifacts.c.workspace_id == settings.workspace_id,
+            ).values(available_at=None))
+        raise
     size = os.fstat(file.fileno()).st_size
     if size != result['byte_size']:
         file.close()
+        with engine.begin() as c:
+            c.execute(db.artifacts.update().where(
+                db.artifacts.c.id == identifier,
+                db.artifacts.c.workspace_id == settings.workspace_id,
+            ).values(available_at=None))
         raise ProviderError('artifact_unavailable')
+    if result['available_at'] is None:
+        with engine.begin() as c:
+            c.execute(db.artifacts.update().where(
+                db.artifacts.c.id == identifier,
+                db.artifacts.c.workspace_id == settings.workspace_id,
+            ).values(available_at=sa.func.now()))
     etag = f'"{result["sha256"]}"'
     headers = {'ETag': etag, 'Accept-Ranges': 'bytes', 'Content-Length': str(size),
                'Content-Disposition': f'inline; filename="museforge-{identifier}.wav"'}

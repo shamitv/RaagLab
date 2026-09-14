@@ -115,6 +115,8 @@ class AttemptView(StrictModel):
 class JobView(StrictModel):
     id: UUID
     project_id: UUID
+    operation: str
+    retry_of_job_id: UUID | None
     state: str
     stage: str
     progress: float | None
