@@ -8,11 +8,11 @@
 
 ## Scope and current outcome
 
-This record covers the concrete Part 2 model and image work that followed the
-portable mock application. The standalone real-model checkpoint is complete for
-the selected test cases. The application remains in mock mode: YuE2 has not yet
-been adapted to the MuseForge provider contract or routed through PostgreSQL,
-RabbitMQ, the dispatcher, and the application worker.
+This record covers the Part 2 model/image work and the integrated D03 YuE2 route.
+The standalone checkpoint and narrow application gate are complete: one durable
+YuE2 job passed through PostgreSQL, RabbitMQ, the dispatcher, and the real worker,
+and its 48 kHz stereo result was retrieved and played through the API. The portable
+application still defaults to mock mode; the real profile is explicit.
 
 The eventual production path remains:
 
@@ -21,9 +21,10 @@ Browser -> API -> PostgreSQL/outbox -> RabbitMQ -> real worker
         -> persisted model audio -> API playback/download -> browser
 ```
 
-The standalone checkpoint deliberately exercises only the worker-side model
-image, persistent model acquisition, GPU access, process bounds, audio validation,
-and restart behavior. It does not satisfy the D03 application-queue exit gate.
+The standalone checkpoint exercises image/model setup, GPU access, process bounds,
+audio validation, and repeatability. The separate integrated D03 evidence closes
+the narrow application-queue gate; broader capability and system recovery checks
+remain in Phase 05 and D04.
 
 ## Selected model and image
 
@@ -71,6 +72,8 @@ must initialize in the worker process, use one active request per GPU, maintain
 bounded shutdown/cancellation behavior, validate audio before publication, and
 persist model provenance with the result.
 
-The standalone evidence is [here](evidence/2026-09-14-yue2/README.md). The next
-implementation step is to add the YuE2 provider adapter and a dedicated real queue
-while retaining the working mock profile for diagnostics.
+The standalone evidence is [here](evidence/2026-09-14-yue2/README.md), and the
+integrated application evidence is [here](evidence/2026-09-14-d03-review-corrections/README.md).
+The next deployment step is D02 on Ubuntu1, followed by D04 real workflow,
+recovery, and resource validation. D05 will complete operations, backup/restore,
+update/rollback, and portability handoff.

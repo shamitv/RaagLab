@@ -17,7 +17,7 @@ The repository is a product specification and two UI references. The core workfl
 4. Use RabbitMQ and Celery in a separate worker container. Persist job plus dispatch intent transactionally. The dispatcher publishes JSON-only messages with confirms and reconciles stale dispatch/leases. Application-owned retries use durable scheduled outbox records; no second result store, Celery Beat, Redis, or inference in API background tasks is introduced.
 5. Use durable classic queues, persistent messages and one RabbitMQ instance for local development. This provides restart durability, not high availability or protection against loss of the host disk. Provider-specific queues prevent incompatible consumers. A quarantine queue on the same broker isolates malformed/unsupported messages; it is not an additional broker.
 6. A filesystem storage adapter publishes audio under immutable attempt-specific keys on a named volume. API reads; worker writes. Referenced files survive stop/restart and version branching. Cross-host workers require shared/object storage behind the interface; a host-local Docker volume is insufficient.
-7. Lyrics and music providers are independently configured. Implement user/static/mock lyrics and deterministic audible mock music. Keep capabilities for lyrics text, instrumental output, vocals, exact lyric-conditioned vocals, and audio editing separate. No model is selected and no fake real adapter is delivered. Part 2 D03 owns the concrete adapter and model-specific image/runtime pins.
+7. Lyrics and music providers are independently configured. Implement user/static/mock lyrics and deterministic audible mock music. Keep capabilities for lyrics text, instrumental output, vocals, exact lyric-conditioned vocals, and audio editing separate. At this decision's initial date no model was selected; the later D03 implementation update below records the selected YuE2 adapter and its limits.
 8. API liveness is separate from dependency and worker readiness. Existing projects remain readable while a model warms or a worker is offline. Durable capabilities/readiness advertise availability; accepted jobs receive visible bounded recovery outcomes.
 9. Initial security scope is a trusted single-user local workspace, loopback host binding, internal DB/broker, safe development placeholders, ignored secret files, bounded inputs, and artifact traversal protection. Authentication and internet exposure require later scope. Carry `workspace_id` in data and repository methods to preserve an ownership-check boundary without claiming multi-user security.
 
@@ -27,7 +27,16 @@ The database owns idempotency, immutable request snapshots, attempt claims, leas
 
 Celery uses JSON, late acknowledgment, prefetch one, no eager execution, and no result backend. Configure `task_reject_on_worker_lost=false` deliberately: DB lease recovery re-dispatches lost work under an attempt limit instead of relying on unbounded broker redelivery. Celery documents that child termination can still acknowledge late-acknowledged tasks. The [task documentation](https://docs.celeryq.dev/en/v5.6.3/userguide/tasks.html) therefore informs, but does not replace, the application recovery design. Version-specific runtime fault tests are required.
 
-The CPU mock worker begins with prefork concurrency one and initializes provider state in the execution child. A heartbeat loop inside that execution process must continue during work. A future GPU adapter must choose and test a compatible process model, load weights in the inference process, retain them when supported, and prove heartbeats/cancellation under busy inference. No GPU state may be initialized before an arbitrary fork.
+The CPU mock worker begins with prefork concurrency one and initializes provider state in the execution child. A heartbeat loop inside that execution process must continue during work. The D03 YuE2 worker uses a supervised inference child, one active request per GPU, readiness preflight, and bounded cancellation/reaping; D04 continues broader workflow and resource verification. No GPU state may be initialized before an arbitrary fork.
+
+## Implementation update — 2026-09-14
+
+The narrow D03 YuE2 application route is implemented using pinned YuE2-3B and
+Vae revisions in a separate worker image and durable queue. One real job persisted
+and played through the API. This does not verify exact lyrics, vocal behavior,
+instrumental-only output, audio language, musical-control fidelity, or requested
+duration; Phase 05 records those independently as supported, unsupported, or
+unknown. See the [D03 integration evidence](../../deployment/evidence/2026-09-14-d03-review-corrections/README.md).
 
 ## Alternatives considered
 

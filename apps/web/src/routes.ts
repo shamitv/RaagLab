@@ -1,5 +1,5 @@
 export const destinations = [
-  { path: '/create', title: 'Create', description: 'Your next idea starts here.', detail: 'Compose an original instrumental demo and preserve your lyrics.' },
+  { path: '/create', title: 'Create', description: 'Your next idea starts here.', detail: 'Compose audio with the configured provider and preserve your lyrics.' },
   { path: '/library', title: 'Library', description: 'A home for your finished music.', detail: 'Search and filter completed versions across your projects.' },
   { path: '/projects', title: 'Projects', description: 'Keep your ideas together.', detail: 'Search, reopen, duplicate, and archive your projects.' },
   { path: '/settings', title: 'Settings', description: 'Make the workspace yours.', detail: 'Choose generation, playback, and export defaults.' },

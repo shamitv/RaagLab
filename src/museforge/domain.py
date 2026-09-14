@@ -86,12 +86,125 @@ class ProviderError(Exception):
         super().__init__(code)
 
 
+class CapabilityAssessment(StrictModel):
+    """Evidence-backed product capability for one provider revision."""
+
+    state: Literal['supported', 'unsupported', 'unknown']
+    evidence: str
+    limits: list[str] = Field(default_factory=list)
+
+
+def capability_matrix(provider='mock'):
+    """Keep request acceptance separate from verified model behavior."""
+    common = {
+        'lyrics_text_input': CapabilityAssessment(
+            state='supported',
+            evidence='The API accepts and preserves non-empty user-supplied lyrics.',
+        ),
+        'technical_audio_output': CapabilityAssessment(
+            state='supported',
+            evidence='Generated files are decoded, checked, and validated before atomic publication.',
+            limits=['Valid audio metadata does not establish musical quality or semantic control fidelity.'],
+        ),
+        'audio_conditioning': CapabilityAssessment(
+            state='unsupported', evidence='No provider route accepts a reference-audio input.'
+        ),
+        'audio_editing': CapabilityAssessment(
+            state='unsupported', evidence='No provider route edits an existing audio artifact.'
+        ),
+        'continuation': CapabilityAssessment(
+            state='unsupported', evidence='No provider route continues from an existing audio artifact.'
+        ),
+    }
+    if provider == 'yue2':
+        return common | {
+            'lyrics_text_generation': CapabilityAssessment(
+                state='unsupported', evidence='YuE2 consumes supplied lyrics; it does not generate a separate lyrics result.'
+            ),
+            'instrumental_music_generation': CapabilityAssessment(
+                state='unknown',
+                evidence='The application accepts an Instrumental request, but the generated result has not been audited for instrumental-only output.',
+                limits=['The model may include vocals.'],
+            ),
+            'vocal_generation': CapabilityAssessment(
+                state='unknown',
+                evidence='The model may include vocals; vocal presence and behavior have not been audited.',
+            ),
+            'exact_lyrics_singing': CapabilityAssessment(
+                state='unknown',
+                evidence='User lyrics are passed to the model, but lyric adherence has not been measured.',
+            ),
+            'language_fidelity': CapabilityAssessment(
+                state='unknown',
+                evidence='Only English user lyrics have been exercised through the application route; audio language fidelity is unverified.',
+            ),
+            'instrument_control': CapabilityAssessment(
+                state='unknown', evidence='Instrument selections are included in the style prompt; output fidelity has not been measured.'
+            ),
+            'mood_control': CapabilityAssessment(
+                state='unknown', evidence='Mood selection is included in the style prompt; output fidelity has not been measured.'
+            ),
+            'genre_control': CapabilityAssessment(
+                state='unknown', evidence='Genre selection is included in the style prompt; output fidelity has not been measured.'
+            ),
+            'tempo_control': CapabilityAssessment(
+                state='unknown', evidence='Tempo selection is included in the style prompt; output fidelity has not been measured.'
+            ),
+            'duration_control': CapabilityAssessment(
+                state='unsupported',
+                evidence='The request duration is retained as intent but does not constrain YuE2 output duration.',
+                limits=['Actual output duration is model-determined and may exceed the requested value.'],
+            ),
+            'seed_reproducibility': CapabilityAssessment(
+                state='unknown', evidence='The seed is passed to YuE2; cross-runtime reproducibility is unverified.'
+            ),
+        }
+    return common | {
+        'lyrics_text_generation': CapabilityAssessment(
+            state='supported',
+            evidence='The mock lyrics provider returns deterministic demo text, an original static fixture, or supplied user text.',
+            limits=['Generated text is scripted demo content, not model-written lyrics.'],
+        ),
+        'instrumental_music_generation': CapabilityAssessment(
+            state='unsupported',
+            evidence='The mock provider creates labelled demo tones, not semantically conditioned instrumental music.',
+        ),
+        'vocal_generation': CapabilityAssessment(
+            state='unsupported', evidence='The mock provider creates no sung vocals.'
+        ),
+        'exact_lyrics_singing': CapabilityAssessment(
+            state='unsupported', evidence='The mock provider does not sing supplied lyrics.'
+        ),
+        'language_fidelity': CapabilityAssessment(
+            state='unsupported', evidence='The mock audio contains no linguistic content.'
+        ),
+        'instrument_control': CapabilityAssessment(
+            state='unsupported', evidence='Instrument selections do not alter mock audio.'
+        ),
+        'mood_control': CapabilityAssessment(
+            state='unsupported', evidence='Mood selection does not alter mock audio.'
+        ),
+        'genre_control': CapabilityAssessment(
+            state='unsupported', evidence='Genre selection does not alter mock audio.'
+        ),
+        'tempo_control': CapabilityAssessment(
+            state='unsupported', evidence='Tempo selection does not alter mock audio.'
+        ),
+        'duration_control': CapabilityAssessment(
+            state='supported', evidence='Mock audio is generated at the requested duration.'
+        ),
+        'seed_reproducibility': CapabilityAssessment(
+            state='supported', evidence='The same generation snapshot and seed produce identical mock PCM.'
+        ),
+    }
+
+
 def capabilities(provider='mock', *, model_id=None, model_revision=None, decoder_revision=None):
     if provider == 'yue2':
         return dict(provider_id='yue2', provider_revision='yue2-infer-0.1.6', model_id=model_id,
                     model_revision=model_revision, decoder_revision=decoder_revision, is_demo=False,
-                    lyrics_modes=['user'], lyrics_text=True, text_to_instrumental=False,
-                    vocals=False, exact_lyrics_vocals=False, instruments=INSTRUMENTS,
+                    capability_matrix=capability_matrix('yue2'), lyrics_modes=['user'], lyrics_text=True,
+                    text_to_instrumental=None, vocals=None, exact_lyrics_vocals=None, instruments=INSTRUMENTS,
                     moods=MOODS, languages=['English'], genres=GENRES, vocal_types=['Instrumental'],
                     operations=['generate'], duration={'min': 5, 'max': 30, 'default': 8},
                     sample_rates=[48000], channels=[2],
@@ -101,7 +214,8 @@ def capabilities(provider='mock', *, model_id=None, model_revision=None, decoder
                     'Only English user lyrics have been exercised through the application route.',
                     'Refinement, variation, regeneration, audio editing, and continuation are unsupported.'])
     return dict(provider_id='mock', provider_revision='1', model_id=None, model_revision=None,
-                decoder_revision=None, is_demo=True, lyrics_modes=['user', 'static', 'mock'], lyrics_text=True,
+                decoder_revision=None, is_demo=True, capability_matrix=capability_matrix('mock'),
+                lyrics_modes=['user', 'static', 'mock'], lyrics_text=True,
                 text_to_instrumental=False, vocals=False, exact_lyrics_vocals=False,
                 instruments=INSTRUMENTS, moods=MOODS, languages=LANGUAGES, genres=GENRES,
                 vocal_types=['Instrumental'], operations=['generate', 'refine', 'variation', 'regenerate', 'lyrics_edit'], duration={'min': 5, 'max': 30, 'default': 8},
@@ -259,11 +373,12 @@ class CapabilitiesView(StrictModel):
     model_revision: str | None
     decoder_revision: str | None = None
     is_demo: bool
+    capability_matrix: dict[str, CapabilityAssessment]
     lyrics_modes: list[str]
     lyrics_text: bool
-    text_to_instrumental: bool
-    vocals: bool
-    exact_lyrics_vocals: bool
+    text_to_instrumental: bool | None
+    vocals: bool | None
+    exact_lyrics_vocals: bool | None
     instruments: list[str]
     moods: list[str]
     languages: list[str]
@@ -283,6 +398,8 @@ class CapabilitiesResponse(CapabilitiesView):
     readiness: ReadinessInfo
 
 class Provenance(CapabilitiesView):
+    # Existing immutable versions predate the evidence matrix.
+    capability_matrix: dict[str, CapabilityAssessment] = Field(default_factory=dict)
     lyrics: LyricsCheckpoint
     runtime: dict[str, Any] = Field(default_factory=dict)
 

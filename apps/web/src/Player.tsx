@@ -94,7 +94,8 @@ export function Player({
       <h3>{version.label}</h3>
       <p className="muted">
         {String(version.inputs.genre)} · {String(version.inputs.language)} ·
-        Original demo
+        {version.provenance.provider_id}
+        {version.provenance.is_demo ? " demo" : " real output"}
       </p>
       <audio
         ref={audio}

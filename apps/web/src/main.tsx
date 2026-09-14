@@ -114,7 +114,7 @@ function App() {
       <div className="workspace">
         <header>
           <span>Music workspace</span>
-          <span className="badge">Playable demo</span>
+          <span className="badge">Playable audio</span>
         </header>
         <main id="main" tabIndex={-1}>
           <p className="eyebrow">MUSEFORGE AI</p>

@@ -54,7 +54,14 @@ Every heartbeat/progress/checkpoint/finalization write compares job ID, attempt 
 
 The mock CPU worker starts with prefork concurrency 1 and prefetch 1. Initialize providers and heartbeat facilities in the execution child. A separate heartbeat loop in that process renews the DB lease and checks cancellation while provider work proceeds. Use short DB transactions/timeouts and a thread-safe cancellation token. If work blocks heartbeat or ignores cancellation, deadlines and fencing still prevent late publication; a watchdog terminates/restarts a stuck execution child within its hard deadline.
 
-Future GPU workers start with one active inference per GPU. Select a process model after model/runtime verification; never initialize GPU weights in a parent and then fork arbitrarily. Load/warm in the inference process, retain weights between requests when supported, and prove heartbeat/cancellation responsiveness under busy inference. This is a Part 2 adapter gate, not a claim that Python threads make every ML runtime safe.
+The integrated YuE2 worker runs one active inference on its configured GPU and
+uses a supervised child for model inference. It performs CUDA/BF16/weight/model
+preflight before readiness, keeps lease heartbeat and cancellation checks active,
+and reaps the inference process on cancellation, deadline, or owner loss. Its
+measured runtime and resource limits are recorded in the [D03 evidence](../deployment/evidence/2026-09-14-d03-review-corrections/README.md).
+Additional GPU providers must verify their own process model; never initialize
+GPU weights in a parent and then fork arbitrarily, and prove heartbeat/cancellation
+responsiveness under busy inference.
 
 ## Retry and acknowledgment policy
 

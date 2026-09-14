@@ -40,3 +40,40 @@ def test_yue2_requires_explicit_user_lyrics_mode():
     with pytest.raises(ValidationError):
         Settings(_env_file=None, music_provider='yue2', device='cuda', precision='bfloat16',
                  model_id='m-a-p/YuE2-3B', model_revision='model', decoder_revision='vae')
+
+
+@pytest.mark.parametrize('lyrics_provider', ['user', 'static', 'mock'])
+def test_lyrics_source_configuration_is_independent_for_mock_music(lyrics_provider):
+    settings = Settings(_env_file=None, music_provider='mock', lyrics_provider=lyrics_provider)
+    assert settings.music_provider == 'mock'
+    assert settings.lyrics_provider == lyrics_provider
+    assert settings.provider_route == 'museforge.mock.v1'
+
+
+@pytest.mark.parametrize('values', [
+    {'music_provider': 'unknown'},
+    {'lyrics_provider': 'unknown'},
+    {'music_provider': 'yue2', 'lyrics_provider': 'mock'},
+    {'music_provider': 'yue2', 'lyrics_provider': 'static'},
+    {'music_provider': 'yue2', 'device': 'cpu'},
+    {'music_provider': 'yue2', 'precision': 'float32'},
+    {'music_provider': 'yue2', 'model_revision': None},
+])
+def test_provider_configuration_rejects_missing_or_incompatible_adapter(values):
+    base = dict(
+        _env_file=None,
+        music_provider='yue2',
+        lyrics_provider='user',
+        device='cuda',
+        precision='bfloat16',
+        model_id='m-a-p/YuE2-3B',
+        model_revision='model',
+        decoder_revision='vae',
+    )
+    if values.get('music_provider') == 'unknown':
+        base.update(music_provider='unknown')
+    if values.get('lyrics_provider') == 'unknown':
+        base.update(lyrics_provider='unknown')
+    base.update(values)
+    with pytest.raises(ValidationError):
+        Settings(**base)

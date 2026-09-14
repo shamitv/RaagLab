@@ -1,8 +1,8 @@
 # Application contracts and data decisions
 
-- Contract baseline: 1
+- Contract baseline: 2
 - Decision date: 2026-09-13
-- State: Phase 01 foundations and Phase 02 generation/provider/artifact interfaces are implemented; later-phase endpoints remain planned. See [Phase 02 report](phases/02-mock-end-to-end/implementation-status.md).
+- State: Phase 01–05 API and provider contracts are implemented; Phase 05 runtime regression evidence is in progress. The capability matrix is additive, and earlier version provenance without it remains readable as an empty matrix. See [Phase 05 status](phases/05-provider-readiness/status.md) and [current verification evidence](evidence/05/2026-09-14-provider-readiness/README.md).
 - Related: [ADR 0001](decisions/0001-application-architecture.md), [job reliability](job-reliability.md), [UI behavior](ui-behavior.md)
 
 ## Common conventions and validation
@@ -110,7 +110,8 @@ Define typed `LyricsProvider` and `MusicProvider` interfaces with `capabilities`
 | Capability/result field | Meaning |
 | --- | --- |
 | `provider_id`, `provider_revision`, `model_id`, `model_revision`, `is_demo` | Exact provenance; null model fields for mock, never a fabricated real identity |
-| `lyrics_text`, `text_to_instrumental`, `vocals`, `exact_lyrics_vocals` | Separate booleans; mock lyrics supports text, demo music does not claim semantic text-to-music/vocals |
+| `capability_matrix` | Per-capability `supported`, `unsupported`, or `unknown` state, evidence, and limits; distinguish accepted request fields from verified output behavior |
+| `lyrics_text`, `text_to_instrumental`, `vocals`, `exact_lyrics_vocals` | Compatibility fields; `null` means unknown. Use the evidence matrix for capability decisions. |
 | `languages` | Distinguish lyrics text acceptance from verified audio/vocal language conditioning |
 | `operations` | Separate full generation, lyrics edit, variation/regeneration, audio edit, continuation and audio conditioning |
 | `duration`, `sample_rates`, `channels`, `seed_behavior` | Supported bounds/formats and reproducibility qualifications |
@@ -120,7 +121,7 @@ Define typed `LyricsProvider` and `MusicProvider` interfaces with `capabilities`
 
 Typed errors: invalid request, unsupported capability, transient infrastructure/provider failure, initialization failure, resource exhaustion, deadline exceeded, and cancellation. Mock/static lyrics and original fixture provenance are distinct from user lyrics. Free-text mock refinement retains the instruction and generates another labelled demo; it does not claim precise semantic editing. Lyrics-only refinement creates a new version while reusing the source audio with `audio_recomposed=false`.
 
-Configuration independently chooses `LYRICS_PROVIDER=user|static|mock` as the default and allows the configured supported lyrics modes in the editor; `MUSIC_PROVIDER=mock|<selected-adapter>`. Unsupported explicit choices fail validation. Model ID/revision, weights/cache directories, device/precision, duration/resource limits, timeout, concurrency, and queues are configuration. There is no real adapter until Part 2 selects one. Real mode with missing adapter/weights/device must fail clearly and may never fall back to mock.
+Configuration independently chooses the default lyrics source with `LYRICS_PROVIDER=user|static|mock` and selects music with `MUSIC_PROVIDER=mock|yue2`. The YuE2 adapter is isolated in a real-worker image and dedicated queue; it requires user lyrics, pinned model/decoder identity, weights, CUDA, and BF16. The API and CPU mock images remain free of inference dependencies. Unsupported explicit choices fail validation. Missing real-worker requirements fail readiness/startup and may never fall back to mock.
 
 ## Static hosting and artifact protocol
 

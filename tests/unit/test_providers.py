@@ -4,7 +4,10 @@ import types
 import wave
 import pytest
 from pydantic import ValidationError
-from museforge.domain import Generation, ProviderError, Lyrics, provider_capabilities
+from museforge.domain import (
+    CapabilitiesResponse, Generation, ProviderError, Lyrics,
+    capability_matrix, provider_capabilities,
+)
 from museforge.providers import DemoLyrics, MockMusic, YuE2Music, STATIC
 from museforge.config import Settings
 from museforge.storage import inspect, publish, resolve
@@ -15,8 +18,10 @@ TEXT = '  [अंतरा]\r\nहवा 🎵\n\n[பல்லவி]\nவான
 def test_lyrics_source_and_exact_preservation(mode):
     request = {'lyrics': {'mode': mode, 'text': TEXT}, 'seed': 12}
     provider = DemoLyrics()
-    first = provider.generate(request, lambda *_: None, lambda: None)
+    progress = []
+    first = provider.generate(request, progress.append, lambda: None)
     assert first == provider.generate(request, lambda *_: None, lambda: None)
+    assert progress == ['writing_lyrics']
     assert first['source'] == mode
     assert first['text'] == (TEXT if mode == 'user' else STATIC if mode == 'static' else first['text'])
     assert first['text']
@@ -25,8 +30,18 @@ def test_lyrics_source_and_exact_preservation(mode):
 def test_audio_decodes_deterministically_and_publishes(tmp_path, duration):
     request = {'duration_seconds': duration, 'seed': 123}
     paths = [tmp_path / f'{i}.tmp' for i in range(2)]
-    for path in paths: MockMusic(path).generate(request, lambda *_: None, lambda: None)
+    progress = []
+    providers = [MockMusic(path) for path in paths]
+    for provider in providers:
+        provider.generate(request, progress.append, lambda: None)
     assert paths[0].read_bytes() == paths[1].read_bytes()
+    assert progress == ['composing_music', 'composing_music']
+    assert providers[0].readiness() == 'ready'
+    assert providers[0].metadata == {
+        'actual_duration_seconds': duration, 'sample_rate': 44100, 'channels': 2,
+        'seed': 123, 'provider_output_format': 'WAV/PCM_16',
+        'effective_settings': {'duration_seconds': duration, 'seed': 123},
+    }
     info = inspect(paths[0])
     assert info['duration_seconds'] == duration
     assert info['sample_rate'] == 44100 and info['channels'] == 2
@@ -63,8 +78,22 @@ def test_unicode_limits():
 
 def test_cooperative_cancellation(tmp_path):
     def cancel(): raise ProviderError('cancelled')
+    progress = []
     with pytest.raises(ProviderError, match='cancelled'):
-        MockMusic(tmp_path/'audio.tmp').generate({'duration_seconds': 8,'seed': 1}, lambda *_: None, cancel)
+        MockMusic(tmp_path/'audio.tmp').generate({'duration_seconds': 8,'seed': 1}, progress.append, cancel)
+    assert progress == ['composing_music']
+    assert not (tmp_path/'audio.tmp').exists()
+
+
+@pytest.mark.parametrize('provider_request', [
+    {'duration_seconds': True, 'seed': 1},
+    {'duration_seconds': 4, 'seed': 1},
+    {'duration_seconds': 8, 'seed': True},
+    {'duration_seconds': 8, 'seed': '4'},
+])
+def test_mock_music_rejects_invalid_provider_input(tmp_path, provider_request):
+    with pytest.raises(ProviderError, match='invalid_request'):
+        MockMusic(tmp_path / 'audio.tmp').normalize(provider_request)
 
 
 def yue2_settings():
@@ -193,7 +222,34 @@ def test_yue2_capabilities_are_narrow_and_provider_specific():
     assert caps['provider_route'] == 'museforge.yue2.v1'
     assert caps['sample_rates'] == [48000]
     assert caps['operations'] == ['generate']
+    assert caps['text_to_instrumental'] is None
+    assert caps['vocals'] is None
+    assert caps['exact_lyrics_vocals'] is None
+    assert caps['capability_matrix']['instrumental_music_generation'].state == 'unknown'
+    assert caps['capability_matrix']['vocal_generation'].state == 'unknown'
+    assert caps['capability_matrix']['exact_lyrics_singing'].state == 'unknown'
+    assert caps['capability_matrix']['duration_control'].state == 'unsupported'
     assert any('may contain vocals' in warning for warning in caps['warnings'])
+
+
+def test_capability_matrix_distinguishes_known_gaps_from_unknown_behavior():
+    mock = capability_matrix('mock')
+    real = capability_matrix('yue2')
+    assert mock['lyrics_text_generation'].state == 'supported'
+    assert mock['vocal_generation'].state == 'unsupported'
+    assert mock['instrument_control'].state == 'unsupported'
+    assert real['lyrics_text_generation'].state == 'unsupported'
+    assert real['instrument_control'].state == 'unknown'
+    assert real['continuation'].state == 'unsupported'
+
+    response = CapabilitiesResponse.model_validate(
+        provider_capabilities(yue2_settings()) | {
+            'default_lyrics_mode': 'user',
+            'readiness': {'state': 'offline', 'last_observed_at': None},
+            'duration': {'min': 5, 'max': 30, 'default': 8},
+        }
+    )
+    assert response.capability_matrix['exact_lyrics_singing'].state == 'unknown'
 
 
 def test_storage_rejects_traversal_symlink_and_malformed(tmp_path):

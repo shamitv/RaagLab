@@ -408,16 +408,20 @@ export interface components {
             decoder_revision?: string | null;
             /** Is Demo */
             is_demo: boolean;
+            /** Capability Matrix */
+            capability_matrix: {
+                [key: string]: components["schemas"]["CapabilityAssessment"];
+            };
             /** Lyrics Modes */
             lyrics_modes: string[];
             /** Lyrics Text */
             lyrics_text: boolean;
             /** Text To Instrumental */
-            text_to_instrumental: boolean;
+            text_to_instrumental: boolean | null;
             /** Vocals */
-            vocals: boolean;
+            vocals: boolean | null;
             /** Exact Lyrics Vocals */
-            exact_lyrics_vocals: boolean;
+            exact_lyrics_vocals: boolean | null;
             /** Instruments */
             instruments: string[];
             /** Moods */
@@ -452,6 +456,21 @@ export interface components {
              */
             default_lyrics_mode: "user" | "static" | "mock";
             readiness: components["schemas"]["ReadinessInfo"];
+        };
+        /**
+         * CapabilityAssessment
+         * @description Evidence-backed product capability for one provider revision.
+         */
+        CapabilityAssessment: {
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "supported" | "unsupported" | "unknown";
+            /** Evidence */
+            evidence: string;
+            /** Limits */
+            limits?: string[];
         };
         /** ErrorField */
         ErrorField: {
@@ -820,16 +839,20 @@ export interface components {
             decoder_revision?: string | null;
             /** Is Demo */
             is_demo: boolean;
+            /** Capability Matrix */
+            capability_matrix?: {
+                [key: string]: components["schemas"]["CapabilityAssessment"];
+            };
             /** Lyrics Modes */
             lyrics_modes: string[];
             /** Lyrics Text */
             lyrics_text: boolean;
             /** Text To Instrumental */
-            text_to_instrumental: boolean;
+            text_to_instrumental: boolean | null;
             /** Vocals */
-            vocals: boolean;
+            vocals: boolean | null;
             /** Exact Lyrics Vocals */
-            exact_lyrics_vocals: boolean;
+            exact_lyrics_vocals: boolean | null;
             /** Instruments */
             instruments: string[];
             /** Moods */

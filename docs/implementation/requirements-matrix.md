@@ -1,7 +1,7 @@
 # Requirement traceability matrix
 
 - Baseline: [Part 1](../prompts/01-portable-application.md) and [design](../../design.md)
-- State: Phases 01–04 passed; Phases 05–06 remain. See [Phase 04 evidence](evidence/04/2026-09-14-projects-recovery/README.md) for project/library/settings, save recovery, retry/dispatch/worker recovery, artifact safety and restart acceptance; [Phase 03 evidence](evidence/03/2026-09-13-workspace/README.md) records responsive workspace checks, and [Phase 02 evidence](evidence/02/2026-09-13-mock-end-to-end/README.md) records baseline generation, lyric and playback acceptance.
+- State: Phases 01–04 passed; Phase 05 implementation is in progress and Phase 06 remains. See [Phase 05 evidence](evidence/05/2026-09-14-provider-readiness/README.md), [Phase 04 evidence](evidence/04/2026-09-14-projects-recovery/README.md) for project/library/settings, save recovery, retry/dispatch/worker recovery, artifact safety and restart acceptance; [Phase 03 evidence](evidence/03/2026-09-13-workspace/README.md) records responsive workspace checks, and [Phase 02 evidence](evidence/02/2026-09-13-mock-end-to-end/README.md) records baseline generation, lyric and playback acceptance.
 - Evidence catalogue: [verification strategy](verification-strategy.md); A01–A12 match the prompt's numbered acceptance checks
 - Phase links and dependencies: [master plan](master-plan.md)
 
@@ -34,7 +34,7 @@
 | P23 / section 9 | 1440/390/320–360 responsive layouts, accessibility, no horizontal page scroll; document tradeoffs | 00 UI decision, 03, 04 changed flows | A11; viewport, keyboard, contrast, zoom, reduced-motion evidence |
 | P24 / sections 9–10 | Omit unavailable collaboration/billing/notifications/accounts; distinct text/instrumental/vocal/exact-lyrics/edit capabilities | 00 scope, 03 UI, 05 audit | A12; full control-to-capability/action mapping |
 | P25 / section 10 | Typed provider lifecycle/errors/normalization/results; independent config, limits/revisions/storage/device/concurrency | 00 contracts, 02 mock, 05 boundary | Provider contract tests, config validation, A12 |
-| P26 / section 10 | No chosen model: defer selection/concrete real adapter to Part 2; isolate dependencies; fail instead of silent fallback | 05 handoff; Part 2 D03 | A12; missing-real-mode error test; documented pending capabilities |
+| P26 / section 10 | Part 1 deferred model selection and a concrete adapter to Part 2; D03 now supplies a narrow YuE2 adapter, with dependencies isolated and no silent fallback | 05 handoff; Part 2 D03 | A12; missing-real-mode error test; unsupported and unknown capabilities remain explicit |
 | P27 / section 11 | Reproducible API/mock images, deliberate profiles/overrides, persistent volumes, health/migrations/shutdown | 01, 05 real boundary, 06 docs | A01/A05; resolved-service assertions and normal restart |
 | P28 / section 11 | Safe environment examples, configurable paths/ports/providers, loopback/internal network, no host-path dependency | 01, 06 audit; target config Part 2 | Compose/source/config checks; A01/A02 |
 | P29 / section 11 | Setup/start/stop/migration/seed/log/smoke/test entry points, separate reset, local security boundary | 01 skeleton, 02 smoke, 04 maintenance, 06 runbook | Reproduction of documented commands; no-volume-delete stop |

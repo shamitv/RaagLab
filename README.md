@@ -19,7 +19,7 @@ bash scripts/logs.sh         # recent application process logs
 bash scripts/stop.sh         # preserves database, broker, and artifact volumes
 ```
 
-The `mock` profile selects the CPU worker. Real adapters are not implemented. Run `bash scripts/seed-demo.sh` to create three source-labelled demo projects, or `bash scripts/smoke.sh mock` for a measured audio smoke check. Both use `API_BASE_URL` (default http://127.0.0.1:8000). Full release acceptance remains Phase 06 work.
+The `mock` profile selects the CPU worker. An explicit `yue2` Compose override selects the integrated YuE2 worker for English, user-supplied lyrics; it has passed one durable queued-generation check. That narrow check proves routing and technical audio handling, not lyric adherence, instrumental-only output, style fidelity, or duration control. Missing model files or GPU access fail startup rather than returning demo audio. Run `bash scripts/seed-demo.sh` to create three source-labelled demo projects, or `bash scripts/smoke.sh mock` for a measured audio smoke check. Both use `API_BASE_URL` (default http://127.0.0.1:8000). Full release acceptance remains Phase 06 work.
 
 ## Verify
 
@@ -37,6 +37,7 @@ falls back to CPU when CUDA is unavailable. Run `bash scripts/test.sh yue2-cpu`
 for a real short-audio integration test without a GPU; verified weights and
 sufficient RAM are required. See [device configuration](docs/development.md#yue2-cuda-first--cpu-fallback), the
 [Part 2 deployment plan](docs/deployment/master-plan.md), [model integration
-boundary](docs/model-integration.md), and [dated YuE2 evidence](docs/deployment/evidence/2026-09-14-yue2/README.md).
+boundary](docs/model-integration.md), [queued application evidence](docs/deployment/evidence/2026-09-14-d03-review-corrections/README.md),
+and [YuE2 evidence](docs/deployment/evidence/2026-09-14-yue2/README.md).
 
-See [development instructions](docs/development.md), [Phase 04 status](docs/implementation/phases/04-projects-versions-and-recovery/status.md), and [Phase 04 evidence](docs/implementation/evidence/04/2026-09-14-projects-recovery/README.md). Release certification and real-provider readiness remain Phase 05/06 work.
+See [development instructions](docs/development.md), [Phase 04 status](docs/implementation/phases/04-projects-versions-and-recovery/status.md), [Phase 05 status](docs/implementation/phases/05-provider-readiness/status.md), and [Phase 04 evidence](docs/implementation/evidence/04/2026-09-14-projects-recovery/README.md). Phase 05 capability verification is in progress; release certification remains Phase 06 work.

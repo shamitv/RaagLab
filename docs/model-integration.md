@@ -17,6 +17,34 @@ failures, and cancellation must be typed provider outcomes. The adapter must not
 return mock fixtures when model files, device access, or configuration are
 missing.
 
+## Capability audit
+
+Capability state is evidence-backed: `supported` means the behavior was verified,
+`unsupported` means the active adapter does not provide it, and `unknown` means the
+request may be accepted but the output behavior has not been demonstrated. The
+capability matrix is returned by `/api/v1/capabilities` and copied into new version
+provenance. Legacy boolean fields are `null` when behavior is unknown.
+
+| Capability | CPU mock | YuE2 `yue2-infer-0.1.5` | Evidence and limits |
+| --- | --- | --- | --- |
+| Supplied lyrics text | Supported | Supported | API preserves user text; YuE2 route accepts English user lyrics. This does not prove singing. |
+| Separate lyrics generation | Supported as scripted demo text | Unsupported | Mock text is deterministic scripted content, not an LLM result; YuE2 consumes supplied lyrics. |
+| Instrumental music generation | Unsupported | Unknown | Mock tones are not semantically conditioned music. YuE2 accepts an Instrumental request but may include vocals. |
+| Vocal generation | Unsupported | Unknown | Vocal presence and behavior have not been audited for YuE2. |
+| Exact supplied lyrics sung | Unsupported | Unknown | Lyrics reach YuE2, but adherence was not measured. |
+| Audio language fidelity | Unsupported | Unknown | The app route was exercised with English lyrics only; language fidelity was not measured. |
+| Instrument, mood, genre, tempo fidelity | Unsupported | Unknown | Mock ignores these controls. YuE2 receives them in its style prompt; output fidelity has not been evaluated per control. |
+| Requested duration control | Supported | Unsupported | Mock audio matches the requested seconds. YuE2 duration is model-determined and may exceed the request. |
+| Seed reproducibility | Supported | Unknown | Mock PCM is deterministic; the seed reaches YuE2, but cross-runtime reproducibility is unverified. |
+| Audio conditioning, editing, continuation | Unsupported | Unsupported | No active route accepts reference audio, edits an artifact, or continues from one. |
+| Technical audio output | Supported | Supported | Mock emits validated 44.1 kHz stereo WAV. The D03 queued YuE2 result was a verified 48 kHz stereo PCM WAV retrievable through the API. This is format evidence, not semantic music-quality evidence. |
+
+The real route currently allows only `generate`, English, and user-supplied lyrics.
+Refinement, variation, regeneration, lyrics-only editing, non-English requests,
+and duration control remain unavailable or unverified; the UI must not present
+them as active behavior. The request's `Instrumental` value is retained for
+contract compatibility and is explicitly not a guarantee about YuE2 output.
+
 For YuE2, the request mapping is explicit: `brief`, genre, mood, instruments and
 tempo become the style prompt, and the persisted user-lyrics checkpoint becomes
 the supplied lyric text. The application adapter sends full symbolic planning
@@ -75,11 +103,11 @@ effective settings, seed, actual duration, and child validation metadata with th
 version. The existing artifact publication and fenced job finalization remain
 authoritative; mock artifacts continue to use exact-duration 44.1 kHz WAV.
 
-## Required application verification
+## Integrated route regression checks
 
-The standalone D03 evidence proves image-level CUDA/BF16 readiness and four
-successful process-isolated outputs. The corrected integrated worker also passed
-the application gate on 2026-09-14. These remain required acceptance checks:
+The standalone D03 evidence proves image-level CUDA/BF16 readiness and successful
+process-isolated outputs. The integrated worker also passed its application gate
+on 2026-09-14. Keep these checks in regression coverage:
 
 1. A real request is accepted by the API and published through the durable outbox
    and real queue.

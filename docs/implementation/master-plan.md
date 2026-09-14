@@ -1,10 +1,10 @@
 # MuseForge AI portable application master plan
 
 - Plan date: 2026-09-13
-- Scope: Part 1 portable application plus the current handoff to Part 2 deployment; Phases 01–03 implementation is verified.
+- Scope: Part 1 portable application plus Part 2 model integration and deployment handoff.
 - Branch: `planning-docs`
 - Baseline commit: `ac46f5a535e4461250322351e31b3433bbf96988`
-- Execution state: see [overall status](status.md); Phases 01–03 are complete; Phases 04–06 remain pending. The Part 2 YuE2 standalone checkpoint is recorded separately.
+- Execution state: see [overall status](status.md); Phases 00–04 are complete, Phase 05 provider readiness is in progress, and Phase 06 release verification remains. Part 2 D03 has a narrow integrated YuE2 success; D04/D05 remain.
 
 ## Outcome and source of truth
 
@@ -24,8 +24,9 @@ The Phase 00 authoring environment was Windows/PowerShell, with Python 3.14.2, N
 
 Assume one trusted local workspace, a loopback application port, no accounts or paid service, CPU mock generation, and persistent named volumes on one host. The
 portable application still defaults to mock generation. YuE2-3B is selected for a
-bounded Part 2 standalone checkpoint, but is not yet the application's active
-provider. The repository name does not select a model. Default port 8000 is
+bounded Part 2 integrated route and is available through an explicit real-worker
+Compose profile; it is not the default provider. The repository name does not
+select a model. Default port 8000 is
 configurable and is not asserted available on any target machine.
 
 Phase 01 was implemented from Linux and verified on the user-supplied Docker VM at `10.42.0.42`; see its [evidence](evidence/01/2026-09-13-foundation/README.md). The baseline environment observations above are historical.
@@ -52,12 +53,12 @@ Use Python/FastAPI/Pydantic, SQLAlchemy/Alembic with psycopg, PostgreSQL, Rabbit
 
 Included: three lyrics modes; composer selections; asynchronous generation; real playable demo WAVs; progress/cancellation/error states; full player; immutable iteration and variation; project/library organization; local draft recovery and server save/reopen; templates and local preferences; capability handling; reproducible containers; tests and operating documentation.
 
-Deferred to Part 2: application real-provider integration, WSL/native-Linux startup
-integration for the full stack, queue-routed real inference, browser/API playback,
-and verified backup/restore on the deployment host. The standalone Ubuntu1 host
-inventory, GPU access, YuE2 model selection, immutable weight acquisition, image,
-and short real-inference measurements are now recorded in the [Part 2 deployment
-plan](../deployment/master-plan.md) and [evidence](../deployment/evidence/2026-09-14-yue2/README.md).
+Deferred to Part 2 D04/D05: full-stack target deployment validation, broader
+real-provider capability and recovery checks, verified backup/restore, and the
+operations/portability handoff. Ubuntu1 host inventory, GPU access, YuE2 model
+selection, immutable weight acquisition, the isolated image, standalone runs, and
+the narrow queued application result are recorded in the [Part 2 deployment
+plan](../deployment/master-plan.md) and [evidence](../deployment/evidence/2026-09-14-d03-review-corrections/README.md).
 
 Deferred product scope: collaboration/comments, billing/credits/upgrades, notifications, multi-user permissions/authentication, public exposure, DAW stems, and multitrack notation. Omit those controls in Part 1. Keep every required local Create, Library, Projects, Settings, Templates, Advanced Options, and version action accessible. Optional decorative waterfront art is not a release gate. No fixture, example duration, or version count is presented as a measured live result.
 
@@ -121,18 +122,18 @@ Runtime documentation will be delivered as `README.md`, `docs/architecture.md`, 
 | Mock audio is mistaken for semantic music generation | Explicit demo labels, honest capabilities and provenance | 02, 03, 05 browser/provider tests |
 | Dependencies drift or direct versions resolve but fail at runtime | Exact selected pins, frozen locks, pinned images, clean build gate | 01; recheck support/security in 06 |
 | Containers unavailable in authoring shell | Run checks in a suitable existing Linux-engine environment when implementation starts; record any blocked checks precisely | 01 status; no host changes in this planning run |
-| Real model does not support vocals/lyrics/languages/refinement | Distinct capabilities and explicit Part 2 selection/testing gate | 05 handoff to D03 |
+| Real model may not support vocals/lyrics/languages/refinement | Distinct evidence-backed capabilities and explicit D04 product validation gate | 05 and D04 |
 | Local drafts overwrite newer server state | Persist base revision, conditional save, explicit conflict choice | 03 draft foundation; 04 multi-tab tests |
 
 ## Part 2 handoff boundary
 
 Part 1 passes on the resolved mock startup command, source/image versions, migration head, internal service names, data and artifact mount contracts, provider routing, effective limits, fixture provenance, and test evidence. It lists exact missing musical capabilities and explains real-image construction without choosing a model by folder name.
 
-Part 2 creates its separate `docs/deployment/` record and D00–D05 phases after
-inspecting the target. That record now contains the Ubuntu1 inventory and plans,
-the YuE2 model/image manifest, and the standalone verification evidence. It still
-must verify the actual user-facing browser route, real queued inference through the
-MuseForge worker, restart/recovery, measured resources, and an isolated restore.
+Part 2 has its separate `docs/deployment/` record and D00–D05 phases. It contains
+the Ubuntu1 inventory, YuE2 model/image manifest, standalone verification, and the
+narrow successful user-facing queued inference. D04 must still verify broader
+real workflow, recovery, and resource limits; D05 must verify an isolated restore,
+operations, and portability evidence.
 WSL/native-Linux portability is reported separately as verified, configuration
 checked, documented only, or blocked. The standalone image is not an application
 deployment completion claim.

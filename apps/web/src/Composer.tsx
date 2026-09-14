@@ -18,6 +18,24 @@ import { Player } from "./Player";
 const terminal = new Set(["succeeded", "failed", "cancelled", "timed_out"]);
 type Caps = components["schemas"]["CapabilitiesResponse"];
 type Summary = components["schemas"]["VersionView"];
+const capabilityLabels: Record<string, string> = {
+  lyrics_text_input: "Supplied lyrics",
+  technical_audio_output: "Validated audio output",
+  lyrics_text_generation: "Separate lyrics generation",
+  instrumental_music_generation: "Instrumental music",
+  vocal_generation: "Sung vocals",
+  exact_lyrics_singing: "Exact supplied lyrics sung",
+  language_fidelity: "Audio language fidelity",
+  instrument_control: "Instrument selection fidelity",
+  mood_control: "Mood control",
+  genre_control: "Genre control",
+  tempo_control: "Tempo control",
+  duration_control: "Requested duration control",
+  seed_reproducibility: "Seed reproducibility",
+  audio_conditioning: "Reference audio conditioning",
+  audio_editing: "Audio editing",
+  continuation: "Audio continuation",
+};
 export function Composer() {
   const { id } = useParams();
   const location = useLocation();
@@ -154,10 +172,16 @@ export function Composer() {
         if (v) adopt(v);
         const { lyrics_mode: lyricsMode, ...generationDefaults } =
           settings.generation_defaults;
+        const effectiveLyricsMode = cap.lyrics_modes.includes(lyricsMode)
+          ? lyricsMode
+          : cap.default_lyrics_mode;
         const preferred: Generation = {
           ...defaults,
           ...generationDefaults,
-          lyrics: { mode: lyricsMode },
+          language: cap.languages.includes(generationDefaults.language)
+            ? generationDefaults.language
+            : (cap.languages[0] as Generation["language"] | undefined) ?? "English",
+          lyrics: { mode: effectiveLyricsMode },
         };
         const server =
           p && Object.keys(p.draft).length
@@ -505,6 +529,12 @@ export function Composer() {
   }
   const blocked = busy || !online || !loaded;
   const generating = !!job && !terminal.has(job.state);
+  const lyricsModeSupported = !!caps?.lyrics_modes.includes(
+    draft.lyrics?.mode ?? "mock",
+  );
+  const languageSupported = !!caps?.languages.includes(draft.language);
+  const supportsOperation = (operation: string) =>
+    !!caps?.operations.includes(operation);
   const lyricsCard = version ? (
     <section key="lyrics" className="card" aria-label="Generated Lyrics">
       <h2>Lyrics · {version.provenance.lyrics.source}</h2>
@@ -564,7 +594,11 @@ export function Composer() {
           <pre className="lyrics" tabIndex={0}>
             {version.lyrics}
           </pre>
-          <button onClick={() => setEditing(true)}>Refine Lyrics</button>
+          {supportsOperation("lyrics_edit") ? (
+            <button onClick={() => setEditing(true)}>Refine Lyrics</button>
+          ) : (
+            <p>Lyrics editing is unavailable with the active provider.</p>
+          )}
         </>
       )}
     </section>
@@ -581,8 +615,9 @@ export function Composer() {
   return (
     <>
       <p className="demo-note">
-        Original instrumental demo. Musical controls are saved intent; demo
-        audio does not faithfully implement them or sing lyrics.
+        {caps?.is_demo === false
+          ? "Real provider audio may not follow requested lyrics, vocals, musical controls, or duration. Review the capability evidence before generating."
+          : "Original instrumental demo. Musical controls are saved intent; demo audio does not faithfully implement them or sing lyrics."}
       </p>
       <div role="status">
         {notice}
@@ -732,10 +767,16 @@ export function Composer() {
                     "Happy",
                   ],
                 ];
+                const supportedExamples = caps
+                  ? examples.filter(([_, language]) =>
+                      caps.languages.includes(language),
+                    )
+                  : examples;
+                if (supportedExamples.length === 0) return;
                 const ex =
-                  examples[
-                    (examples.findIndex((x) => x[0] === draft.brief) + 1) %
-                      examples.length
+                  supportedExamples[
+                    (supportedExamples.findIndex((x) => x[0] === draft.brief) + 1) %
+                      supportedExamples.length
                   ];
                 setDraft({
                   ...draft,
@@ -811,16 +852,21 @@ export function Composer() {
                 </label>
               ))}
               <label>
-                Vocal Type
-                <select disabled value="Instrumental">
+                Requested vocal mode
+                <select
+                  disabled
+                  value="Instrumental"
+                  aria-describedby="vocal-mode-help"
+                >
                   <option>Instrumental</option>
-                  <option>Male Vocals</option>
-                  <option>Female Vocals</option>
-                  <option>Mixed Vocals</option>
                 </select>
               </label>
             </div>
-            <small>Sung vocals require a capable real provider.</small>
+            <small id="vocal-mode-help">
+              {caps?.provider_id === "yue2"
+                ? "YuE2 may include vocals even when Instrumental is requested."
+                : "The mock output contains no sung vocals."}
+            </small>
             <label>
               Lyrics source
               <select
@@ -832,11 +878,27 @@ export function Composer() {
                   })
                 }
               >
-                <option value="user">Your exact lyrics</option>
-                <option value="static">Original static fixture</option>
-                <option value="mock">Generated demo lyrics</option>
+                {caps?.lyrics_modes.map((mode) => (
+                  <option key={mode} value={mode}>
+                    {mode === "user"
+                      ? "Your lyrics"
+                      : mode === "static"
+                        ? "Original static fixture"
+                        : "Generated demo lyrics"}
+                  </option>
+                ))}
               </select>
             </label>
+            {!lyricsModeSupported && (
+              <p role="alert">
+                This saved lyrics source is unavailable with the active provider. Choose a supported source to generate.
+              </p>
+            )}
+            {!languageSupported && (
+              <p role="alert">
+                This saved language is unavailable with the active provider. Choose a supported language to generate.
+              </p>
+            )}
             {draft.lyrics?.mode === "user" && (
               <label>
                 Your lyrics
@@ -857,9 +919,30 @@ export function Composer() {
             <details>
               <summary>Advanced Options</summary>
               <p>
-                Provider: {caps?.provider_id ?? "Loading…"} · CPU demo ·{" "}
-                {caps?.readiness.state}
+                Provider: {caps?.provider_id ?? "Loading…"}
+                {caps?.is_demo === true ? " · demo" : caps ? " · real" : ""}
+                {caps?.model_id ? ` · ${caps.model_id}` : ""}
+                {caps?.model_revision ? ` @ ${caps.model_revision}` : ""}
+                {caps ? ` · worker ${caps.readiness.state}` : ""}
+                {caps?.readiness.last_observed_at
+                  ? ` · checked ${new Date(caps.readiness.last_observed_at).toLocaleTimeString()}`
+                  : ""}
               </p>
+              <h3>Provider capabilities</h3>
+              <ul aria-label="Provider capability status">
+                {Object.entries(caps?.capability_matrix ?? {}).map(
+                  ([key, capability]) => (
+                    <li key={key}>
+                      <strong>{capabilityLabels[key] ?? key}:</strong>{" "}
+                      {capability.state}. {capability.evidence}{" "}
+                      {(capability.limits ?? []).join(" ")}
+                    </li>
+                  ),
+                )}
+              </ul>
+              {caps?.warnings.map((warning) => (
+                <p key={warning}>{warning}</p>
+              ))}
               <label>
                 Duration (seconds)
                 <input
@@ -867,11 +950,21 @@ export function Composer() {
                   min="5"
                   max="30"
                   value={draft.duration_seconds}
+                  disabled={
+                    caps?.capability_matrix.duration_control.state !==
+                    "supported"
+                  }
                   onChange={(e) =>
                     change("duration_seconds", Number(e.target.value))
                   }
                 />
               </label>
+              {caps?.capability_matrix.duration_control.state !==
+                "supported" && (
+                <small>
+                  Requested seconds do not constrain output duration for this provider.
+                </small>
+              )}
               <label>
                 Seed (optional)
                 <input
@@ -888,13 +981,17 @@ export function Composer() {
                 />
               </label>
               <small>
-                Duration and seed affect demo audio. Exact musical refinement is
-                unavailable.
+                {caps?.is_demo
+                  ? "The seed and requested duration affect the demo signal; musical controls do not."
+                  : "The seed is passed to the model; reproducibility is unverified. Musical-control fidelity is listed above."}
               </small>
             </details>
             <button
               className="primary generate"
-              disabled={blocked || generating || !validDraft(draft)}
+              disabled={
+                blocked || generating || !lyricsModeSupported ||
+                !languageSupported || !validDraft(draft)
+              }
             >
               {busy ? "Submitting…" : "Generate"}
             </button>
@@ -1003,8 +1100,9 @@ export function Composer() {
             <section className="card empty">
               <h2>Your music starts with an idea</h2>
               <p>
-                Generate a demo to hear real audio, preserve your lyrics, and
-                explore versions.
+                {caps?.is_demo === false
+                  ? "Generate audio with the configured provider, preserve your lyrics, and review its limits."
+                  : "Generate a demo to hear audio, preserve your lyrics, and explore versions."}
               </p>
             </section>
           ) : (
@@ -1015,17 +1113,20 @@ export function Composer() {
               <section className="card">
                 <h2>Iterate</h2>
                 <p>
-                  Another original demo will be produced. Precise semantic audio
-                  changes are not supported. Source: {version.label}.
+                  Source: {version.label}. {supportsOperation("refine")
+                    ? "The provider accepts refinement requests."
+                    : "Refinement is unavailable with the active provider."}
                 </p>
-                <label>
-                  Tell us how you’d like to change the song
-                  <textarea
-                    maxLength={2000}
-                    value={instruction}
-                    onChange={(e) => setInstruction(e.target.value)}
-                  />
-                </label>
+                {supportsOperation("refine") && (
+                  <label>
+                    Tell us how you’d like to change the song
+                    <textarea
+                      maxLength={2000}
+                      value={instruction}
+                      onChange={(e) => setInstruction(e.target.value)}
+                    />
+                  </label>
+                )}
                 {focused === "mood" && (
                   <label>
                     Iteration mood
@@ -1077,53 +1178,63 @@ export function Composer() {
                     </div>
                   </fieldset>
                 )}
-                <button
-                  className="primary apply"
-                  disabled={
-                    blocked ||
-                    generating ||
-                    !instruction.trim() ||
-                    !validDraft(iterationDraft)
-                  }
-                  onClick={() => void iterate("refine")}
-                >
-                  Apply Changes
-                </button>
+                {supportsOperation("refine") && (
+                  <button
+                    className="primary apply"
+                    disabled={
+                      blocked ||
+                      generating ||
+                      !instruction.trim() ||
+                      !validDraft(iterationDraft)
+                    }
+                    onClick={() => void iterate("refine")}
+                  >
+                    Apply Changes
+                  </button>
+                )}
                 <div className="actions">
-                  <button
-                    disabled={blocked || generating}
-                    onClick={() => void iterate("regenerate")}
-                  >
-                    Regenerate
-                  </button>
-                  <button
-                    onClick={() => {
-                      setFocused("mood");
-                      setInstruction("Change the mood");
-                    }}
-                  >
-                    Change Mood
-                  </button>
-                  <button
-                    onClick={() => {
-                      setFocused("instruments");
-                      setInstruction("Try new instruments");
-                    }}
-                  >
-                    Try New Instruments
-                  </button>
-                  <button
-                    disabled={blocked || generating}
-                    onClick={() => void iterate("variation")}
-                  >
-                    Create Variation
-                  </button>
+                  {supportsOperation("regenerate") && (
+                    <button
+                      disabled={blocked || generating}
+                      onClick={() => void iterate("regenerate")}
+                    >
+                      Regenerate
+                    </button>
+                  )}
+                  {supportsOperation("refine") && (
+                    <>
+                      <button
+                        onClick={() => {
+                          setFocused("mood");
+                          setInstruction("Change the mood");
+                        }}
+                      >
+                        Change Mood
+                      </button>
+                      <button
+                        onClick={() => {
+                          setFocused("instruments");
+                          setInstruction("Try new instruments");
+                        }}
+                      >
+                        Try New Instruments
+                      </button>
+                    </>
+                  )}
+                  {supportsOperation("variation") && (
+                    <button
+                      disabled={blocked || generating}
+                      onClick={() => void iterate("variation")}
+                    >
+                      Create Variation
+                    </button>
+                  )}
                 </div>
               </section>
               <details className="card" open={desktop}>
                 <summary>Song Structure</summary>
                 <p>
-                  Structure unavailable. The demo provider supplies no measured
+                  Structure unavailable. The active provider supplies no measured
                   or estimated section boundaries.
                 </p>
                 <p>

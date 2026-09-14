@@ -3,7 +3,7 @@
 - State: `in_progress`
 - Last updated: 2026-09-14
 - Target: `ubuntu1` (Ubuntu 24.04.5 LTS in WSL2; Docker Engine in WSL)
-- Current focus: D03 application integration after the standalone YuE2 checkpoint
+- Current focus: D02 target mock deployment, then D04 real workflow and recovery validation
 
 ## Completed
 
@@ -17,29 +17,30 @@
 - Three original prompt cases generated successfully; all audio checks passed.
 - A fresh offline container repeated the first prompt with identical FLAC and PCM
   hashes. Every attempt released GPU memory; no OOM or timeout occurred.
+- D03 integrated the YuE2 adapter, isolated worker image/queue, startup readiness,
+  provenance, and no-fallback behavior. One durable application job produced a
+  verified 48 kHz stereo result that was retrieved and played through the API.
+  See the [D03 integration evidence](evidence/2026-09-14-d03-review-corrections/README.md).
 
 ## Remaining work
 
-- Implement and test a MuseForge music-provider adapter for YuE2.
-- Add real-provider configuration, queue routing, readiness, provenance, and
-  explicit no-fallback behavior to the application.
 - Re-run D02 mock deployment on this target if this machine becomes the deployment
   host; the existing mock evidence belongs to the separate VM.
-- Send a real job through the application queue, persist and retrieve its audio via
-  the API, then perform D04 browser/recovery checks.
+- Perform D04 browser, real workflow, cancellation, restart/recovery, and resource
+  checks on this target after D02 is complete.
 - Write the operations/backup/restore handoff after the integrated path passes.
 
 ## Blockers and limitations
 
-The real-model exit gate is open because no application job has used this image.
-The product's exact-lyrics, vocal, language, editing, and continuation capabilities
-remain unverified; standalone lyric prompts do not prove sung-word accuracy.
+The narrow real-model D03 gate passed. The product's exact-lyrics, vocal,
+language, style-control, and requested-duration behavior remain unverified;
+successful audio transport does not establish those capabilities.
 Listening quality and lyric adherence are pending because no listening tool was
 available during the run. Native Linux execution is documented only, not tested.
 
 ## Latest verification
 
-See the [dated YuE2 evidence](evidence/2026-09-14-yue2/README.md), including runtime
-inventory, image/build logs, model hashes, three prompt reports, restart comparison,
-and the nine harness tests. The next action is D03-04: implement the adapter and
-route one short job through the existing application worker contract.
+See the [standalone YuE2 evidence](evidence/2026-09-14-yue2/README.md) and
+[integrated D03 evidence](evidence/2026-09-14-d03-review-corrections/README.md).
+The next action is D02 target deployment; D04 depends on both that target stack
+and the completed D03 application route.

@@ -12,7 +12,7 @@ import threading
 import time
 import wave
 from pathlib import Path
-from typing import Callable, Protocol
+from typing import Callable, Literal, Protocol, TypedDict
 from museforge.domain import ProviderError, Lyrics, capabilities
 
 STATIC = '[Verse]\nMorning opens quiet doors\nLight is dancing on the floor\n\n[Chorus]\nCarry every little spark\nLet it glow against the dark\n'
@@ -20,17 +20,28 @@ STATIC = '[Verse]\nMorning opens quiet doors\nLight is dancing on the floor\n\n[
 class CancellationToken(Protocol):
     def __call__(self) -> None: ...
 
+ProgressCallback = Callable[[str], None]
+
+class LyricsResult(TypedDict):
+    text: str
+    source: Literal['user', 'static', 'mock']
+    provider_revision: str
+    fixture_id: str | None
+    fixture_revision: str | None
+
 class LyricsProvider(Protocol):
     def capabilities(self) -> dict: ...
     def readiness(self) -> str: ...
     def normalize(self, request: dict) -> dict: ...
-    def generate(self, request: dict, progress_callback: Callable, cancellation_token: CancellationToken) -> dict: ...
+    def generate(self, request: dict, progress_callback: ProgressCallback,
+                 cancellation_token: CancellationToken) -> LyricsResult: ...
 
 class MusicProvider(Protocol):
     def capabilities(self) -> dict: ...
     def readiness(self) -> str: ...
     def normalize(self, request: dict) -> dict: ...
-    def generate(self, request: dict, progress_callback: Callable, cancellation_token: CancellationToken) -> Path: ...
+    def generate(self, request: dict, progress_callback: ProgressCallback,
+                 cancellation_token: CancellationToken) -> Path: ...
 
 class DemoLyrics:
     def capabilities(self): return capabilities()
@@ -39,8 +50,9 @@ class DemoLyrics:
         try: Lyrics.model_validate(request['lyrics'])
         except (ValueError, KeyError): raise ProviderError('invalid_request') from None
         return request
-    def generate(self, request, progress_callback, cancellation_token):
+    def generate(self, request, progress_callback, cancellation_token) -> LyricsResult:
         self.normalize(request)
+        progress_callback('writing_lyrics')
         cancellation_token()
         mode = request['lyrics']['mode']
         if mode == 'user':
@@ -55,15 +67,20 @@ class DemoLyrics:
                 'fixture_revision': '1' if mode == 'static' else None}
 
 class MockMusic:
-    def __init__(self, output: Path): self.output = output
+    def __init__(self, output: Path): self.output, self.metadata = output, {}
     def capabilities(self): return capabilities()
     def readiness(self): return 'ready'
     def normalize(self, request):
-        if not 5 <= request['duration_seconds'] <= 30:
+        duration = request.get('duration_seconds')
+        seed = request.get('seed')
+        if (isinstance(duration, bool) or not isinstance(duration, int) or not 5 <= duration <= 30 or
+                isinstance(seed, bool) or not isinstance(seed, int)):
             raise ProviderError('invalid_request')
         return request
     def generate(self, request, progress_callback, cancellation_token):
         self.normalize(request)
+        progress_callback('composing_music')
+        cancellation_token()
         rng = random.Random(request['seed'])
         notes = [rng.choice([220, 261.6256, 293.6648, 329.6276, 391.9954]) for _ in range(16)]
         rate, frames = 44100, 44100 * request['duration_seconds']
@@ -80,6 +97,17 @@ class MockMusic:
                     right = int(left * .9)
                     block.extend(struct.pack('<hh', left, right))
                 audio.writeframesraw(block)
+        self.metadata = {
+            'actual_duration_seconds': request['duration_seconds'],
+            'sample_rate': rate,
+            'channels': 2,
+            'seed': request['seed'],
+            'provider_output_format': 'WAV/PCM_16',
+            'effective_settings': {
+                'duration_seconds': request['duration_seconds'],
+                'seed': request['seed'],
+            },
+        }
         return self.output
 
 

@@ -2,46 +2,46 @@
 
 ## Objective
 
-The working mock product exposes truthful capabilities and a stable integration boundary so Part 2 can add a selected local music model without redesigning the UI, API, persistence or job transport.
+The mock and integrated YuE2 routes expose evidence-backed capabilities and a stable provider boundary. The UI, API, and workers distinguish accepted request fields from verified model behavior and preserve route isolation and no-fallback behavior.
 
 ## Dependencies and entry criteria
 
-Phase 04 persistence/recovery gates pass and the current mock workflow remains usable. YuE2-3B is now selected only for the separate Part 2 standalone checkpoint; it is not an active application provider. Read the Part 2 deployment record as a handoff input, not as Phase 05 completion.
+Phase 04 persistence/recovery gates pass and the mock workflow remains usable. The narrow YuE2 D03 application gate also passed on Ubuntu1: a durable English user-lyrics job ran through the real worker and its verified 48 kHz result was retrieved and played through the API. D03 proves transport, provenance, and technical audio handling; it does not prove lyric adherence, instrumental-only output, language fidelity, style-control fidelity, or duration control. Phase 05 audits and enforces those distinctions.
 
 ## Scope
 
-Audit and complete provider types/capability handling, model/readiness lifecycle contract, independent lyrics/music configuration, provider-specific routing and the real-worker build/configuration contract. The deliverable remains an executable mock provider plus documented adapter/image integration requirements; actual application real inference remains Part 2 D03.
+Audit and complete provider types/capability handling, readiness lifecycle, independent lyrics/music configuration, provider-specific routing, and the real-worker build/configuration contract. Keep both the CPU mock and narrow YuE2 route usable while clearly identifying unverified model behavior.
 
 ## Work breakdown
 
-1. **05-01** Audit the capability schema against separate lyrics text, instrumental music, vocals, exact supplied-lyrics singing, audio conditioning/editing and continuation. Record supported/unsupported/unknown values with model/provider revisions and limits, never extrapolating one capability to another.
+1. **05-01** Add a typed evidence matrix for supplied/generated lyrics, instrumental output, vocals, exact-lyrics singing, language/style controls, duration, seed reproducibility, audio conditioning/editing, continuation, and validated audio output. Include state, evidence, and limits for mock and pinned YuE2 provider revisions.
 2. **05-02** Complete shared provider conformance tests for normalization/validation, deterministic mock behavior, progress/cancellation, typed initialization/transient/resource/capability errors and result/audio metadata validation.
-3. **05-03** Finish API/UI capability-driven control handling, effective settings and readiness/staleness displays. Retain product options/limitations where useful; ensure selecting real mode cannot return demo output after a missing-adapter/weights/device failure.
+3. **05-03** Drive the composer from API capabilities: expose only supported lyrics modes/languages and operations, block saved drafts with unsupported choices, disable ineffective duration controls, and show provider/model/readiness plus capability evidence and warnings.
 4. **05-04** Validate independent LYRICS_PROVIDER and MUSIC_PROVIDER configuration, model ID/revision/cache/device/precision/resource/duration/time/concurrency settings and snapshot provenance. Reject incompatible route/model changes for preserved retries explicitly.
-5. **05-05** Document the real-worker image/build contract and Compose override/profile selection, incorporating the isolated YuE2 image as a Part 2 reference: only selected provider queues can be consumed, API/mock images remain light, and a mock profile stays usable for diagnostics.
-6. **05-06** Define a real-mode startup/configuration gate that fails clearly until an adapter/image is supplied. Validate mock-only, missing-real and accidental-mixed routing configurations through tests; audit resolved services rather than relying on profile names.
-7. **05-07** Write docs/model-integration.md with required adapter methods/errors, file publication protocol, capability examples, dependency isolation, safe single-inference/GPU process lifecycle, heartbeat/cancellation proof requirements and no-fallback policy.
-8. **05-08** Write the model-selection handoff to Part 2 D03: use the YuE2 standalone record for exact model/revision/license/access, observed hardware/RAM/VRAM/disk, runtime compatibility and short inference evidence, while keeping supported controls and application activation open.
+5. **05-05** Document and verify the separate real-worker image/build contract and Compose profiles: API/mock images stay free of inference dependencies, only the selected route is consumed, and the mock profile remains available for diagnostics.
+6. **05-06** Verify startup gates for invalid providers, missing YuE2 identity/weights/device, and intentionally combined diagnostic profiles. Check resolved services and queue bindings; no failure may return mock audio for a YuE2 job.
+7. **05-07** Maintain docs/model-integration.md with actual adapter methods/errors, publication protocol, capability matrix, dependency isolation, GPU process lifecycle, heartbeat/cancellation proof, and no-fallback policy.
+8. **05-08** Record the selected model/revisions/license/access, hardware and measured limits, runtime compatibility, and narrow queued inference evidence in the Part 2 handoff; keep unverified musical capabilities explicit.
 9. **05-09** Re-run affected provider, routing, lifecycle and API-served capability browser checks and the existing mock smoke; record which capabilities are mocked, unsupported and pending.
-10. **05-10** Synchronize phase/overall records and create implementation-status.md only when the mock, capability audit and model integration boundary are verified; explicitly report real adapter/inference as not implemented.
+10. **05-10** Synchronize phase/overall/deployment records and write implementation-status.md with implemented, tested, unsupported, unknown, and pending behavior. D03 real inference is implemented and narrowly verified; D04/D05 system validation and operations remain separate.
 
 ## Contracts and data changes
 
-Freeze or deliberately version the provider/envelope/request contracts from ../../contracts.md. Persist model identity/revision when known, measured result metadata and effective capability provenance. Minor additive metadata is allowed with schema compatibility tests; breaking request/envelope changes require migration and version handling. The real adapter is intentionally absent, so the failure gate is real behavior to test rather than a placeholder returning fake audio.
+Keep existing request/envelope and database snapshot versions. Add the typed capability matrix to the capabilities API and new provenance snapshots. Historical immutable provenance without the matrix parses as an empty matrix; no database migration is required. Legacy capability booleans are nullable so `unknown` does not collapse into `unsupported`.
 
 ## Acceptance criteria
 
 - **05-AC1:** Mock remains fully functional through the real queue and independent lyrics modes after provider-contract changes.
-- **05-AC2:** Capabilities distinguish all five product abilities and unsupported controls have explicit UI/API behavior; actual metadata and demo labels are accurate.
+- **05-AC2:** Capabilities distinguish supported, unsupported, and unknown behavior for lyrics, instrumental output, vocals, exact lyric singing, style/language controls, audio operations, duration, and seed; UI/API behavior and labels match.
 - **05-AC3:** Provider conformance and configuration/routing tests pass, including unknown adapter, missing real requirements and an incompatible worker receiving a request; none returns a successful mock substitute.
 - **05-AC4:** API and CPU mock dependency/image sets remain free of heavyweight inference dependencies; YuE2 real-worker requirements are isolated and reproducibly documented without adding them to the API/mock image.
 - **05-AC5:** Worker readiness/lifecycle, single active GPU inference intent, safe model initialization, heartbeat/cancellation and error propagation are specified and observable in mock tests without claiming a GPU was tested.
-- **05-AC6:** Part 2 can implement its concrete adapter/image using the documented contracts; YuE2 is a selected test model, while exact-lyrics/vocal/language/editing targets and application activation remain explicit.
+- **05-AC6:** The integrated YuE2 adapter/image follows the documented contracts; unverified lyric/vocal/language/editing behavior remains explicit rather than inferred from transport and audio-format acceptance.
 - **05-AC7:** A12 and the mock regression smoke pass with evidence; the completion report distinguishes provider readiness from real inference.
 
 ## Verification
 
-Planned: bash scripts/test.sh unit with provider conformance/configuration/capability cases; bash scripts/test.sh integration for test_capabilities.py and queue-route/schema/missing-real tests; bash scripts/test.sh e2e with capabilities.spec.ts; bash scripts/smoke.sh mock. Inspect API/mock installed dependency lists and resolved mock/missing-real configurations. Compare every exposed control with its capability/action and evidence. Save the capability matrix and command results under docs/implementation/evidence/05/<run-id>/. The standalone YuE2 GPU/model run is recorded under docs/deployment; it does not replace these application checks.
+Run provider/configuration unit tests, real-service provider-route and capability API tests, the API-served capability browser test, and mock smoke. Inspect API/mock dependency sets and resolved mock/YuE2/combined Compose profiles. Compare every UI control with its capability state and request action. Save the matrix, source revision, and command results under `docs/implementation/evidence/05/<run-id>/`. The D03 model gate remains supporting real-inference evidence, not evidence of unverified semantics.
 
 ## Risks, assumptions, and deferred work
 
