@@ -8,4 +8,4 @@
 - [x] D03-06 Repeat a prompt in a fresh offline container and compare hashes.
 - [x] D03-07 Implement the MuseForge YuE2 provider adapter and conformance tests.
 - [x] D03-08 Add real queue routing, readiness, provenance, and no-fallback checks.
-- [ ] D03-09 Produce one persisted real application result retrievable through the API.
+- [x] D03-09 Produce one persisted real application result retrievable through the API.

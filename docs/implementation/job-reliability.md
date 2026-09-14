@@ -1,9 +1,9 @@
 # Durable jobs, worker lifecycle, and artifact recovery
 
-- Date: 2026-09-13
-- State: Phase 02 baseline implemented and verified in its [report](phases/02-mock-end-to-end/implementation-status.md); Phase 04 proof obligations remain planned
-- Owners: Phase 02 implements the first safe path; Phase 04 completes recovery and adversarial verification
-- Related: [contracts](contracts.md), [verification strategy](verification-strategy.md)
+- Date: 2026-09-14
+- State: Phase 04 dispatch, worker, cancellation, retry, and artifact recovery gates passed; see the [Phase 04 report](phases/04-projects-versions-and-recovery/implementation-status.md)
+- Owners: Phase 02 implements the initial path; Phase 04 completes the mock-service recovery contract
+- Related: [contracts](contracts.md), [verification strategy](verification-strategy.md), [API documentation](../api.md), [development instructions](../development.md)
 
 ## Queue envelope and routing
 
@@ -90,10 +90,10 @@ SIGTERM stops accepting new jobs and drains current work for the configured grac
 
 Use temporary and final files on the same volume. Validate decodability/nonzero samples, duration/rate/channels, content type, byte count and checksum; flush before atomic rename to a unique attempt-specific key. In a subsequent fenced DB transaction attach the artifact and complete the job/version. A crash between file publication and DB commit creates an orphan, never a misleading successful row.
 
-The worker and an explicit maintenance command have write access; the API mount is read-only. `python -m museforge.storage.gc --dry-run` is the planned inspection command; `--apply` removes only eligible unreferenced files/retired rows. Use a minimum grace period, no valid associated attempt lease, transactional reference checks and tombstone coordination so attaching a reusable artifact and deleting it cannot race. Archive retains references; duplication and lyrics-only versions share artifacts. Do not delete any file referenced by any version. Never use a blanket volume reset for cleanup.
+The worker and an explicit maintenance command have write access; the API mount is read-only. Run `python -m museforge.maintenance` for inspection; inspection is the default and makes no deletions. Run `python -m museforge.maintenance --apply` to retire unreferenced tracked objects and delete only objects whose 24-hour grace has elapsed, no version references them, and no live attempt protects the path. `--grace-hours` may raise the grace period but rejects values below 24. Archive retains references; duplication and lyrics-only versions share artifacts. Do not delete any file referenced by any version. Never use a blanket volume reset for cleanup.
 
-Reconciliation detects missing referenced artifacts and records availability metadata without changing immutable generated content. Playback returns an actionable unavailable result; prior projects/lyrics remain readable. Repair requires recovering the original object or explicitly creating a new generation/version. Tests cover traversal, symlinks, invalid IDs, disk/permission failures, crashes before/after rename, and shared-artifact retention.
+Reconciliation detects missing referenced artifacts and records availability metadata without changing immutable generated content. Playback returns an actionable unavailable result; prior projects/lyrics remain readable, and the library exposes `available: false`. Repair requires recovering the original object or explicitly creating a new generation/version. Tests cover traversal, symlinks, invalid IDs, disk/permission failures, crashes before/after rename, shared-artifact retention, missing-object reporting, dry-run inspection and apply safety.
 
 ## Failure proof obligations
 
-Phase 02 proves transactional acceptance, confirmed publication, basic claim/fence, duplicate submission/delivery and playable publication. Phase 04 must inject: dispatcher death after DB commit and after publish; broker outage/restart; execution-child and whole-worker loss; heartbeat expiry with late completion; queued/running cancellation and a barrier-controlled success race; simultaneous version completion and manual selection; exhausted retry; invalid envelopes; missing/shared artifacts; and API/browser restart. See named tests and expected evidence in [verification strategy](verification-strategy.md).
+Phase 02 proves transactional acceptance, confirmed publication, basic claim/fence, duplicate submission/delivery and playable publication. Phase 04 evidence exercises expired outbox claims and confirmed-publish ambiguity, broker/dispatcher restarts, a killed whole worker with bounded lease recovery, expired fences, retry exhaustion, cancellation races, simultaneous completion, shared/missing artifacts, API restart, and full Compose stop/start with named volumes retained. The test-runner only removes its uniquely named Compose projects after saving evidence. Detailed counts and artifacts are in the [Phase 04 evidence](evidence/04/2026-09-14-projects-recovery/README.md).

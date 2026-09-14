@@ -54,7 +54,7 @@ budget, and no claim about maximum context or concurrent generation.
 | D00 Inventory and plan | completed | Target, topology, model decision, gaps, and acceptance checks recorded |
 | D01 Host preparation | in_progress | WSL/Docker/NVIDIA path is verified; application deployment directories and startup configuration remain |
 | D02 Mock deployment | not_started on `ubuntu1` | Re-run the existing DB/broker/API/mock worker path on this target and prove browser playback/restart |
-| D03 Real model | in_progress | Standalone image/acquisition/inference passed; still requires a real queued application job and persisted result |
+| D03 Real model | completed | Corrected integrated worker passed one durable real API job, verified provenance, 48 kHz retrieval/playback, and Phase 4-baseline regressions; [evidence](evidence/2026-09-14-d03-review-corrections/README.md) |
 | D04 System validation | not_started | Validate real capabilities, API playback, iterations, cancellation, restart, and resource limits |
 | D05 Operations and handoff | not_started | Runbook, manifest, backup/restore, update/rollback, and portability handoff |
 

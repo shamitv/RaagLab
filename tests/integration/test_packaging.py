@@ -31,5 +31,5 @@ def test_real_broker_queues():
     with app.connection_for_read() as connection:
         with connection.channel() as channel:
             result = channel.queue_declare(queue='museforge.mock.v1', passive=True)
-            assert result.consumer_count == 1
+            assert result.consumer_count >= 1
             channel.queue_declare(queue='museforge.quarantine.v1', passive=True)

@@ -10,7 +10,8 @@ import {
 import type { components } from "./api.generated";
 import { destinations, pageFor } from "./routes";
 import "./style.css";
-import { Composer, Projects } from "./Composer";
+import { Composer } from "./Composer";
+import { Library, Projects, Settings, Templates } from "./WorkspacePages";
 
 type Readiness = components["schemas"]["Readiness"];
 
@@ -70,9 +71,7 @@ function App() {
           MuseForge <small>AI</small>
         </NavLink>
         <nav aria-label="Main navigation">
-          {destinations
-            .filter((item) => ["/create", "/projects"].includes(item.path))
-            .map((item) => (
+          {destinations.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
@@ -96,7 +95,13 @@ function App() {
                     d={
                       item.path === "/create"
                         ? "M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5Z"
-                        : "M3 6h7l2 3h9v11H3Z"
+                        : item.path === "/projects"
+                          ? "M3 6h7l2 3h9v11H3Z"
+                          : item.path === "/library"
+                            ? "M4 5h16v14H4zM8 9h8M8 13h5"
+                            : item.path === "/templates"
+                              ? "M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"
+                              : "M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4m0-12.8L17 7M7 17l-1.4 1.4M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
                     }
                   />
                 </svg>
@@ -122,10 +127,13 @@ function App() {
             <Route path="/create" element={<Composer />} />
             <Route path="/projects/:id" element={<Composer />} />
             <Route path="/projects" element={<Projects />} />
+            <Route path="/library" element={<Library />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/templates" element={<Templates />} />
             <Route
               path="*"
               element={
-                <p>This workspace feature is planned for a later phase.</p>
+                <p>This page is not part of this workspace.</p>
               }
             />
           </Routes>

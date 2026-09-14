@@ -15,6 +15,9 @@ dependencies = [
   "psycopg[binary]==3.3.5",
 ]
 
+[project.scripts]
+museforge-artifact-gc = "museforge.maintenance:main"
+
 [dependency-groups]
 api = ["fastapi==0.141.1", "uvicorn==0.52.4"]
 mock-worker = ["celery==5.6.3"]

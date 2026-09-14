@@ -1,9 +1,9 @@
 export const destinations = [
   { path: '/create', title: 'Create', description: 'Your next idea starts here.', detail: 'Compose an original instrumental demo and preserve your lyrics.' },
-  { path: '/library', title: 'Library', description: 'A home for your finished music.', detail: 'Your completed versions will appear here when the library is implemented.' },
-  { path: '/projects', title: 'Projects', description: 'Keep your ideas together.', detail: 'Open saved projects and their completed version history.' },
-  { path: '/settings', title: 'Settings', description: 'Make the workspace yours.', detail: 'Workspace preferences will be available in a later phase.' },
-  { path: '/templates', title: 'Templates', description: 'A little inspiration to get started.', detail: 'Original starting points will be available when templates are implemented.' },
+  { path: '/library', title: 'Library', description: 'A home for your finished music.', detail: 'Search and filter completed versions across your projects.' },
+  { path: '/projects', title: 'Projects', description: 'Keep your ideas together.', detail: 'Search, reopen, duplicate, and archive your projects.' },
+  { path: '/settings', title: 'Settings', description: 'Make the workspace yours.', detail: 'Choose generation, playback, and export defaults.' },
+  { path: '/templates', title: 'Templates', description: 'A little inspiration to get started.', detail: 'Apply an original starting point to your draft.' },
 ] as const;
 
 export function pageFor(pathname: string) {

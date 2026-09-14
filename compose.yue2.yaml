@@ -36,6 +36,7 @@ services:
       QUEUE_DEADLINE_SECONDS: 1800
   worker-yue2:
     profiles: [yue2]
+    env_file: .env
     init: true
     restart: unless-stopped
     stop_grace_period: 30s
@@ -43,9 +44,6 @@ services:
       context: .
       dockerfile: packaging/yue2/Dockerfile.worker
     environment:
-      DATABASE_URL: postgresql+psycopg://museforge:local-development-only@db:5432/museforge
-      BROKER_URL: amqp://museforge:local-development-only@broker:5672//
-      WORKSPACE_ID: 00000000-0000-4000-8000-000000000001
       MUSIC_PROVIDER: yue2
       LYRICS_PROVIDER: user
       YUE2_QUEUE: museforge.yue2.v1
@@ -72,6 +70,13 @@ services:
       HARD_WATCHDOG_SECONDS: 930
       QUEUE_DEADLINE_SECONDS: 1800
     networks: [backend]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     volumes:
       - artifacts:/var/lib/museforge/artifacts
       - yue2_weights:/weights:ro

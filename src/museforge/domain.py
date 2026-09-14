@@ -137,6 +137,8 @@ class AttemptView(StrictModel):
 class JobView(StrictModel):
     id: UUID
     project_id: UUID
+    operation: str
+    retry_of_job_id: UUID | None
     state: str
     stage: str
     progress: float | None
@@ -172,6 +174,70 @@ class ProjectDetail(ProjectView):
 class ProjectPage(StrictModel):
     items: list[ProjectView]
     next_cursor: str | None
+
+class LibraryItem(StrictModel):
+    project_id: UUID
+    project_title: str
+    version_id: UUID
+    version_number: int
+    version_label: str
+    favorite: bool
+    created_at: datetime
+    genre: str | None
+    language: str | None
+    duration_seconds: float | None
+    available: bool
+
+class LibraryPage(StrictModel):
+    items: list[LibraryItem]
+    next_cursor: str | None
+
+class GenerationDefaults(StrictModel):
+    instruments: list[Literal['Guitar', 'Piano', 'Tabla', 'Drums', 'Bass', 'Strings', 'Synth']] = Field(default_factory=lambda: ['Piano'], min_length=1)
+    mood: Literal['Happy', 'Melancholic', 'Romantic', 'Energetic', 'Calm', 'Epic'] = 'Calm'
+    language: Literal['Hindi', 'English', 'Hinglish', 'Punjabi', 'Tamil'] = 'English'
+    genre: Literal['Indie Pop', 'Pop', 'Folk', 'Ambient', 'Rock', 'Electronic'] = 'Indie Pop'
+    tempo: Literal['Slow', 'Medium', 'Fast'] = 'Medium'
+    vocal_type: Literal['Instrumental'] = 'Instrumental'
+    duration_seconds: int = Field(8, ge=5, le=30)
+    lyrics_mode: Literal['user', 'static', 'mock'] = 'mock'
+
+    @field_validator('instruments')
+    @classmethod
+    def unique_instruments(cls, value):
+        if len(value) != len(set(value)):
+            raise ValueError('Instruments must be unique')
+        return value
+
+class SettingsPatch(StrictModel):
+    generation_defaults: GenerationDefaults | None = None
+    volume: float | None = Field(None, ge=0, le=1)
+    repeat_mode: Literal['off', 'one', 'all'] | None = None
+    export_format: Literal['wav'] | None = None
+
+    @model_validator(mode='after')
+    def validate_patch(self):
+        if not self.model_fields_set: raise ValueError('Patch must not be empty')
+        for name in self.model_fields_set:
+            if getattr(self, name) is None: raise ValueError(f'{name} is required')
+        return self
+
+class SettingsView(StrictModel):
+    revision: int
+    generation_defaults: GenerationDefaults
+    volume: float
+    repeat_mode: Literal['off', 'one', 'all']
+    export_format: Literal['wav']
+
+class TemplateView(StrictModel):
+    id: str
+    revision: int
+    name: str
+    description: str
+    draft: dict[str, Any]
+
+class TemplatePage(StrictModel):
+    items: list[TemplateView]
 
 class LyricsCheckpoint(StrictModel):
     text: str
@@ -271,12 +337,14 @@ class ProjectPatch(StrictModel):
     title: str | None = None
     draft: Generation | None = None
     active_version_id: UUID | None = None
+    archived: bool | None = None
 
     @model_validator(mode='after')
     def validate_patch(self):
         if not self.model_fields_set: raise ValueError('Patch must not be empty')
         if 'title' in self.model_fields_set: ProjectCreate(title=self.title)
         if 'draft' in self.model_fields_set and self.draft is None: raise ValueError('Draft is required')
+        if 'archived' in self.model_fields_set and self.archived is None: raise ValueError('Archive state is required')
         return self
 
 class VersionPatch(StrictModel):

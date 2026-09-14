@@ -21,6 +21,9 @@ log = logging.getLogger('museforge')
 
 
 def execute(settings, envelope):
+    # Delivery compatibility is not a durable job outcome.
+    if envelope.provider_route != settings.provider_route:
+        raise ProviderError('incompatible_envelope')
     engine = engine_for(settings)
     fence = None
     temporary = None
@@ -49,8 +52,7 @@ def execute(settings, envelope):
                     provider_snapshot.get('model_revision') != settings.model_revision or
                     provider_snapshot.get('decoder_revision') != settings.decoder_revision or
                     envelope.provider_route != settings.provider_route):
-                finish_error(c, job, settings, 'unsupported_capability')
-                return
+                raise ProviderError('incompatible_envelope')
             if settings.music_provider == 'yue2' and job['execution_snapshot'].get('operation') != 'generate':
                 finish_error(c, job, settings, 'unsupported_capability')
                 return

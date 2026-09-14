@@ -1,0 +1,41 @@
+{
+  "accepted": {
+    "job_id": "2cd337ab-cf93-4cd8-883d-2a382f5ed529",
+    "project_id": "cc99693c-dd88-4746-8f19-ad95825d73fc",
+    "state": "queued",
+    "status_url": "/api/v1/jobs/2cd337ab-cf93-4cd8-883d-2a382f5ed529",
+    "project_url": "/projects/cc99693c-dd88-4746-8f19-ad95825d73fc"
+  },
+  "completed": {
+    "id": "2cd337ab-cf93-4cd8-883d-2a382f5ed529",
+    "project_id": "cc99693c-dd88-4746-8f19-ad95825d73fc",
+    "operation": "generate",
+    "retry_of_job_id": null,
+    "state": "succeeded",
+    "stage": "saving_result",
+    "progress": null,
+    "attempt_count": 1,
+    "cancellation_requested_at": null,
+    "result_version_id": "1cf7dea7-4cdc-4c28-aed3-9f874cd66227",
+    "created_at": "2026-09-14T07:49:16.687933Z",
+    "completed_at": "2026-09-14T07:49:22.243004Z",
+    "correlation_id": "22373cfe-cf08-4527-a3a7-50b11d5ef507",
+    "dispatch_sequence": 1,
+    "error": null,
+    "version_url": "/api/v1/versions/1cf7dea7-4cdc-4c28-aed3-9f874cd66227",
+    "dispatch_status": "published",
+    "attempts": [
+      {
+        "attempt_number": 1,
+        "worker_id": "dbff931b-9d95-4ec4-892b-58df55e2d36e",
+        "started_at": "2026-09-14T07:49:20.819884Z",
+        "ended_at": "2026-09-14T07:49:22.243004Z",
+        "outcome": "succeeded"
+      }
+    ],
+    "provider_readiness": {
+      "state": "ready",
+      "last_observed_at": "2026-09-14T07:49:22.231042Z"
+    }
+  }
+}

@@ -25,14 +25,16 @@ def publish_child(envelope, settings, result):
     null = os.open(os.devnull, os.O_WRONLY)
     os.dup2(null, 1)
     os.dup2(null, 2)
-    from museforge.worker.app import app, TASK_NAME
+    from museforge.routing import publisher_app, publication_options
+    from museforge.worker.tasks import TASK_NAME
     try:
+        options = publication_options(settings, envelope['provider_route'])
+        app = publisher_app(settings)
         with app.connection_for_write() as connection:
             connection.ensure_connection(max_retries=0)
             producer = app.amqp.Producer(connection, on_return=lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError('unroutable')))
-            route = envelope['provider_route']
             app.send_task(TASK_NAME, args=[envelope], task_id=envelope['message_id'], producer=producer,
-                queue=route, routing_key=route, mandatory=True, retry=False,
+                **options, mandatory=True, retry=False,
                 delivery_mode=2, timeout=settings.broker_timeout_seconds,
                 confirm_timeout=settings.broker_timeout_seconds)
         result.send(True)

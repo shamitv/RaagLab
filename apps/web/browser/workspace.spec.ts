@@ -229,12 +229,13 @@ test('cancellation and stale save keep the editable draft',async({page},testInfo
  await page.goto('/create');await page.getByLabel('Music brief').fill('Cancellation and save conflict acceptance');
  await page.getByRole('button',{name:'Generate',exact:true}).click();await page.getByRole('button',{name:'Cancel generation',exact:true}).click();
  await expect(page.getByRole('region',{name:'Generation status'})).toContainText('cancelled',{timeout:45000});await expect(page.getByRole('region',{name:'Generated result'})).toHaveCount(0);
- await page.getByRole('button',{name:'Generate again',exact:true}).click();await expect(page.getByRole('region',{name:'Generated result'})).toBeVisible({timeout:45000});
+ await page.getByRole('button',{name:'Generate',exact:true}).click();await expect(page.getByRole('region',{name:'Generated result'})).toBeVisible({timeout:45000});
  const projectPath='/api/v1/projects/'+page.url().split('/').at(-1);const project=await(await page.request.get(projectPath)).json();
  const changed=await page.request.patch(projectPath,{data:{title:'A newer server title'},headers:{'If-Match':`"${project.revision}"`}});expect(changed.status()).toBe(200);
  await page.getByLabel('Music brief').fill('Keep this local text after a stale save');await page.getByRole('button',{name:'Save Project',exact:true}).click();
  await expect(page.getByRole('alert')).toContainText('Save conflict');await expect(page.getByLabel('Music brief')).toHaveValue('Keep this local text after a stale save');
  expect((await(await page.request.get(projectPath)).json()).title).toBe('A newer server title');
- await page.getByRole('button',{name:'Reload server state',exact:true}).click();await expect(page.getByRole('alert')).toContainText('Server state reloaded');
+ await expect(page.getByRole('button',{name:'Keep local',exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Keep local',exact:true}).click();
  await page.getByRole('button',{name:'Save Project',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Saved to server'})).toBeVisible();
 });

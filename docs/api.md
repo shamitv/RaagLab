@@ -1,4 +1,4 @@
-# Phase 2 API
+# API
 
 The API container serves the browser and `/api/v1` on the same origin. `/docs` and `/openapi.json` describe request and response types; regenerate the checked-in TypeScript definitions with `npm run types:api` after exporting OpenAPI as described in development.md.
 
@@ -16,7 +16,7 @@ Identical key and validated intent returns the same job even after completion; a
 
 Errors contain a safe code/message, retryability, correlation ID, and optional validation field locations. Database failures return 503. An offline worker does not prevent acceptance into a configured queue. No storage key, secret, database URL, or broker address is returned.
 
-Project editing, user retry, iterations, archive/duplicate, settings, and library operations are reserved for later phases.
+Project, job, version, library, workspace preference and template routes live under `/api/v1`. Project and version identifiers are UUIDs scoped to the configured workspace.
 
 ## Phase 03 workspace endpoints
 
@@ -29,3 +29,21 @@ Project editing, user retry, iterations, archive/duplicate, settings, and librar
 For lyrics_edit, musical inputs are preserved from the immutable source; only submitted user lyrics and the instruction change. The worker links the original audio artifact and emits `audio_recomposed: false`. Other operations publish new audio artifacts. Variation from the UI requests a new seed; regeneration retains the source seed. The mock provider records musical intent without promising semantic audio edits or sung lyrics. Structure remains null because this provider supplies no timed sections.
 
 Migration `0002_version_favorites` adds the favorite relation without modifying the frozen foundation migration. Existing projects and version content remain intact.
+
+## Phase 04 project, library, and workspace routes
+
+`GET /api/v1/projects` accepts `q`, `archived=active|archived|all`, `limit` (1–100, default 20), and an opaque `cursor`. Search matches project titles. Pages use stable `(created_at, id)` ordering; cursors are bound to the search/archive filters and reject reuse with different filters. The default `active` view omits archived projects. `GET /api/v1/projects/{id}` reopens the project draft, active version, and recent job history.
+
+`PATCH /api/v1/projects/{id}` adds `archived` to the existing conditional title/draft/selection patch. Send the project ETag as `If-Match`; a missing header returns 428 and a stale revision returns 412. Archiving a project with queued or running work returns 409. Archive retains all history and artifact references. `POST /api/v1/projects/{id}/duplicate` creates `Copy of <title>` with new project and version IDs, a remapped completed-version parent graph, the same selected version, and `origin_version_id` links. Pending jobs and idempotency/attempt records are not copied. Audio artifacts are shared by reference and remain protected from collection.
+
+`GET /api/v1/library` returns completed versions from active projects, newest first by default. It accepts `q` (project title or version label), `favorite_only`, `genre`, `language`, `sort=recent|oldest`, `limit`, and `cursor`. The cursor is stable and bound to the full filter/sort selection. Items report favorite and audio availability. Version labels and favorites are changed with the conditional `PATCH /api/v1/versions/{id}` described above.
+
+`GET /api/v1/settings` returns an ETag/revision. `PATCH /api/v1/settings` requires `If-Match` and accepts a nonempty subset of `generation_defaults`, `volume` (0–1), `repeat_mode` (`off|one|all`), and `export_format` (`wav`). Missing and stale revisions return 428 and 412 respectively. Initial defaults are Piano, Calm, English, Indie Pop, Medium tempo, Instrumental, 8 seconds, mock lyrics, volume 0.8, repeat off, and WAV export.
+
+`GET /api/v1/templates` and `/api/v1/templates/{id}` expose five original revision-1 starter templates. Template application is a browser draft action; it does not create a job or start generation. Generation remains an explicit user action.
+
+`POST /api/v1/jobs/{id}/retry` requires `Idempotency-Key` and is allowed for failed or timed-out jobs. It creates a new job linked through `retry_of_job_id`; replaying the same key returns that job. The new job keeps the source execution snapshot, provider route and lyrics checkpoint. The original operation remains in the snapshot, so retrying a lyrics-only edit still reuses its source audio. Retry jobs cannot themselves be retried, preventing chains. The original failed/timed-out record is unchanged.
+
+If an artifact is missing or unsafe, artifact playback returns 410 and version/library metadata remains inspectable with `available: false`. A successful later read can restore the availability flag after the object returns. Missing media is never replaced with generated content implicitly.
+
+Migration `0003_workspace_settings` adds revisioned settings and the verified project/library and recovery indexes. It follows `0002_version_favorites`; existing applied migrations are not rewritten. See [development](development.md) for safe artifact inspection/collection and full Phase 04 verification commands.

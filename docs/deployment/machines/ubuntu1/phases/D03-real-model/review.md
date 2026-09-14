@@ -172,3 +172,43 @@ and seeking.
 
 The existing `in_progress` D03 status remains appropriate. This review does not
 change the phase status or implement any of the recommended corrections.
+
+## Disposition after reassessment and corrections — 2026-09-14
+
+The findings were reassessed against the code rather than accepted solely on the
+review's recommendation. The D03 series was replayed onto Phase 4 merge
+`c546152` in `integration/d03-review-corrections`. The replay preserved Phase 4
+source-version linkage, retry behavior, migrations, and completed phase status.
+
+| Finding | Disposition and verification |
+| --- | --- |
+| 1. Runtime lock | Confirmed and corrected. Added resolver input and regenerated the complete Linux Python 3.12 hash lock against inference constraints. Both image installation stages and `pip check` passed. |
+| 2. GPU allocation | Confirmed for the standard Docker runtime; a host default NVIDIA runtime could have masked it. Added one explicit GPU reservation and verified the integrated CUDA/BF16/model gate. |
+| 3. Persisted routes | Confirmed for mixed pending routes, rather than a fresh single-provider deployment. A dedicated publisher knows both queues and has a registered default queue; each worker retains its configured consumer queue. Unit message-construction tests and four actual broker publication combinations passed. |
+| 4. Wrong worker | Confirmed as a defensive delivery issue; ordinary queue isolation already prevents it. Incompatible routes are rejected before database access; incompatible snapshot identities roll back without changing the job. The database test then completes the same job with a matching synthetic provider. |
+| 5. Pool-child death | Confirmed risk, distinct from ordinary cancellation/deadline cleanup. A Linux guardian monitors a control pipe, holds an exclusive inference lock, terminates process groups and escaped descendants, and reaps children. Synthetic SIGKILL, cancellation, deadline, shutdown, and real YuE2 GPU owner-loss checks passed. |
+| 6. Deployment configuration | Confirmed for custom deployments. The real service inherits `.env`; provider-specific overrides remain explicit. Custom credentials/workspace and mount-access resolution checks passed. |
+| 7. Readiness compatibility | Confirmed and corrected. Readiness matches provider/revision, model/revision, route, capability revision, workspace, and expiry. SQL and actual-registration tests passed; API readiness was observed as offline → initializing → ready. |
+| 8. Recorded identity | Confirmed and corrected through validation rather than introducing a new identity schema. Startup compares configured model/decoder identity with the packaged lock and verifies mounted manifest identities and file hashes. Conflicting identity fails startup with exit 78. |
+| Additional environment concern | Corrected. Warmup and generation share one effective environment builder for offline access, paths, model identity, memory budget, and offload settings. Both use the same lifecycle guardian. |
+
+The final corrected worker has produced a real durable application result with
+one attempt and one version, verified model/decoder provenance, and a measured
+48 kHz stereo PCM WAV. Full, HEAD, and range retrieval plus browser playback and
+seeking passed. Missing weights/model/device and conflicting identity fail
+startup; an unavailable real worker leaves the request queued with no attempt or
+result until cancellation. No mock fallback occurred.
+
+Detailed results and reproducible commands are in the
+[correction evidence](../../../../evidence/2026-09-14-d03-review-corrections/README.md).
+This evidence supersedes the original review's environment limitations; the
+original findings above remain as the historical review record.
+
+The final Phase 4-baseline regression run passed 48 integration tests, 30 mock
+browser checks, all publisher/broker/worker/full-restart recovery probes, and the
+existing smoke check. Local Python passed 131 tests; the runtime test image
+passed 129 with two expected skips covered locally. Frontend passed three tests.
+Two test-fixture corrections restored API-readable synthetic artifacts and the
+outbox invariant of the existing live-attempt GC fixture; production Phase 4
+behavior was not changed. D03 remained open throughout corrections and is now
+completed because the real application gate and final regressions passed.

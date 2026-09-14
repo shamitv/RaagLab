@@ -10,6 +10,17 @@ RUN npm run build
 FROM web-build AS web-test
 RUN npm test
 
+# Browser dependencies remain in this test-only image and never enter runtime stages.
+FROM node:24.21.0-bookworm-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553 AS browser-test
+WORKDIR /web
+RUN npm install --global npm@11.19.0
+COPY apps/web/package.json apps/web/package-lock.json ./
+RUN npm ci --no-audit --no-fund
+RUN npx playwright install --with-deps chromium
+COPY apps/web/ ./
+ENV API_BASE_URL=http://api:8000
+CMD ["npm", "run", "test:browser"]
+
 FROM python:3.13.15-slim-bookworm@sha256:ed86c82274b3c69b52fb5820f358f0bd7df0b603332063cb5c6e32bd220c3e6e AS python-base
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 UV_NO_PROGRESS=1 UV_LINK_MODE=copy
 WORKDIR /app
@@ -51,7 +62,7 @@ RUN uv sync --frozen --group api --group mock-worker --no-editable
 COPY alembic.ini ./
 COPY migrations/ migrations/
 COPY tests/ tests/
-COPY compose.yaml ./
+COPY compose.yaml compose.yue2.yaml ./
 COPY packaging/ packaging/
 COPY scripts/ scripts/
 COPY .gitattributes .gitignore .dockerignore .env.example ./

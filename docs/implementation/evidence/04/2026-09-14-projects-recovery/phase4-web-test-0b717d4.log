@@ -1,0 +1,77 @@
+#0 building with "rootless" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.87kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 1.2s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#3 resolve docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/node:24.21.0-bookworm-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553
+#4 DONE 1.4s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 331B done
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 DONE 0.0s
+
+#7 [web-build 1/7] FROM docker.io/library/node:24.21.0-bookworm-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553
+#7 resolve docker.io/library/node:24.21.0-bookworm-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553 0.0s done
+#7 DONE 0.0s
+
+#6 [internal] load build context
+#6 transferring context: 1.59kB done
+#6 DONE 0.0s
+
+#8 [web-build 4/7] COPY apps/web/package.json apps/web/package-lock.json ./
+#8 CACHED
+
+#9 [web-build 5/7] RUN npm ci --no-audit --no-fund
+#9 CACHED
+
+#10 [web-build 6/7] COPY apps/web/ ./
+#10 CACHED
+
+#11 [web-build 2/7] WORKDIR /web
+#11 CACHED
+
+#12 [web-build 3/7] RUN npm install --global npm@11.19.0
+#12 CACHED
+
+#13 [web-build 7/7] RUN npm run build
+#13 CACHED
+
+#14 [web-test 1/1] RUN npm test
+#14 0.354
+#14 0.354 > museforge-web@0.1.0 test
+#14 0.354 > vitest run
+#14 0.354
+#14 0.684
+#14 0.684 [1m[30m[46m RUN [49m[39m[22m [36mv5.0.0 [39m[90m/web[39m
+#14 0.684
+#14 0.884  [32m✓[39m src/routes.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+#14 0.886  [32m✓[39m src/client.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+#14 0.897
+#14 0.897 [2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+#14 0.897 [2m      Tests [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+#14 0.897 [2m   Start at [22m 08:01:37
+#14 0.897 [2m   Duration [22m 204ms[2m (transform 65%, import 23%, tests 6%, worker 6%)[22m
+#14 0.897
+#14 DONE 1.0s
+
+#15 exporting to image
+#15 exporting layers 0.1s done
+#15 exporting manifest sha256:5428f0e054f9cb1e9a0e382833221e1b090ddf9cdcbf497f6af36d5cf5a15d2d
+#15 exporting manifest sha256:5428f0e054f9cb1e9a0e382833221e1b090ddf9cdcbf497f6af36d5cf5a15d2d 0.0s done
+#15 exporting config sha256:2c50303196fea07824240988f9406946a29fbdc6c3f21ad7724daa0271cc9e60 0.0s done
+#15 exporting attestation manifest sha256:b1fa42affc18ff8ce12e5fb03dc610e5bf047ba4d72bf0d61b68e8f54b089c4c 0.0s done
+#15 exporting manifest list sha256:27423cb34bad6c9bdfc64df8c1d51c71f5eae9a372a5fc3e98f6005679427801 0.0s done
+#15 naming to docker.io/library/museforge-phase4-web-test:0b717d4 done
+#15 unpacking to docker.io/library/museforge-phase4-web-test:0b717d4 0.1s done
+#15 DONE 0.3s
