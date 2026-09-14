@@ -55,7 +55,7 @@ def test_lyrics_source_configuration_is_independent_for_mock_music(lyrics_provid
     {'lyrics_provider': 'unknown'},
     {'music_provider': 'yue2', 'lyrics_provider': 'mock'},
     {'music_provider': 'yue2', 'lyrics_provider': 'static'},
-    {'music_provider': 'yue2', 'device': 'cpu'},
+    {'music_provider': 'yue2', 'device': 'mps'},
     {'music_provider': 'yue2', 'precision': 'float32'},
     {'music_provider': 'yue2', 'model_revision': None},
 ])
