@@ -3,7 +3,8 @@
 This document is the application handoff boundary for the selected YuE2 real
 music provider. The portable application still defaults to the `mock` provider.
 YuE2 is enabled only with the explicit real-worker Compose override and remains
-subject to the Ubuntu1 queued-generation acceptance gate.
+validated by the Ubuntu1 queued-generation acceptance gate on 2026-09-14. See
+[application evidence](deployment/evidence/2026-09-14-d03-review-corrections/README.md).
 
 ## Provider contract
 
@@ -71,8 +72,8 @@ authoritative; mock artifacts continue to use exact-duration 44.1 kHz WAV.
 ## Required application verification
 
 The standalone D03 evidence proves image-level CUDA/BF16 readiness and four
-successful process-isolated outputs. Application integration remains open until
-all of these pass:
+successful process-isolated outputs. The corrected integrated worker also passed
+the application gate on 2026-09-14. These remain required acceptance checks:
 
 1. A real request is accepted by the API and published through the durable outbox
    and real queue.
@@ -94,5 +95,6 @@ revisions, CUDA/BF16, one GPU inference, and measured 900-second execution
 limits. It does not start the mock worker and it never changes the default
 `compose.yaml` mock profile.
 
-Only then may D03 be marked completed. A standalone model command, image build,
-or successful import cannot close the application real-model gate.
+D03 closure is supported by the recorded durable application result, not merely
+a standalone model command, image build, or successful import. Broader provider
+semantics and quality remain outside this narrow verification.
