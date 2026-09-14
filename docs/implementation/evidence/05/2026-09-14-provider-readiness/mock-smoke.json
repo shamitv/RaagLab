@@ -1,0 +1,18 @@
+{
+  "command": "python3 scripts/demo.py smoke --base-url http://127.0.0.1:32802",
+  "result": "passed",
+  "provider": "mock",
+  "job_state": "succeeded",
+  "attempt_count": 1,
+  "job_id": "7113fd70-d24f-4d8a-80f2-a5b7349ee704",
+  "project_id": "287e5292-d883-47e7-888f-125abd8b1523",
+  "version_id": "fc455700-fa1c-4714-9fae-e3e5cf7e298d",
+  "audio": {
+    "media_type": "audio/wav",
+    "sample_rate": 44100,
+    "channels": 2,
+    "duration_seconds": 5.0,
+    "byte_size": 882044,
+    "decoded_non_silent": true
+  }
+}

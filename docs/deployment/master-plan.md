@@ -23,8 +23,8 @@ Browser -> API -> PostgreSQL/outbox -> RabbitMQ -> real worker
 
 The standalone checkpoint exercises image/model setup, GPU access, process bounds,
 audio validation, and repeatability. The separate integrated D03 evidence closes
-the narrow application-queue gate; broader capability and system recovery checks
-remain in Phase 05 and D04.
+the narrow application-queue gate; Phase 05 capability readiness is complete,
+while broader deployment and system recovery checks remain in D04.
 
 ## Selected model and image
 

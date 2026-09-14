@@ -38,4 +38,4 @@ Independent isolated service runs passed confirmed publisher ambiguity, dispatch
 
 ## Boundaries
 
-These gates exercise the original CPU mock provider. They do not certify a real model, real provider routing/readiness, semantic music controls, sung lyrics, WebKit, accessibility conformance beyond the recorded browser checks, deployment backup/restore, or release certification. Those remain Phase 05/06 work. All 12 task IDs and all eight acceptance criteria are closed in the [Phase 04 checklist](todo.md) and [status](status.md).
+These gates exercise the original CPU mock provider. They do not certify semantic music controls, sung lyrics, WebKit, accessibility conformance beyond the recorded browser checks, deployment backup/restore, or release certification. Phase 05 separately verifies route readiness and records unverified model behavior; Phase 06 and Part 2 D04/D05 own the remaining checks. All 12 task IDs and all eight acceptance criteria are closed in the [Phase 04 checklist](todo.md) and [status](status.md).

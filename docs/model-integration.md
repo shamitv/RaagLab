@@ -25,7 +25,7 @@ request may be accepted but the output behavior has not been demonstrated. The
 capability matrix is returned by `/api/v1/capabilities` and copied into new version
 provenance. Legacy boolean fields are `null` when behavior is unknown.
 
-| Capability | CPU mock | YuE2 `yue2-infer-0.1.5` | Evidence and limits |
+| Capability | CPU mock | YuE2 `yue2-infer-0.1.6` | Evidence and limits |
 | --- | --- | --- | --- |
 | Supplied lyrics text | Supported | Supported | API preserves user text; YuE2 route accepts English user lyrics. This does not prove singing. |
 | Separate lyrics generation | Supported as scripted demo text | Unsupported | Mock text is deterministic scripted content, not an LLM result; YuE2 consumes supplied lyrics. |

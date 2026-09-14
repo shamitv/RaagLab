@@ -1,42 +1,70 @@
-# Phase 05 provider-readiness evidence (local checks)
+# Phase 05 provider-readiness verification
 
-Date: 2026-09-14. Branch: `phase-5-provider-readiness`, based on
-`da3474277f7b1bbed89a8a208db6f192f76a55b4` (`origin/main`). This is partial
-verification for the working-tree implementation, not a Phase 05 completion
-report.
+Date: 2026-09-14. Branch: `phase-5-provider-readiness`. The integrated run used
+source commit `d40fccc` after rebasing on `origin/main` (`359eb89`, YuE2
+CUDA-first/CPU-fallback support). Docker runs used the configured Linux VM with
+Docker Engine 29.8.0 and Compose 5.5.1. All test services used the isolated
+Compose project `museforge-phase2-test-phase5-ad6105be2a15`; the VM's unrelated
+`survey_app` containers were left running and untouched.
 
-## Capability and contract changes
+## Results
 
-The API now exposes a typed supported/unsupported/unknown capability matrix for
-the mock and pinned YuE2 adapter. New version provenance records the matrix;
-historical provenance without it remains readable. The composer follows the
-active provider's lyrics modes, language list, and operations; prevents generation
-from unsupported saved choices; disables unsupported duration control; and shows
-provider identity, readiness, capability evidence, and warnings. The YuE2 model
-capability audit and measured application boundary are recorded in
+| Gate | Result |
+| --- | --- |
+| Local Python unit suite | 173 passed, 5 optional NumPy-dependent skips |
+| Local frontend | TypeScript/Vite build passed; 3 Vitest tests passed |
+| Docker test-image unit suite | 172 passed, 6 expected skips (Git-only checkout test and optional NumPy tests) |
+| PostgreSQL/RabbitMQ integration | 49 passed in 270.92 seconds |
+| API-served Playwright | 34 passed, 22 intentional skips across desktop, mobile, small and narrow projects |
+| Queued API restart | Job remained queued through API restart and completed after worker restart; one attempt |
+| Mock smoke | Succeeded; decoded 5-second, 44.1 kHz stereo WAV was non-silent |
+| Readiness after recovery | API reported `ready`; DB, schema, artifacts, dispatcher, mock worker, broker observation and provider were ready |
+
+The browser run covered the capability UI at all four sizes, missing-project
+alert semantics at all four sizes, generation/playback, and the desktop Phase 4
+library/project/settings flow. That library flow now passes with its search
+result visible. The D03 persisted-real-result browser case was skipped because
+this isolated mock stack did not contain a persisted real-model result. Other
+skips are desktop-only stateful checks repeated in responsive projects.
+
+## Compose resolution
+
+`docker compose config --services` passed for mock-only, YuE2-only and combined
+diagnostic profiles. The exact service lists are in
+[`compose-profiles.txt`](compose-profiles.txt). This verifies profile selection,
+not a new YuE2 inference run. The mock-only image and real-service tests exercised
+the independent mock queue; provider-route tests also passed. Current YuE2
+capability claims remain bounded by the audited matrix in
 [`docs/model-integration.md`](../../../../model-integration.md).
 
-## Checks run in this checkout
+## Commands and attachments
 
-| Check | Result |
-| --- | --- |
-| `.venv/bin/python -m pytest tests/unit -q` | 148 passed; one optional NumPy-dependent test skipped because NumPy is not installed in this local environment |
-| `npm test` in `apps/web` | 3 passed |
-| `npm run build` in `apps/web` | TypeScript check and Vite production build passed |
-| `API_BASE_URL=http://127.0.0.1:4173 npm run test:browser -- browser/capabilities.spec.ts --project=desktop` | 1 passed against Vite; the test intercepted health, settings, and capabilities responses to verify provider-driven UI behavior |
-| API capability route contract tests in `tests/unit/test_capabilities.py` | Passed as part of the Python unit suite; response schema and old-provenance compatibility covered |
-| API OpenAPI export and `npm run types:api` | Passed; generated types require the capability matrix on current capability responses and make it optional on historical version provenance |
+The isolated Docker gate was run from the source checkout with:
 
-The browser check above is a frontend regression with API responses intercepted;
-it is not counted as an API-served browser acceptance run.
+```sh
+MUSEFORGE_TEST_PROJECT_PREFIX=museforge-phase2-test-phase5- \
+PHASE4_BROWSER=1 python3 scripts/verify-phase2.py
+```
 
-## Remaining integrated checks
+Attached outputs: [`integration.txt`](integration.txt), [`browser.txt`](browser.txt),
+[`queued-restart.json`](queued-restart.json), [`restart.json`](restart.json),
+[`readiness.json`](readiness.json), and [`mock-smoke.json`](mock-smoke.json).
+The harness removed only its named containers, network and volumes after the
+successful run. It left no test-prefixed containers or volumes behind.
 
-The local environment has no Docker or Compose executable. This run therefore did
-not repeat real-service provider routing/lifecycle tests, inspect resolved Compose
-profiles and queue bindings, run the API-served browser regression, or run
-`scripts/smoke.sh mock`. The prior [D03 integration evidence](../../../../deployment/evidence/2026-09-14-d03-review-corrections/README.md)
-records those real-worker startup/routing/no-fallback checks and a mock regression
-run against the Phase 04 baseline; Phase 05 still needs its fresh combined run on
-a Docker runner. No capability claim above treats that earlier run as evidence of
-musical behavior.
+## Capability boundary
+
+The mock remains a deterministic demo provider: it accepts and preserves user
+lyrics, returns scripted demo lyric text for its demo mode, and emits validated
+non-silent WAV audio at the requested duration. It does not sing lyrics or
+semantically follow music controls.
+
+The pinned YuE2 provider accepts English user lyrics and has one prior durable
+application result retrieved and played through the API; see the linked D03
+application evidence. This proves route transport and technical audio handling.
+It does not establish lyric adherence, vocal or instrumental behavior, language
+fidelity, style-control fidelity, duration control, or cross-runtime seed
+reproducibility. Audio conditioning, editing and continuation remain unsupported.
+A fresh real YuE2 inference and the optional CPU-model inference test were not
+part of this Phase 05 regression run. Release acceptance and Part 2 D04/D05
+remain separate work.

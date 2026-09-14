@@ -2,7 +2,7 @@
 
 - Contract baseline: 2
 - Decision date: 2026-09-13
-- State: Phase 01–05 API and provider contracts are implemented; Phase 05 runtime regression evidence is in progress. The capability matrix is additive, and earlier version provenance without it remains readable as an empty matrix. See [Phase 05 status](phases/05-provider-readiness/status.md) and [current verification evidence](evidence/05/2026-09-14-provider-readiness/README.md).
+- State: Phase 01–05 API and provider contracts are implemented and verified. The capability matrix is additive, and earlier version provenance without it remains readable as an empty matrix. See [Phase 05 status](phases/05-provider-readiness/status.md) and [verification evidence](evidence/05/2026-09-14-provider-readiness/README.md).
 - Related: [ADR 0001](decisions/0001-application-architecture.md), [job reliability](job-reliability.md), [UI behavior](ui-behavior.md)
 
 ## Common conventions and validation

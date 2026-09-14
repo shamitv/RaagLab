@@ -1,8 +1,8 @@
 # Verification strategy and acceptance catalogue
 
 - Date: 2026-09-14
-- Current evidence: [planning verification](evidence/planning-verification.md), [Phase 01 implementation](evidence/01/2026-09-13-foundation/README.md), [Phase 04 projects and recovery](evidence/04/2026-09-14-projects-recovery/README.md)
-- Status: Phases 01–04 are implemented and verified; Phase 05 provider readiness and Phase 06 release verification remain planned.
+- Current evidence: [planning verification](evidence/planning-verification.md), [Phase 01 implementation](evidence/01/2026-09-13-foundation/README.md), [Phase 04 projects and recovery](evidence/04/2026-09-14-projects-recovery/README.md), [Phase 05 provider readiness](evidence/05/2026-09-14-provider-readiness/README.md)
+- Status: Phases 01–05 are implemented and verified; Phase 06 release verification remains planned.
 
 ## Execution environments and evidence discipline
 
@@ -16,7 +16,7 @@ Create evidence under `docs/implementation/evidence/<phase>/<run-id>/` as meanin
 
 Phase 04 passed on the user-authorized isolated runner at `yolo1@10.42.0.42` with Docker 29.8.0, Compose 5.5.1, Python 3.13.15, PostgreSQL 18.6, RabbitMQ 4.3.5, Node 24.21.0 and npm 11.19.0. Python unit tests had 102 passes and one expected Git-only skip; real-service integration had 42 passes, including upgrade from `0002_version_favorites` to `0003_workspace_settings`; the pinned frontend target passed build/typecheck and 3 unit tests. API-served Playwright ran 48 cases: 30 passed and 18 were intentionally skipped because shared stateful scenarios run once at desktop width. Playback, routing and responsive checks passed at 1440, 390, 360 and 320 px.
 
-Separate uniquely named Compose runs proved confirmed-publish ambiguity/reclaim, dispatcher restart, broker outage recovery, whole-worker loss with a bounded second attempt, queued acceptance through API restart, and full Compose stop/start preserving projects, settings and playable artifacts. Evidence and test outputs are linked from the Phase 04 report. These tests use the mock provider; real-model inference/provider readiness and release certification remain Phase 05/06 work.
+Separate uniquely named Compose runs proved confirmed-publish ambiguity/reclaim, dispatcher restart, broker outage recovery, whole-worker loss with a bounded second attempt, queued acceptance through API restart, and full Compose stop/start preserving projects, settings and playable artifacts. Evidence and test outputs are linked from the Phase 04 report. The Phase 05 mock/provider regression is also complete; semantic YuE2 capability evidence and release certification remain outside that gate.
 
 ## Command interfaces
 

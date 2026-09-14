@@ -4,7 +4,7 @@
 - Started: 2026-09-14
 - Last updated: 2026-09-14
 - Completed: 2026-09-14
-- Current focus: Phase 04 acceptance gates remain passed; Phase 05 provider-readiness verification is in progress
+- Current focus: Phase 04 remains complete; Phase 05 is complete and Phase 06 release verification remains
 
 ## Completed work
 
@@ -30,4 +30,4 @@ See the linked report for test source revisions, exact evidence files, and the P
 
 ## Next action
 
-Start Phase 05 provider capability/readiness audit.
+Continue with the [Phase 06 release verification plan](../06-release-verification-and-handoff/plan.md).

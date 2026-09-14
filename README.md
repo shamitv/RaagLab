@@ -40,4 +40,4 @@ sufficient RAM are required. See [device configuration](docs/development.md#yue2
 boundary](docs/model-integration.md), [queued application evidence](docs/deployment/evidence/2026-09-14-d03-review-corrections/README.md),
 and [YuE2 evidence](docs/deployment/evidence/2026-09-14-yue2/README.md).
 
-See [development instructions](docs/development.md), [Phase 04 status](docs/implementation/phases/04-projects-versions-and-recovery/status.md), [Phase 05 status](docs/implementation/phases/05-provider-readiness/status.md), and [Phase 04 evidence](docs/implementation/evidence/04/2026-09-14-projects-recovery/README.md). Phase 05 capability verification is in progress; release certification remains Phase 06 work.
+See [development instructions](docs/development.md), [Phase 04 status](docs/implementation/phases/04-projects-versions-and-recovery/status.md), [Phase 05 status](docs/implementation/phases/05-provider-readiness/status.md), and [Phase 04 evidence](docs/implementation/evidence/04/2026-09-14-projects-recovery/README.md). Phase 05 provider readiness is verified; release certification remains Phase 06 work.

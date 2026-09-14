@@ -1,0 +1,16 @@
+Source commit: d40fccc
+Docker Engine: 29.8.0
+Docker Compose: v5.5.1
+
+Mock diagnostics (compose.yaml + compose.test.yaml, --profile mock):
+broker db migrate api browser-tests dispatcher worker-mock tests
+
+YuE2 route (compose.yaml + compose.yue2.yaml, --profile yue2):
+broker db migrate dispatcher worker-yue2 api
+
+Combined diagnostics (compose.yaml + compose.yue2.yaml, --profile mock --profile yue2):
+db migrate broker worker-mock worker-yue2 api dispatcher
+
+All three `docker compose config --services` checks resolved successfully. The
+combined profile includes both workers; the mock integration run itself selected
+only worker-mock. This was profile resolution, not a real YuE2 inference run.

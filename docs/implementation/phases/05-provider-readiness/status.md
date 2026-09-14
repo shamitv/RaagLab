@@ -1,10 +1,10 @@
 # Phase 05 status
 
-- State: in_progress
+- State: completed
 - Started: 2026-09-14
 - Last updated: 2026-09-14
-- Completed: not completed
-- Current focus: capability contract, UI behavior, provider configuration, and regression evidence
+- Completed: 2026-09-14
+- Current focus: Phase 05 gates passed; Phase 06 release verification remains
 
 ## Completed work
 
@@ -26,29 +26,24 @@ unsupported as recorded in the matrix. See [D03 evidence](../../../deployment/ev
 
 ## Remaining work
 
-Tasks 05-01 through 05-08 have implementation or prior D03 verification evidence.
-Task 05-09 remains open for a fresh API-served capability browser run, resolved
-Compose profile inspection, real-service route regression, and mock smoke against
-this branch. Task 05-10 and final acceptance remain open until those checks pass.
+No Phase 05 work remains. Phase 06 release acceptance and Part 2 D04/D05
+deployment validation and operations handoff remain separate.
 
 ## Blockers and decisions needed
 
-No implementation decision is blocking. This checkout has no Docker/Compose
-executable, so its real-service regression checks cannot run locally. The prior
-documented Ubuntu1 D03 run already proves that a real result crossed the MuseForge
-queue; the remaining gate is rerunning Phase 05 regression checks on a Docker
-runner with this branch's changes.
+No Phase 05 implementation decision or verification blocker remains. The
+integrated checks ran on the configured Linux Docker VM using a uniquely named
+Compose project; the run cleaned only its own containers, network and volumes.
 
 ## Latest verification
 
-Local verification: 148 Python unit tests passed and one optional NumPy-dependent
-test skipped; all three frontend unit tests and the TypeScript/Vite production
-build passed. Provider configuration/API contract coverage passed in that suite.
-The prior [D03 application evidence](../../../deployment/evidence/2026-09-14-d03-review-corrections/README.md)
-contains integrated queue, startup, no-fallback, playback, and mock regression
-results. The new matrix and UI browser regression still require a fresh run through
-the API-served app. See [Phase 05 local evidence](../../evidence/05/2026-09-14-provider-readiness/README.md).
+Local Python tests passed (173 passed, 5 optional skips); the frontend build and
+3 unit tests passed. The VM Docker run passed 172 container unit tests (6 expected
+skips), 49 real-service integration tests, 34 API-served browser tests (22
+intentional skips), queued API restart, mock smoke, and mock/YuE2/combined Compose
+resolution. See the [Phase 05 completion report](implementation-status.md) and
+[verification evidence](../../evidence/05/2026-09-14-provider-readiness/README.md).
 
 ## Next action
 
-05-09: run this branch's API-served browser, resolved Compose profile/queue, integration, and mock smoke checks on the documented Docker runner.
+Continue with the [Phase 06 release verification plan](../06-release-verification-and-handoff/plan.md).
