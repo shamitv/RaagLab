@@ -1,5 +1,28 @@
+@font-face {
+  font-family: "MuseForge Tamil";
+  src: url("./fonts/NotoSansTamil.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+  unicode-range: U+0B80-0BFF;
+}
+@font-face {
+  font-family: "MuseForge Devanagari";
+  src: url("./fonts/NotoSansDevanagari.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+  unicode-range: U+0900-097F, U+A8E0-A8FF;
+}
+@font-face {
+  font-family: "MuseForge Gurmukhi";
+  src: url("./fonts/NotoSansGurmukhi.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+  unicode-range: U+0A00-0A7F;
+}
 :root {
-  font-family: Inter, "SF Pro Text", "Segoe UI", sans-serif;
+  font-family:
+    Inter, "SF Pro Text", "Segoe UI", "MuseForge Tamil", "MuseForge Devanagari",
+    "MuseForge Gurmukhi", sans-serif;
   font-synthesis: none;
   line-height: 1.5;
   color: #142b57;
@@ -331,6 +354,9 @@ main {
     SFMono-Regular,
     Menlo,
     Consolas,
+    "MuseForge Tamil",
+    "MuseForge Devanagari",
+    "MuseForge Gurmukhi",
     monospace;
   background: #f7faff;
   border: 1px solid var(--border);
@@ -588,4 +614,11 @@ h3 {
 .composer-fields {
   display: grid;
   gap: 16px;
+}
+
+.service-status a,
+.project-list + a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
 }
