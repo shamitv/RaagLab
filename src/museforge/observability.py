@@ -29,7 +29,9 @@ def write_probe(path: Path, *, healthy: bool, role: str):
     temporary.replace(path)
 
 
-def probe_loop(settings: Settings, role: str, instance: str, stop: threading.Event, broker_check):
+def probe_loop(settings: Settings, role: str, instance: str, stop: threading.Event, broker_check,
+               provider_role: str | None = None, readiness: str = 'ready'):
+    registration_role = provider_role or role
     engine = engine_for(settings)
     try:
         while not stop.is_set():
@@ -44,16 +46,25 @@ def probe_loop(settings: Settings, role: str, instance: str, stop: threading.Eve
                         ON CONFLICT (role, instance_id) DO UPDATE SET
                         broker_connected = true, last_heartbeat = now(), expires_at = EXCLUDED.expires_at
                     """), {"role": role, "instance": instance, "lease": settings.lease_seconds})
-                    if role == "worker-mock":
+                    if registration_role.startswith("worker-"):
                         connection.execute(text("""
                             INSERT INTO worker_registrations (workspace_id, worker_name, provider_id, provider_revision,
-                              provider_route, capability_revision, readiness, last_heartbeat, expires_at)
-                            VALUES (:workspace, :instance, 'mock', '1', :route,
-                              '1', 'ready', now(), now() + :lease * interval '1 second')
+                              model_id, model_revision, provider_route, capability_revision, readiness,
+                              last_heartbeat, expires_at)
+                            VALUES (:workspace, :instance, :provider, :provider_revision, :model_id, :model_revision,
+                              :route, :capability_revision, :readiness, now(), now() + :lease * interval '1 second')
                             ON CONFLICT (worker_name) DO UPDATE SET last_heartbeat = now(),
-                              expires_at = EXCLUDED.expires_at, readiness = 'ready', provider_revision = '1', capability_revision = '1'
+                              expires_at = EXCLUDED.expires_at, readiness = EXCLUDED.readiness,
+                              provider_id = EXCLUDED.provider_id, provider_revision = EXCLUDED.provider_revision,
+                              model_id = EXCLUDED.model_id, model_revision = EXCLUDED.model_revision,
+                              provider_route = EXCLUDED.provider_route,
+                              capability_revision = EXCLUDED.capability_revision
                         """), {"workspace": settings.workspace_id, "instance": instance,
-                               "route": settings.mock_queue, "lease": settings.lease_seconds})
+                               "provider": settings.provider_id, "provider_revision": settings.provider_revision,
+                               "model_id": settings.model_id, "model_revision": settings.model_revision,
+                               "route": settings.provider_route, "capability_revision": settings.provider_revision,
+                               "readiness": readiness,
+                               "lease": settings.lease_seconds})
                 healthy = True
             except Exception as exc:
                 logger.warning("process_probe_failed role=%s error_type=%s", role, type(exc).__name__)

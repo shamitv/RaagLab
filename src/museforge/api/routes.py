@@ -10,7 +10,7 @@ from fastapi import APIRouter, Header, Query, Request, Response
 from fastapi.responses import JSONResponse, StreamingResponse
 from starlette.background import BackgroundTask
 from museforge.db import schema as db
-from museforge.domain import Accepted, Generation, ProjectCreate, ProjectPatch, VersionPatch, Iteration, ProviderError, capabilities
+from museforge.domain import Accepted, Generation, ProjectCreate, ProjectPatch, VersionPatch, Iteration, ProviderError, provider_capabilities
 from museforge.domain import ErrorResponse, CapabilitiesResponse, ProjectView, ProjectDetail, ProjectPage, JobView, VersionPage, VersionDetail
 from museforge.domain import LibraryPage, SettingsPatch, SettingsView, TemplatePage, TemplateView
 from museforge.jobs import accepted, cancel, retry as retry_job, row, scoped, submit
@@ -137,7 +137,7 @@ def job_detail(c, settings, identifier):
 
 def readiness(c, settings):
     rows = c.execute(sa.select(db.registrations.c.readiness, db.registrations.c.last_heartbeat).where(
-        scoped(db.registrations, settings), db.registrations.c.provider_route == settings.mock_queue,
+        scoped(db.registrations, settings), db.registrations.c.provider_route == settings.provider_route,
         db.registrations.c.expires_at > sa.func.now()).order_by(db.registrations.c.last_heartbeat.desc())).mappings().all()
     return dict(state=('busy' if any(r['readiness'] == 'busy' for r in rows) else rows[0]['readiness']) if rows else 'offline', last_observed_at=rows[0]['last_heartbeat'] if rows else None)
 
@@ -146,7 +146,7 @@ def readiness(c, settings):
 def get_capabilities(request: Request):
     engine, settings = context(request)
     with engine.connect() as c:
-        return dict(capabilities() | {'duration': {'min': 5, 'max': 30, 'default': settings.duration_seconds}}, default_lyrics_mode=settings.lyrics_provider,
+        return dict(provider_capabilities(settings) | {'duration': {'min': 5, 'max': 30, 'default': settings.duration_seconds}}, default_lyrics_mode=settings.lyrics_provider,
                     readiness=readiness(c, settings))
 
 

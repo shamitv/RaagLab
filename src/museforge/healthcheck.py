@@ -18,7 +18,8 @@ def main():
             settings = Settings()
             data = json.loads(settings.health_file.read_text())
             age = time.time() - data["observed_at"]
-            if not data["healthy"] or data["role"] != role or not 0 <= age < settings.lease_seconds:
+            expected_role = "worker-mock" if role == "worker-yue2" else role
+            if not data["healthy"] or data["role"] != expected_role or not 0 <= age < settings.lease_seconds:
                 raise ValueError("stale or unhealthy process")
             os.kill(data["pid"], 0)
     except Exception:

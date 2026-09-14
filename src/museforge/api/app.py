@@ -33,7 +33,7 @@ class Readiness(BaseModel):
 
 def storage_readiness(settings, engine):
     dependencies = {"database": "unavailable", "schema": "unavailable", "artifacts": "unavailable"}
-    services = {"dispatcher": "unobserved", "worker-mock": "unobserved", "broker": "unobserved", "provider": "offline"}
+    services = {"dispatcher": "unobserved", settings.worker_role: "unobserved", "broker": "unobserved", "provider": "offline"}
     try:
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
@@ -45,7 +45,8 @@ def storage_readiness(settings, engine):
                 FROM process_heartbeats WHERE expires_at > now() GROUP BY role
             """)).mappings().all()
             for row in observations:
-                services[row["role"]] = "ready" if row["broker_connected"] else "degraded"
+                observed_role = settings.worker_role if row["role"] == "worker-mock" else row["role"]
+                services[observed_role] = "ready" if row["broker_connected"] else "degraded"
             services["provider"] = provider_readiness(connection, settings)["state"]
             if observations:
                 services["broker"] = "observed_connected" if any(row["broker_connected"] for row in observations) else "degraded"
