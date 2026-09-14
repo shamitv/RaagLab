@@ -1,0 +1,16 @@
+ Container musicgen-yue2-test-test-run-6e58436ede30 Creating
+ Container musicgen-yue2-test-test-run-6e58436ede30 Created
+test_clipped_audio_fails (test_harness.AudioChecks.test_clipped_audio_fails) ... ok
+test_nonfinite_audio_fails (test_harness.AudioChecks.test_nonfinite_audio_fails) ... ok
+test_silent_audio_fails (test_harness.AudioChecks.test_silent_audio_fails) ... ok
+test_valid_flac_roundtrip (test_harness.AudioChecks.test_valid_flac_roundtrip) ... ok
+test_wrong_format_dimensions_fail (test_harness.AudioChecks.test_wrong_format_dimensions_fail) ... ok
+test_prompt_contract (test_harness.ProcessChecks.test_prompt_contract) ... ok
+test_stubborn_process_is_killed (test_harness.ProcessChecks.test_stubborn_process_is_killed) ... ok
+test_success_and_failure (test_harness.ProcessChecks.test_success_and_failure) ... ok
+test_timeout_reaps_and_subsequent_request_recovers (test_harness.ProcessChecks.test_timeout_reaps_and_subsequent_request_recovers) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 6.475s
+
+OK

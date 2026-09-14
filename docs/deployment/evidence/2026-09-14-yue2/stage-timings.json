@@ -1,0 +1,150 @@
+[
+  {
+    "run_id": "20260914T024054027064Z-batch",
+    "id": "acoustic-folk-baseline",
+    "timing": {
+      "abc": {
+        "seconds": 8.943296971003292,
+        "prefill_seconds": 0.5902012209990062,
+        "ttft_seconds": 0.833382034994429,
+        "output_tokens": 909,
+        "content_tokens": 908,
+        "output_tps": 101.64036852932828,
+        "prefix_tokens": 142,
+        "cfg_branches": 1,
+        "execution": "cuda_graph",
+        "attention": "flash"
+      },
+      "semantic": {
+        "seconds": 22.989251783990767,
+        "prefill_seconds": 0.13690011599101126,
+        "ttft_seconds": 0.1396969019988319,
+        "output_tokens": 2476,
+        "content_tokens": 2475,
+        "output_tps": 107.70250477330605,
+        "prefix_tokens": 1052,
+        "cfg_branches": 1,
+        "execution": "cuda_graph",
+        "attention": "flash"
+      },
+      "nar_seconds": 11.58049586400739,
+      "vae_seconds": 6.365865043000667,
+      "load": {
+        "resolve_and_integrity_seconds": 2.9447727730002953,
+        "mot_load_seconds": 0.24063142399245407
+      },
+      "e2e_seconds": 53.51817840299918
+    }
+  },
+  {
+    "run_id": "20260914T024054027064Z-batch",
+    "id": "synth-pop-baseline",
+    "timing": {
+      "abc": {
+        "seconds": 5.271462381002493,
+        "prefill_seconds": 0.6128873499983456,
+        "ttft_seconds": 0.9265402849996462,
+        "output_tokens": 486,
+        "content_tokens": 485,
+        "output_tps": 92.19453063944195,
+        "prefix_tokens": 140,
+        "cfg_branches": 1,
+        "execution": "cuda_graph",
+        "attention": "flash"
+      },
+      "semantic": {
+        "seconds": 10.000814042999991,
+        "prefill_seconds": 0.1504433640075149,
+        "ttft_seconds": 0.153922280005645,
+        "output_tokens": 1053,
+        "content_tokens": 1052,
+        "output_tps": 105.2914288249406,
+        "prefix_tokens": 627,
+        "cfg_branches": 1,
+        "execution": "cuda_graph",
+        "attention": "flash"
+      },
+      "nar_seconds": 4.711503975006053,
+      "vae_seconds": 6.1892814690072555,
+      "load": {
+        "resolve_and_integrity_seconds": 2.6023185519879917,
+        "mot_load_seconds": 0.22325765699497424
+      },
+      "e2e_seconds": 28.919764890990336
+    }
+  },
+  {
+    "run_id": "20260914T024054027064Z-batch",
+    "id": "piano-ballad-baseline",
+    "timing": {
+      "abc": {
+        "seconds": 6.218938423000509,
+        "prefill_seconds": 0.5192340639914619,
+        "ttft_seconds": 0.7723392479965696,
+        "output_tokens": 594,
+        "content_tokens": 593,
+        "output_tps": 95.51469392318043,
+        "prefix_tokens": 139,
+        "cfg_branches": 1,
+        "execution": "cuda_graph",
+        "attention": "flash"
+      },
+      "semantic": {
+        "seconds": 19.06353345399839,
+        "prefill_seconds": 0.20659391800290905,
+        "ttft_seconds": 0.2094327780068852,
+        "output_tokens": 2052,
+        "content_tokens": 2051,
+        "output_tps": 107.64006604293041,
+        "prefix_tokens": 734,
+        "cfg_branches": 1,
+        "execution": "cuda_graph",
+        "attention": "flash"
+      },
+      "nar_seconds": 9.823699346990907,
+      "vae_seconds": 6.330671179006458,
+      "load": {
+        "resolve_and_integrity_seconds": 2.8091228010016493,
+        "mot_load_seconds": 0.2197861919994466
+      },
+      "e2e_seconds": 44.246570242001326
+    }
+  },
+  {
+    "run_id": "20260914T024340479084Z-restart",
+    "id": "acoustic-folk-baseline",
+    "timing": {
+      "abc": {
+        "seconds": 8.849350820994005,
+        "prefill_seconds": 0.490254680000362,
+        "ttft_seconds": 0.6676357319956878,
+        "output_tokens": 909,
+        "content_tokens": 908,
+        "output_tps": 102.71939924039495,
+        "prefix_tokens": 142,
+        "cfg_branches": 1,
+        "execution": "cuda_graph",
+        "attention": "flash"
+      },
+      "semantic": {
+        "seconds": 23.13792080199346,
+        "prefill_seconds": 0.16443244299443904,
+        "ttft_seconds": 0.16760368799441494,
+        "output_tokens": 2476,
+        "content_tokens": 2475,
+        "output_tps": 107.01047951493891,
+        "prefix_tokens": 1052,
+        "cfg_branches": 1,
+        "execution": "cuda_graph",
+        "attention": "flash"
+      },
+      "nar_seconds": 11.883936935992097,
+      "vae_seconds": 5.898656738005229,
+      "load": {
+        "resolve_and_integrity_seconds": 2.774170459000743,
+        "mot_load_seconds": 0.2036163930024486
+      },
+      "e2e_seconds": 52.42701867800497
+    }
+  }
+]

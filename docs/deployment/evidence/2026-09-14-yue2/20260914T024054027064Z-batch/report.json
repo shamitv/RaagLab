@@ -1,0 +1,184 @@
+{
+  "run_id": "20260914T024054027064Z-batch",
+  "driver": "592.01",
+  "models": {
+    "model": {
+      "repo": "m-a-p/YuE2-3B",
+      "revision": "29b3558dd46954a0cd9021dc76d5c91864a0f1c7"
+    },
+    "vae": {
+      "repo": "m-a-p/YuE2-Vae",
+      "revision": "9a94e1d0ea9f8087e98f77fa88df4a4068104d2a"
+    },
+    "wheel_sha256": "8801e2c0d969db02df78d2994150b4ccd86077d87c24fdb8509b1f6f31462641",
+    "license": "CC-BY-NC-4.0"
+  },
+  "attempts": [
+    {
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 58.96812403200602,
+      "peak_device_used_bytes": 9643802624,
+      "peak_process_tree_rss_bytes": 9856057344,
+      "minimum_host_available_bytes": 22880378880,
+      "device_used_before_bytes": 637480960,
+      "device_used_after_bytes": 637480960,
+      "gpu_memory_recovered": true,
+      "id": "acoustic-folk-baseline",
+      "prompt_id": "acoustic-folk",
+      "offload_ar": false,
+      "validation": {
+        "raw": {
+          "frames": 4751936,
+          "sample_rate": 48000,
+          "channels": 2,
+          "duration_seconds": 98.99866666666667,
+          "finite": true,
+          "peak": 0.8850537538528442,
+          "rms": 0.12644096031520088,
+          "near_clip_fraction": 0.0,
+          "silence_fraction": 0.008022204002747512,
+          "passed": true
+        },
+        "decoded": {
+          "frames": 4751936,
+          "sample_rate": 48000,
+          "channels": 2,
+          "duration_seconds": 98.99866666666667,
+          "finite": true,
+          "peak": 0.8850537538528442,
+          "rms": 0.12644096031384727,
+          "near_clip_fraction": 0.0,
+          "silence_fraction": 0.008020836139207262,
+          "passed": true,
+          "file_sha256": "ba19b9dac37402ffb2befb77264591c579ceaf4bd6024d8897dd1f83f580325d",
+          "pcm_sha256": "4919124b2ec98550c1d39677345f15084d1fa1d141b53c3ca373b5ac4a864b75",
+          "byte_size": 18184316,
+          "format": "FLAC"
+        },
+        "truncated": {
+          "abc": false,
+          "semantic": false
+        },
+        "passed": true,
+        "listening": "pending",
+        "lyric_adherence": "pending",
+        "torch_peak_allocated_bytes": 8519067136,
+        "torch_peak_reserved_bytes": 8734638080,
+        "elapsed_seconds": 56.954698671994265,
+        "offload_ar": false
+      }
+    },
+    {
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 33.638606392007205,
+      "peak_device_used_bytes": 9497001984,
+      "peak_process_tree_rss_bytes": 9900077056,
+      "minimum_host_available_bytes": 22932135936,
+      "device_used_before_bytes": 637480960,
+      "device_used_after_bytes": 637480960,
+      "gpu_memory_recovered": true,
+      "id": "synth-pop-baseline",
+      "prompt_id": "synth-pop",
+      "offload_ar": false,
+      "validation": {
+        "raw": {
+          "frames": 2019776,
+          "sample_rate": 48000,
+          "channels": 2,
+          "duration_seconds": 42.07866666666666,
+          "finite": true,
+          "peak": 1.0,
+          "rms": 0.15015642659542466,
+          "near_clip_fraction": 7.426566114262176e-07,
+          "silence_fraction": 0.010628901422732026,
+          "passed": true
+        },
+        "decoded": {
+          "frames": 2019776,
+          "sample_rate": 48000,
+          "channels": 2,
+          "duration_seconds": 42.07866666666666,
+          "finite": true,
+          "peak": 1.0,
+          "rms": 0.15015642658928086,
+          "near_clip_fraction": 7.426566114262176e-07,
+          "silence_fraction": 0.0106281587661206,
+          "passed": true,
+          "file_sha256": "fd1666cefd8c3f74effa191900d48f60aeafda9dbb601520d43f728a263a1fe8",
+          "pcm_sha256": "f8ecfe6d3096e043e329138789240d5b0673e2fdb1d13b36d452165b3b50cc81",
+          "byte_size": 8853757,
+          "format": "FLAC"
+        },
+        "truncated": {
+          "abc": false,
+          "semantic": false
+        },
+        "passed": true,
+        "listening": "pending",
+        "lyric_adherence": "pending",
+        "torch_peak_allocated_bytes": 8425905152,
+        "torch_peak_reserved_bytes": 8587837440,
+        "elapsed_seconds": 31.744076780989417,
+        "offload_ar": false
+      }
+    },
+    {
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 49.280978883994976,
+      "peak_device_used_bytes": 9606053888,
+      "peak_process_tree_rss_bytes": 9962393600,
+      "minimum_host_available_bytes": 22781538304,
+      "device_used_before_bytes": 637480960,
+      "device_used_after_bytes": 637480960,
+      "gpu_memory_recovered": true,
+      "id": "piano-ballad-baseline",
+      "prompt_id": "piano-ballad",
+      "offload_ar": false,
+      "validation": {
+        "raw": {
+          "frames": 3937856,
+          "sample_rate": 48000,
+          "channels": 2,
+          "duration_seconds": 82.03866666666667,
+          "finite": true,
+          "peak": 0.6019236445426941,
+          "rms": 0.08462548374503065,
+          "near_clip_fraction": 0.0,
+          "silence_fraction": 0.007572140779144794,
+          "passed": true
+        },
+        "decoded": {
+          "frames": 3937856,
+          "sample_rate": 48000,
+          "channels": 2,
+          "duration_seconds": 82.03866666666667,
+          "finite": true,
+          "peak": 0.6019237041473389,
+          "rms": 0.08462548374889452,
+          "near_clip_fraction": 0.0,
+          "silence_fraction": 0.007570109216792082,
+          "passed": true,
+          "file_sha256": "509ec4564f90e8a451648a8ca198d05189dfe9192b1aa8049332505320a5900b",
+          "pcm_sha256": "a54b8906df7ef79dd0492431da1e3c024d8b17337726b81ab8563a86bf6d638e",
+          "byte_size": 14002531,
+          "format": "FLAC"
+        },
+        "truncated": {
+          "abc": false,
+          "semantic": false
+        },
+        "passed": true,
+        "listening": "pending",
+        "lyric_adherence": "pending",
+        "torch_peak_allocated_bytes": 8502389760,
+        "torch_peak_reserved_bytes": 8696889344,
+        "elapsed_seconds": 47.43854491699312,
+        "offload_ar": false
+      }
+    }
+  ],
+  "passed": true
+}

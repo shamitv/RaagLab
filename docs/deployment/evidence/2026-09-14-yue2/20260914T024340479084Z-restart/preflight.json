@@ -1,0 +1,25 @@
+{
+  "python": "3.12.14",
+  "torch": "2.10.0+cu128",
+  "cuda": "12.8",
+  "gpu": "NVIDIA GeForce RTX 5080 Laptop GPU",
+  "capability": [
+    12,
+    0
+  ],
+  "bf16": true,
+  "gpu_total_bytes": 17094475776,
+  "verified_weights": true,
+  "models": {
+    "model": {
+      "repo": "m-a-p/YuE2-3B",
+      "revision": "29b3558dd46954a0cd9021dc76d5c91864a0f1c7"
+    },
+    "vae": {
+      "repo": "m-a-p/YuE2-Vae",
+      "revision": "9a94e1d0ea9f8087e98f77fa88df4a4068104d2a"
+    },
+    "wheel_sha256": "8801e2c0d969db02df78d2994150b4ccd86077d87c24fdb8509b1f6f31462641",
+    "license": "CC-BY-NC-4.0"
+  }
+}

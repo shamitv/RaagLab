@@ -1,0 +1,68 @@
+ Network musicgen-yue2-test_default Creating
+ Network musicgen-yue2-test_default Creating
+ Network musicgen-yue2-test_default Created
+ Network musicgen-yue2-test_default Created
+ Container musicgen-yue2-test-acquire-run-f78f219b1e62 Creating
+ Container musicgen-yue2-test-acquire-run-f78f219b1e62 Created
+
+Fetching 12 files:   0%|          | 0/12 [00:00<?, ?it/s]Downloading 'LICENSE' to '/weights/model/.cache/huggingface/download/DhCjcNQuMpl4FL346qr3tvNUCgY=.5b4b50fd3e4d4cadbc54c49cab3552d0eb303d48.incomplete'
+Download complete. Moving file to /weights/model/LICENSE
+Downloading 'README.md' to '/weights/model/.cache/huggingface/download/Xn7B-BWUGOee2Y6hCZtEhtFu4BE=.6e36a1609e084e83f3e0d80acde19cdffa782497.incomplete'
+Download complete. Moving file to /weights/model/README.md
+
+Fetching 12 files:  17%|█▋        | 2/12 [00:00<00:01,  5.75it/s]Downloading 'THIRD_PARTY_NOTICES.md' to '/weights/model/.cache/huggingface/download/WmMuyhEOTOObJvFhmS4kP19aHKo=.8178461b1f6ec6f9977cf0e03b93abd39f5ba1af.incomplete'
+Download complete. Moving file to /weights/model/THIRD_PARTY_NOTICES.md
+Downloading 'config.json' to '/weights/model/.cache/huggingface/download/8_PA_wEVGiVa2goH2H4KQOQpvVY=.9584e50ba9d6e487690544e14dd7555edbe27973.incomplete'
+Download complete. Moving file to /weights/model/config.json
+
+Fetching 12 files:  33%|███▎      | 4/12 [00:00<00:01,  6.69it/s]Downloading 'generation_config.json' to '/weights/model/.cache/huggingface/download/3EVKVggOldJcKSsGjSdoUCN1AyQ=.041d89f512a1b79c13e1a3dee54b5a9bc7c26cad.incomplete'
+Download complete. Moving file to /weights/model/generation_config.json
+Downloading 'licenses/SnakeBeta-NVIDIA-MIT.txt' to '/weights/model/.cache/huggingface/download/licenses/zJDhgLftM0uX03d8CjUP15w01Jg=.e9663595cc28938f88d6299acd3ba791542e4c0c.incomplete'
+Download complete. Moving file to /weights/model/licenses/SnakeBeta-NVIDIA-MIT.txt
+
+Fetching 12 files:  50%|█████     | 6/12 [00:00<00:00,  7.11it/s]Downloading 'licenses/stable-audio-tools-MIT.txt' to '/weights/model/.cache/huggingface/download/licenses/D17I2LNttJL3-_3qlVOYPkjtoHw=.f119f94cf2ec8269020dd0d8140a4c4b83cc65a1.incomplete'
+Download complete. Moving file to /weights/model/licenses/stable-audio-tools-MIT.txt
+Downloading 'model.safetensors' to '/weights/model/.cache/huggingface/download/xGOKKLRSlIhH692hSVvI1-gpoa8=.1d55c42c1a9875c34f5d736e15078449992b044e807ce2a138e6cf289a1e59e9.incomplete'
+Downloading 'modeling_yue2.py' to '/weights/model/.cache/huggingface/download/v21GIkdY3uqUYDAi4ark9Qwh3GQ=.9e2b9924b6e277cab5905771ac9afc068267ee8b.incomplete'
+Download complete. Moving file to /weights/model/modeling_yue2.py
+
+Fetching 12 files:  67%|██████▋   | 8/12 [00:01<00:00,  6.39it/s]Downloading 'qwen.tiktoken' to '/weights/model/.cache/huggingface/download/1Kd_wvgTXtvulpFNYa8YVBQZ_4Q=.9b9b0e0416d84d7c88333eb261c77e5fe2d7f7be.incomplete'
+Download complete. Moving file to /weights/model/qwen.tiktoken
+Downloading 'weights_manifest.json' to '/weights/model/.cache/huggingface/download/C3SKnCJafecRtqn9U8sjWDtawFo=.5ac0adb948bf8d8987ce7a1401fc39d0842b709d.incomplete'
+Download complete. Moving file to /weights/model/weights_manifest.json
+
+Fetching 12 files:  83%|████████▎ | 10/12 [00:01<00:00,  5.65it/s]Downloading 'yue2_generation_config.json' to '/weights/model/.cache/huggingface/download/5InT7AYrnVMjK_WDoOPD7W34a2w=.f8214009f5bb5425319e4519b12e4853ad72acf3.incomplete'
+Download complete. Moving file to /weights/model/yue2_generation_config.json
+
+Fetching 12 files:  92%|█████████▏| 11/12 [00:20<00:01,  1.82s/it]Download complete. Moving file to /weights/model/model.safetensors
+
+Fetching 12 files: 100%|██████████| 12/12 [03:04<00:00, 15.35s/it]
+Fetching 12 files: 100%|██████████| 12/12 [03:04<00:00, 15.35s/it]
+/weights/model
+
+Fetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]Downloading 'README.md' to '/weights/vae/.cache/huggingface/download/Xn7B-BWUGOee2Y6hCZtEhtFu4BE=.d991eb507ce963451013222b3681058ea344709e.incomplete'
+Download complete. Moving file to /weights/vae/README.md
+Downloading 'LICENSE' to '/weights/vae/.cache/huggingface/download/DhCjcNQuMpl4FL346qr3tvNUCgY=.5b4b50fd3e4d4cadbc54c49cab3552d0eb303d48.incomplete'
+Download complete. Moving file to /weights/vae/LICENSE
+
+Fetching 9 files:  22%|██▏       | 2/9 [00:00<00:01,  6.66it/s]Downloading 'config.json' to '/weights/vae/.cache/huggingface/download/8_PA_wEVGiVa2goH2H4KQOQpvVY=.f68832bef1b99f53dd70460f6b0d336971a664b8.incomplete'
+Downloading 'THIRD_PARTY_NOTICES.md' to '/weights/vae/.cache/huggingface/download/WmMuyhEOTOObJvFhmS4kP19aHKo=.8178461b1f6ec6f9977cf0e03b93abd39f5ba1af.incomplete'
+Download complete. Moving file to /weights/vae/config.json
+Download complete. Moving file to /weights/vae/THIRD_PARTY_NOTICES.md
+
+Fetching 9 files:  44%|████▍     | 4/9 [00:00<00:00,  6.59it/s]Downloading 'licenses/stable-audio-tools-MIT.txt' to '/weights/vae/.cache/huggingface/download/licenses/D17I2LNttJL3-_3qlVOYPkjtoHw=.f119f94cf2ec8269020dd0d8140a4c4b83cc65a1.incomplete'
+Downloading 'licenses/SnakeBeta-NVIDIA-MIT.txt' to '/weights/vae/.cache/huggingface/download/licenses/zJDhgLftM0uX03d8CjUP15w01Jg=.e9663595cc28938f88d6299acd3ba791542e4c0c.incomplete'
+Download complete. Moving file to /weights/vae/licenses/stable-audio-tools-MIT.txt
+Download complete. Moving file to /weights/vae/licenses/SnakeBeta-NVIDIA-MIT.txt
+
+Fetching 9 files:  67%|██████▋   | 6/9 [00:00<00:00,  7.10it/s]Downloading 'model.safetensors' to '/weights/vae/.cache/huggingface/download/xGOKKLRSlIhH692hSVvI1-gpoa8=.807ce9d5149fa27c5ad3e6582058469852e908f6c5acc8c8aa338e7ab7751346.incomplete'
+Downloading 'modeling_vae.py' to '/weights/vae/.cache/huggingface/download/77cF5pujo88d6xcDLicaHEtYI0Q=.79014d26619982b3eaa9b9c987c31d6f931930b0.incomplete'
+Download complete. Moving file to /weights/vae/modeling_vae.py
+Downloading 'weights_manifest.json' to '/weights/vae/.cache/huggingface/download/C3SKnCJafecRtqn9U8sjWDtawFo=.c663bbfcc6238d5b35cd61bee56e6aab4c7e3876.incomplete'
+Download complete. Moving file to /weights/vae/weights_manifest.json
+
+Fetching 9 files:  89%|████████▉ | 8/9 [00:01<00:00,  6.10it/s]Download complete. Moving file to /weights/vae/model.safetensors
+
+Fetching 9 files: 100%|██████████| 9/9 [00:17<00:00,  1.98s/it]
+/weights/vae
+Both pinned snapshots verified
