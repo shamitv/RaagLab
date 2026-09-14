@@ -22,13 +22,13 @@ test("projects, library, duplicate, archive, settings, and templates work", asyn
   await page.getByLabel("Default volume", { exact: false }).fill("0.65");
   await page.getByRole("combobox", { name: "Repeat", exact: true }).selectOption("one");
   await page.getByRole("button", { name: "Save workspace settings" }).click();
-  await expect(page.getByRole("status")).toContainText("settings saved");
+  await expect(page.getByRole("status").filter({ hasText: "Workspace settings saved." })).toBeVisible();
   await page.getByRole("link", { name: "Create", exact: true }).click();
   await expect(page.getByRole("radio", { name: "Happy" })).toBeChecked();
   await page.getByRole("link", { name: "Settings", exact: true }).click();
   await page.getByRole("combobox", { name: "Mood", exact: true }).selectOption("Calm");
   await page.getByRole("button", { name: "Save workspace settings" }).click();
-  await expect(page.getByRole("status")).toContainText("settings saved");
+  await expect(page.getByRole("status").filter({ hasText: "Workspace settings saved." })).toBeVisible();
 
   await page.getByRole("link", { name: "Templates", exact: true }).click();
   await page.getByLabel("Find a template").fill("Tabla");
@@ -37,7 +37,7 @@ test("projects, library, duplicate, archive, settings, and templates work", asyn
     "A relaxed evening instrumental with a soft tabla pulse.",
   );
   await expect(page.getByRole("region", { name: "Generated result" })).toHaveCount(0);
-  await expect(page.getByRole("status")).toContainText("Template applied");
+  await expect(page.getByRole("status").filter({ hasText: "Template applied" })).toBeVisible();
   await page.getByLabel("Project title", { exact: true }).fill("Phase 4 library song");
   await page.getByRole("button", { name: "Save Project", exact: true }).click();
   await expect(page).toHaveURL(/\/projects\/[0-9a-f-]+$/);
@@ -90,7 +90,7 @@ test("projects, library, duplicate, archive, settings, and templates work", asyn
   await page.getByLabel("Default volume", { exact: false }).fill("0.8");
   await page.getByRole("combobox", { name: "Repeat", exact: true }).selectOption("off");
   await page.getByRole("button", { name: "Save workspace settings" }).click();
-  await expect(page.getByRole("status")).toContainText("settings saved");
+  await expect(page.getByRole("status").filter({ hasText: "Workspace settings saved." })).toBeVisible();
 });
 
 test("offline and two-tab draft conflicts keep explicit recovery choices", async ({ page, context }, testInfo) => {
