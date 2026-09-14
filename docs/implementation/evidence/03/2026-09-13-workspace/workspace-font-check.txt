@@ -1,0 +1,39 @@
+
+Running 12 tests using 1 worker
+
+(node:195885) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [desktop] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection (17.3s)
+  ✓   2 [desktop] › browser/workspace.spec.ts:87:1 › breakpoint and zoom layout keeps controls and semantic order (827ms)
+  ✓   3 [desktop] › browser/workspace.spec.ts:120:1 › focused actions, clipboard failure, offline draft and conditional save (23.5s)
+(node:196404) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   4 [mobile] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection (18.5s)
+  ✓   5 [mobile] › browser/workspace.spec.ts:87:1 › breakpoint and zoom layout keeps controls and semantic order (686ms)
+  -   6 [mobile] › browser/workspace.spec.ts:120:1 › focused actions, clipboard failure, offline draft and conditional save
+(node:196729) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   7 [small] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection (17.2s)
+  ✓   8 [small] › browser/workspace.spec.ts:87:1 › breakpoint and zoom layout keeps controls and semantic order (764ms)
+  -   9 [small] › browser/workspace.spec.ts:120:1 › focused actions, clipboard failure, offline draft and conditional save
+(node:196881) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  10 [narrow] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection (18.7s)
+(node:197159) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 [narrow] › browser/workspace.spec.ts:87:1 › breakpoint and zoom layout keeps controls and semantic order (1.1s)
+  -  12 [narrow] › browser/workspace.spec.ts:120:1 › focused actions, clipboard failure, offline draft and conditional save
+
+
+  1) [narrow] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection 
+
+    Error: apiRequestContext._wrapApiCall: ENOENT: no such file or directory, copyfile '/home/shamit/work/RaagLab/test-results/browser/.playwright-artifacts-3/traces/b163ed09f68681248ada-bd638ba94ad78766dbe5-recording1.network' -> '/home/shamit/work/RaagLab/test-results/browser/.playwright-artifacts-3/traces/b163ed09f68681248ada-bd638ba94ad78766dbe5-recording1-pwnetcopy-1.network'
+
+    Error: browserContext._wrapApiCall: ENOENT: no such file or directory, open '/home/shamit/work/RaagLab/test-results/browser/.playwright-artifacts-3/traces/b163ed09f68681248ada-bd638ba94ad78766dbe5.network'
+
+    Error: ENOENT: no such file or directory, open '/home/shamit/work/RaagLab/test-results/browser/.playwright-artifacts-3/3c3090ae2ae1b71ee16b714851089069.zip'
+
+  1 failed
+    [narrow] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection 
+  3 skipped
+  8 passed (1.7m)

@@ -88,7 +88,7 @@ def capabilities():
                 is_demo=True, lyrics_modes=['user', 'static', 'mock'], lyrics_text=True,
                 text_to_instrumental=False, vocals=False, exact_lyrics_vocals=False,
                 instruments=INSTRUMENTS, moods=MOODS, languages=LANGUAGES, genres=GENRES,
-                vocal_types=['Instrumental'], operations=['generate'], duration={'min': 5, 'max': 30, 'default': 8},
+                vocal_types=['Instrumental'], operations=['generate', 'refine', 'variation', 'regenerate', 'lyrics_edit'], duration={'min': 5, 'max': 30, 'default': 8},
                 sample_rates=[44100], channels=[2], seed_behavior='deterministic PCM for identical snapshot',
                 cooperative_cancel=True, progress_mode='stage', warnings=[WARNING])
 
@@ -191,6 +191,7 @@ class Provenance(CapabilitiesView):
     lyrics: LyricsCheckpoint
 
 class VersionView(StrictModel):
+    favorite: bool = False
     id: UUID
     workspace_id: UUID
     created_at: datetime
@@ -239,3 +240,39 @@ class ErrorResponse(StrictModel):
     retryable: bool
     correlation_id: str
     fields: list[ErrorField] | None = None
+
+
+class ProjectPatch(StrictModel):
+    title: str | None = None
+    draft: Generation | None = None
+    active_version_id: UUID | None = None
+
+    @model_validator(mode='after')
+    def validate_patch(self):
+        if not self.model_fields_set: raise ValueError('Patch must not be empty')
+        if 'title' in self.model_fields_set: ProjectCreate(title=self.title)
+        if 'draft' in self.model_fields_set and self.draft is None: raise ValueError('Draft is required')
+        return self
+
+class VersionPatch(StrictModel):
+    label: str | None = None
+    favorite: bool | None = None
+
+    @model_validator(mode='after')
+    def validate_patch(self):
+        if not self.model_fields_set: raise ValueError('Patch must not be empty')
+        if 'label' in self.model_fields_set: ProjectCreate(title=self.label)
+        if 'favorite' in self.model_fields_set and self.favorite is None: raise ValueError('Favorite is required')
+        return self
+
+class Iteration(StrictModel):
+    operation: Literal['refine', 'variation', 'regenerate', 'lyrics_edit']
+    inputs: Generation
+
+    @model_validator(mode='after')
+    def validate_operation(self):
+        if self.operation == 'refine' and not self.inputs.iteration_instruction:
+            raise ValueError('Refinement instruction is required')
+        if self.operation == 'lyrics_edit' and self.inputs.lyrics.mode != 'user':
+            raise ValueError('Lyrics edit requires exact user text')
+        return self

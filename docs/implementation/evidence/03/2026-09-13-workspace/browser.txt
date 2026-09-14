@@ -1,0 +1,46 @@
+
+> museforge-web@0.1.0 test:browser
+> playwright test
+
+
+Running 28 tests using 1 worker
+
+(node:193662) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [desktop] › browser/generation.spec.ts:4:1 › real generation plays, seeks, downloads and survives refresh (7.6s)
+  ✓   2 [desktop] › browser/generation.spec.ts:50:39 › real static lyrics (5.1s)
+  ✓   3 [desktop] › browser/generation.spec.ts:50:39 › real mock lyrics (4.8s)
+  ✓   4 [desktop] › browser/routing.spec.ts:4:1 › API-served shell supports navigation, refresh, and accessible placeholders (1.3s)
+  ✓   5 [desktop] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection (17.8s)
+  ✓   6 [desktop] › browser/workspace.spec.ts:87:1 › breakpoint and zoom layout keeps controls and semantic order (777ms)
+  ✓   7 [desktop] › browser/workspace.spec.ts:120:1 › focused actions, clipboard failure, offline draft and conditional save (20.5s)
+(node:194004) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   8 [mobile] › browser/generation.spec.ts:4:1 › real generation plays, seeks, downloads and survives refresh (8.2s)
+  ✓   9 [mobile] › browser/generation.spec.ts:50:39 › real static lyrics (5.9s)
+  ✓  10 [mobile] › browser/generation.spec.ts:50:39 › real mock lyrics (4.8s)
+  ✓  11 [mobile] › browser/routing.spec.ts:4:1 › API-served shell supports navigation, refresh, and accessible placeholders (1.4s)
+  ✓  12 [mobile] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection (17.0s)
+  ✓  13 [mobile] › browser/workspace.spec.ts:87:1 › breakpoint and zoom layout keeps controls and semantic order (650ms)
+  -  14 [mobile] › browser/workspace.spec.ts:120:1 › focused actions, clipboard failure, offline draft and conditional save
+(node:194307) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  15 [small] › browser/generation.spec.ts:4:1 › real generation plays, seeks, downloads and survives refresh (7.0s)
+  ✓  16 [small] › browser/generation.spec.ts:50:39 › real static lyrics (4.9s)
+  ✓  17 [small] › browser/generation.spec.ts:50:39 › real mock lyrics (4.9s)
+  ✓  18 [small] › browser/routing.spec.ts:4:1 › API-served shell supports navigation, refresh, and accessible placeholders (1.5s)
+  ✓  19 [small] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection (16.6s)
+  ✓  20 [small] › browser/workspace.spec.ts:87:1 › breakpoint and zoom layout keeps controls and semantic order (600ms)
+  -  21 [small] › browser/workspace.spec.ts:120:1 › focused actions, clipboard failure, offline draft and conditional save
+(node:194623) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  22 [narrow] › browser/generation.spec.ts:4:1 › real generation plays, seeks, downloads and survives refresh (8.4s)
+  ✓  23 [narrow] › browser/generation.spec.ts:50:39 › real static lyrics (5.0s)
+  ✓  24 [narrow] › browser/generation.spec.ts:50:39 › real mock lyrics (5.9s)
+  ✓  25 [narrow] › browser/routing.spec.ts:4:1 › API-served shell supports navigation, refresh, and accessible placeholders (1.4s)
+  ✓  26 [narrow] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection (18.0s)
+  ✓  27 [narrow] › browser/workspace.spec.ts:87:1 › breakpoint and zoom layout keeps controls and semantic order (628ms)
+  -  28 [narrow] › browser/workspace.spec.ts:120:1 › focused actions, clipboard failure, offline draft and conditional save
+
+  3 skipped
+  25 passed (2.9m)

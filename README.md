@@ -1,6 +1,6 @@
 # MuseForge AI
 
-A portable local music workspace. Phase 02 provides a composer served by FastAPI, durable PostgreSQL jobs, RabbitMQ dispatch, and a separate CPU worker generating playable original demo WAV audio. Results persist across refresh and API restart.
+A portable local music workspace. Phase 03 provides a responsive composer, real audio controls, exact lyrics editing and immutable version iterations, served by FastAPI with durable PostgreSQL jobs, RabbitMQ dispatch and a separate CPU mock worker. Save, favorite, rename and version selection persist through the API; drafts recover locally in IndexedDB. Demo audio does not sing the supplied lyrics.
 
 ## Start the foundation
 
@@ -30,4 +30,4 @@ bash scripts/test.sh integration   # isolated Docker project, real PostgreSQL/Ra
 
 Integration performs clean image builds, package/service boundary checks, schema and concurrent migration tests, API-hosted static checks, and ordinary stop/start persistence verification. It deletes only its uniquely named test project and volumes. It overrides application connection settings so it cannot use a configured external database.
 
-See [development instructions](docs/development.md), [Phase 02 status](docs/implementation/phases/02-mock-end-to-end/status.md), and [verification evidence](docs/implementation/evidence/01/2026-09-13-foundation/README.md).
+See [development instructions](docs/development.md), [Phase 03 status](docs/implementation/phases/03-complete-responsive-workspace/status.md), and [verification evidence](docs/implementation/evidence/03/2026-09-13-workspace/README.md).

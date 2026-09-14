@@ -114,7 +114,7 @@ def create_app(settings: Settings | None = None):
     @app.exception_handler(ProviderError)
     async def provider_error(request, exc):
         status = {'not_found': 404, 'idempotency_conflict': 409, 'project_archived': 409,
-                  'artifact_unavailable': 410, 'invalid_cursor': 422}.get(exc.code, 422)
+                  'revision_required': 428, 'revision_conflict': 412, 'artifact_unavailable': 410, 'invalid_cursor': 422}.get(exc.code, 422)
         return error(exc.code, status, request.state.correlation_id)
 
     @app.exception_handler(RequestValidationError)

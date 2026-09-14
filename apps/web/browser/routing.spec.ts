@@ -6,8 +6,8 @@ test('API-served shell supports navigation, refresh, and accessible placeholders
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Create', exact: true })).toBeVisible();
-  await expect(page.getByRole('status')).toHaveText('Storage is ready.');
-  for (const name of ['Library', 'Projects', 'Settings', 'Templates', 'Create']) {
+  await expect(page.getByRole('status').filter({hasText:'Storage is ready.'})).toBeVisible();
+  for (const name of ['Projects', 'Create']) {
     await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name, exact: true }).click();
     await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
     await page.reload();

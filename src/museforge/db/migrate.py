@@ -8,7 +8,7 @@ from sqlalchemy import text
 from museforge.config import Settings
 from museforge.db.connection import engine_for
 
-SCHEMA_HEAD = "0001_foundation"
+SCHEMA_HEAD = "0002_version_favorites"
 MIGRATION_LOCK = 0x4D555345464F5247
 
 

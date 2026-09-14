@@ -3,13 +3,13 @@
 - State: in_progress
 - Planning state: completed
 - Application state: in_progress
-- Scope of current run: Phase 02 mock end-to-end
+- Scope of current run: Phase 03 complete responsive workspace
 - Planning started: 2026-09-13T12:25:42+05:30
 - Planning completed: 2026-09-13T07:27:05Z
 - Application started: 2026-09-13T08:12:41Z
-- Last updated: 2026-09-13T13:44:09.571143+00:00
+- Last updated: 2026-09-14T02:55:06.779413+00:00
 - Application completed: not completed
-- Current focus: Phase 02 complete; Phase 03 responsive workspace is next
+- Current focus: Phase 03 complete; Phase 04 projects and recovery is next
 
 ## Phase summary
 
@@ -18,12 +18,14 @@
 | [00 Discovery and contracts](phases/00-discovery-and-contracts/status.md) | completed | Documentation-only discovery and planning verified | [Completion report](phases/00-discovery-and-contracts/implementation-status.md) |
 | [01 Foundation](phases/01-foundation/status.md) | completed | Frozen stack, migrations, health and API-served shell verified | [Completion report](phases/01-foundation/implementation-status.md) |
 | [02 Mock end-to-end](phases/02-mock-end-to-end/status.md) | completed | Playable mock pipeline and restart/browser evidence verified | [Completion report](phases/02-mock-end-to-end/implementation-status.md) |
-| [03 Complete responsive workspace](phases/03-complete-responsive-workspace/status.md) | not_started | Plan ready; mockups inspected | 03-01 visual/components after checkpoint 02 |
+| [03 Complete responsive workspace](phases/03-complete-responsive-workspace/status.md) | completed | Responsive workspace, immutable iterations and browser acceptance verified | [Completion report](phases/03-complete-responsive-workspace/implementation-status.md) |
 | [04 Projects, versions, and recovery](phases/04-projects-versions-and-recovery/status.md) | not_started | Plan ready; recovery/save contracts documented | 04-01 library/project flows after 03 |
 | [05 Provider readiness](phases/05-provider-readiness/status.md) | not_started | Plan ready; no real model selected | 05-01 capability audit after 04 |
 | [06 Release verification and handoff](phases/06-release-verification-and-handoff/status.md) | not_started | Plan ready; no release or deployment | 06-01 requirements/report audit after 01–05 |
 
 ## Completed work
+
+Phase 03 is complete: responsive composer/player/lyrics/iteration/history, conditional metadata and selection, local drafts, and API-served browser/visual acceptance. See its [completion report](phases/03-complete-responsive-workspace/implementation-status.md).
 
 Phase 02 is complete: playable original mock generation, exact lyrics, durable jobs, safe artifacts, and a working composer/player. See its [completion report](phases/02-mock-end-to-end/implementation-status.md).
 
@@ -33,13 +35,15 @@ The repository/design/reference audit, [architecture decision](decisions/0001-ap
 
 ## Remaining work
 
-Phases 03–06 remain unstarted. Part 2 real-model and machine deployment work remains pending.
+Phases 04–06 remain unstarted. Part 2 real-model and machine deployment work remains pending.
 
 ## Blockers and decisions needed
 
-None for Phase 03 mock workspace implementation. The Docker VM at `10.42.0.42` supplied the runtime environment for Phase 02 verification.
+None for Phase 04 projects and recovery. The Docker VM at `10.42.0.42` supplied the runtime environment for Phase 02 verification.
 
 ## Latest verification
+
+Phase 03 passed 97 local Python tests, 3 frontend tests, 29 real-service tests, 5 final lineage checks, 25 full browser checks and final font/recovery/keyboard/native 200% zoom checks. See [Phase 03 evidence](evidence/03/2026-09-13-workspace/README.md).
 
 Phase 02 passed 97 local Python tests, 96 container tests plus one expected Git-only skip, 2 frontend tests, 24 real-service tests, 12 Chromium checks, queued/browser API restart checks and seed/smoke verification. See [Phase 02 evidence](evidence/02/2026-09-13-mock-end-to-end/README.md).
 
@@ -49,4 +53,4 @@ Phase 01 passed all six acceptance criteria: clean pinned image builds; 49 Pytho
 
 ## Next action
 
-Begin Phase 03 at 03-01: apply the planned responsive workspace design to the verified mock-generation flow.
+Begin Phase 04 projects, versions and recovery.
