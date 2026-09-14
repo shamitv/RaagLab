@@ -139,6 +139,8 @@ def retry(engine, settings, identifier, key):
                 return prior
             if original['state'] not in ('failed', 'timed_out'):
                 raise ProviderError('retry_not_allowed')
+            if original['operation'] == 'retry':
+                raise ProviderError('retry_not_allowed')
             if project['archived_at']:
                 raise ProviderError('project_archived')
             if snapshot.get('schema_version') != original['snapshot_schema_version']:
