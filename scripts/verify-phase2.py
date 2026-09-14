@@ -8,7 +8,8 @@ import urllib.request
 import uuid
 
 ROOT=Path(__file__).resolve().parents[1]
-project='museforge-phase2-test-'+uuid.uuid4().hex[:12]
+prefix=os.environ.get('MUSEFORGE_TEST_PROJECT_PREFIX','museforge-phase2-test-')
+project=prefix+uuid.uuid4().hex[:12]
 env=dict(os.environ, APP_PORT='0')
 base=['docker','compose','--project-name',project,'--env-file','.env','--profile','mock','-f','compose.yaml','-f','compose.test.yaml']
 evidence=ROOT/'test-results'/project
@@ -28,12 +29,21 @@ def get(path):
     with urllib.request.urlopen(origin+path,timeout=10) as response: return json.load(response)
 
 try:
-    run('build',timeout=1800)
-    run('up','-d','--wait','--wait-timeout','180','api','dispatcher','worker-mock')
+    run('build','api','dispatcher','worker-mock','tests',timeout=1800)
+    if os.environ.get('PHASE4_BROWSER')=='1':
+        run('build','browser-tests',timeout=1800)
+    if prefix.startswith('museforge-phase4-test-'):
+        run('up','-d','--scale','worker-mock=2','--wait','--wait-timeout','180','api','dispatcher','worker-mock')
+    else:
+        run('up','-d','--wait','--wait-timeout','180','api','dispatcher','worker-mock')
     origin='http://'+run('port','api','8000',capture=True).strip()
     run('run','--rm','tests','/app/.venv/bin/pytest','tests/unit')
     output=run('run','--rm','tests',capture=True)
     (evidence/'integration.txt').write_text(output)
+    if os.environ.get('PHASE4_BROWSER')=='1':
+        browser=run('run','--rm','-e',f'PLAYWRIGHT_OUTPUT_DIR=/test-results/{project}/browser',
+                    'browser-tests',capture=True,timeout=1200)
+        (evidence/'browser.txt').write_text(browser)
     # Hold a dedicated worker: accepted work survives API restart while queued.
     run('stop','worker-mock')
     body=json.dumps({'brief':'Queued restart checkpoint','instruments':['Piano'],'mood':'Calm',
@@ -91,10 +101,11 @@ try:
     if os.environ.get('PHASE2_BROWSER')=='1':
         subprocess.run(['npm','run','test:browser'],cwd=ROOT/'apps/web',env=dict(os.environ,API_BASE_URL=origin),check=True,timeout=600)
     (evidence/'readiness.json').write_text(json.dumps(get('/health/ready'),indent=2))
-    print(f'Phase 2 service checks passed. Evidence: {evidence}')
+    phase='Phase 4' if prefix.startswith('museforge-phase4-test-') else 'Phase 2'
+    print(f'{phase} service checks passed. Evidence: {evidence}')
 finally:
     try:
         (evidence/'services.log').write_text(run('logs','--no-color',capture=True,timeout=30))
     finally:
-        assert project.startswith('museforge-phase2-test-')
+        assert project.startswith(('museforge-phase2-test-','museforge-phase4-test-'))
         run('down','--volumes','--remove-orphans',timeout=120)
