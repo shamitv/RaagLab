@@ -1,0 +1,91 @@
+services:
+  api:
+    environment:
+      MUSIC_PROVIDER: yue2
+      LYRICS_PROVIDER: user
+      YUE2_QUEUE: museforge.yue2.v1
+      MODEL_ID: m-a-p/YuE2-3B
+      MODEL_REVISION: 29b3558dd46954a0cd9021dc76d5c91864a0f1c7
+      DECODER_REVISION: 9a94e1d0ea9f8087e98f77fa88df4a4068104d2a
+      DEVICE: cuda
+      PRECISION: bfloat16
+      YUE2_MODEL_DIR: /weights/model
+      YUE2_VAE_DIR: /weights/vae
+      YUE2_RUNNER: /opt/yue2-test/generate.py
+      YUE2_PREFLIGHT: /opt/yue2-test/preflight.py
+      YUE2_MEMORY_BUDGET_GIB: 16
+      YUE2_PROCESS_TIMEOUT_SECONDS: 900
+      YUE2_WARMUP_TIMEOUT_SECONDS: 900
+      YUE2_OFFLOAD_AR: "false"
+      WORKER_CONCURRENCY: 1
+      ATTEMPT_DEADLINE_SECONDS: 900
+      HARD_WATCHDOG_SECONDS: 930
+      QUEUE_DEADLINE_SECONDS: 1800
+  dispatcher:
+    environment:
+      MUSIC_PROVIDER: yue2
+      LYRICS_PROVIDER: user
+      YUE2_QUEUE: museforge.yue2.v1
+      MODEL_ID: m-a-p/YuE2-3B
+      MODEL_REVISION: 29b3558dd46954a0cd9021dc76d5c91864a0f1c7
+      DECODER_REVISION: 9a94e1d0ea9f8087e98f77fa88df4a4068104d2a
+      DEVICE: cuda
+      PRECISION: bfloat16
+      ATTEMPT_DEADLINE_SECONDS: 900
+      HARD_WATCHDOG_SECONDS: 930
+      QUEUE_DEADLINE_SECONDS: 1800
+  worker-yue2:
+    profiles: [yue2]
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 30s
+    build:
+      context: .
+      dockerfile: packaging/yue2/Dockerfile.worker
+    environment:
+      DATABASE_URL: postgresql+psycopg://museforge:local-development-only@db:5432/museforge
+      BROKER_URL: amqp://museforge:local-development-only@broker:5672//
+      WORKSPACE_ID: 00000000-0000-4000-8000-000000000001
+      MUSIC_PROVIDER: yue2
+      LYRICS_PROVIDER: user
+      YUE2_QUEUE: museforge.yue2.v1
+      MODEL_ID: m-a-p/YuE2-3B
+      MODEL_REVISION: 29b3558dd46954a0cd9021dc76d5c91864a0f1c7
+      DECODER_REVISION: 9a94e1d0ea9f8087e98f77fa88df4a4068104d2a
+      ARTIFACT_ROOT: /var/lib/museforge/artifacts
+      DEVICE: cuda
+      PRECISION: bfloat16
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+      WEIGHTS_DIR: /weights
+      CACHE_DIR: /cache/hf
+      YUE2_MODEL_DIR: /weights/model
+      YUE2_VAE_DIR: /weights/vae
+      YUE2_RUNNER: /opt/yue2-test/generate.py
+      YUE2_PREFLIGHT: /opt/yue2-test/preflight.py
+      YUE2_MEMORY_BUDGET_GIB: 16
+      YUE2_PROCESS_TIMEOUT_SECONDS: 900
+      YUE2_WARMUP_TIMEOUT_SECONDS: 900
+      YUE2_OFFLOAD_AR: "false"
+      WORKER_CONCURRENCY: 1
+      ATTEMPT_DEADLINE_SECONDS: 900
+      HARD_WATCHDOG_SECONDS: 930
+      QUEUE_DEADLINE_SECONDS: 1800
+    networks: [backend]
+    volumes:
+      - artifacts:/var/lib/museforge/artifacts
+      - yue2_weights:/weights:ro
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      broker: {condition: service_healthy}
+    healthcheck:
+      interval: 5s
+      timeout: 10s
+      retries: 12
+      start_period: 120s
+      test: [CMD, python, -m, museforge.healthcheck, worker-yue2]
+
+volumes:
+  yue2_weights:
+    external: true
+    name: musicgen-yue2-test_weights
