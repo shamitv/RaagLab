@@ -6,6 +6,6 @@
 - [x] D03-04 Verify host → WSL → container → PyTorch → model readiness.
 - [x] D03-05 Generate three prompts with bounded process supervision and audio checks.
 - [x] D03-06 Repeat a prompt in a fresh offline container and compare hashes.
-- [ ] D03-07 Implement the MuseForge YuE2 provider adapter and conformance tests.
-- [ ] D03-08 Add real queue routing, readiness, provenance, and no-fallback checks.
+- [x] D03-07 Implement the MuseForge YuE2 provider adapter and conformance tests.
+- [x] D03-08 Add real queue routing, readiness, provenance, and no-fallback checks.
 - [ ] D03-09 Produce one persisted real application result retrievable through the API.

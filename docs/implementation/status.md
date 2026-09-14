@@ -20,7 +20,7 @@
 | [02 Mock end-to-end](phases/02-mock-end-to-end/status.md) | completed | Playable mock pipeline and restart/browser evidence verified | [Completion report](phases/02-mock-end-to-end/implementation-status.md) |
 | [03 Complete responsive workspace](phases/03-complete-responsive-workspace/status.md) | completed | Responsive workspace, immutable iterations and browser acceptance verified | [Completion report](phases/03-complete-responsive-workspace/implementation-status.md) |
 | [04 Projects, versions, and recovery](phases/04-projects-versions-and-recovery/status.md) | not_started | Plan ready; recovery/save contracts documented | 04-01 library/project flows after 03 |
-| [05 Provider readiness](phases/05-provider-readiness/status.md) | not_started | Plan ready; YuE2 standalone Part 2 checkpoint recorded; adapter pending | 05-01 capability audit after 04 |
+| [05 Provider readiness](phases/05-provider-readiness/status.md) | not_started | Plan ready; YuE2 standalone checkpoint and D03 adapter/route implementation recorded; broad audit remains | 05-01 capability audit after 04 |
 | [06 Release verification and handoff](phases/06-release-verification-and-handoff/status.md) | not_started | Plan ready; no release or deployment | 06-01 requirements/report audit after 01–05 |
 
 ## Completed work
@@ -34,22 +34,26 @@ Phase 01 is complete: Python/React source, frozen locks, schema/migrations, cont
 Part 2 now has a standalone YuE2-3B model/image checkpoint on Ubuntu1 WSL2. The
 separate real-worker image, immutable model acquisition, GPU preflight, three
 successful generations, and fresh-container repeat are recorded in the
-[deployment evidence](../deployment/evidence/2026-09-14-yue2/README.md). This
-does not add YuE2 to the application provider or queue.
+[deployment evidence](../deployment/evidence/2026-09-14-yue2/README.md). D03 now
+also contains the additive YuE2 provider, durable route, startup readiness,
+provenance, packaging, and Compose override; the one-real-application-job gate
+remains open.
 
 The repository/design/reference audit, [architecture decision](decisions/0001-application-architecture.md), [contracts](contracts.md), [job reliability](job-reliability.md), [UI decisions](ui-behavior.md), [dependency baseline](dependency-baseline.md), [master plan](master-plan.md), seven phase plans and [requirement matrix](requirements-matrix.md) are written. Primary metadata checks and temporary dependency resolution completed. See [planning verification](evidence/planning-verification.md) for limits and final audit status.
 
 ## Remaining work
 
-Phases 04–06 remain unstarted. Part 2 D03 is in progress: the standalone YuE2
-checkpoint passed, while the application adapter, real queue, API provenance, and
-integrated browser path remain pending.
+Phases 04–06 remain unstarted. Part 2 D03 is in progress: the standalone
+checkpoint and repository-side integration are complete, while the Ubuntu1
+application queue crossing, persisted 48 kHz artifact retrieval, and browser
+playback evidence remain pending.
 
 ## Blockers and decisions needed
 
 None for Phase 04 projects and recovery. The Docker VM at `10.42.0.42` supplied the
 runtime environment for Phase 02 verification. Ubuntu1 supplied the standalone
-YuE2 checkpoint; it has not yet hosted the complete MuseForge real application.
+YuE2 checkpoint; it still needs to host the complete MuseForge real application
+route for D03 closure.
 
 ## Latest verification
 
@@ -67,4 +71,5 @@ and fresh-container reproducibility passed. See [the dated deployment record](..
 
 ## Next action
 
-Begin Phase 04 projects, versions and recovery.
+Complete the D03 Ubuntu1 real-application gate in parallel with the separately
+tracked Phase 04 projects, versions and recovery work.
