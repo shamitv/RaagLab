@@ -138,6 +138,11 @@ def job_detail(c, settings, identifier):
 def readiness(c, settings):
     rows = c.execute(sa.select(db.registrations.c.readiness, db.registrations.c.last_heartbeat).where(
         scoped(db.registrations, settings), db.registrations.c.provider_route == settings.provider_route,
+        db.registrations.c.provider_id == settings.provider_id,
+        db.registrations.c.provider_revision == settings.provider_revision,
+        db.registrations.c.model_id == settings.model_id,
+        db.registrations.c.model_revision == settings.model_revision,
+        db.registrations.c.capability_revision == settings.provider_revision,
         db.registrations.c.expires_at > sa.func.now()).order_by(db.registrations.c.last_heartbeat.desc())).mappings().all()
     return dict(state=('busy' if any(r['readiness'] == 'busy' for r in rows) else rows[0]['readiness']) if rows else 'offline', last_observed_at=rows[0]['last_heartbeat'] if rows else None)
 

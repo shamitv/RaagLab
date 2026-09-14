@@ -10,14 +10,13 @@ from museforge.observability import probe_loop
 from museforge.providers import YuE2Music
 from museforge.worker.broker_probe import check_broker
 from museforge.worker.tasks import GenerationEnvelope, TASK_NAME
+from museforge.routing import provider_queues
 
 settings = Settings()
 app = Celery("museforge", broker=settings.broker_url.get_secret_value())
 exchange = Exchange("museforge", type="direct", durable=True)
 quarantine = Exchange("museforge.quarantine", type="direct", durable=True)
-provider_queue = Queue(settings.provider_route, exchange, routing_key=settings.provider_route, durable=True,
-                       queue_arguments={"x-queue-type": "classic", "x-dead-letter-exchange": quarantine.name,
-                                        "x-dead-letter-routing-key": settings.quarantine_queue})
+provider_queue = provider_queues(settings)[settings.provider_route]
 app.conf.update(
     task_serializer="json", accept_content=["json"], result_serializer="json",
     task_acks_late=True, task_acks_on_failure_or_timeout=True,
