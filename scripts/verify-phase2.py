@@ -43,7 +43,7 @@ try:
     output=run('run','--rm','--no-deps','tests',capture=True)
     (evidence/'integration.txt').write_text(output)
     if os.environ.get('PHASE4_BROWSER')=='1':
-        browser=run('run','--rm','-e',f'PLAYWRIGHT_OUTPUT_DIR=/test-results/{project}/browser',
+        browser=run('run','--rm','--no-deps','-e',f'PLAYWRIGHT_OUTPUT_DIR=/test-results/{project}/browser',
                     'browser-tests',capture=True,timeout=1200)
         (evidence/'browser.txt').write_text(browser)
     # Hold a dedicated worker: accepted work survives API restart while queued.
