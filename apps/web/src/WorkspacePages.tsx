@@ -276,7 +276,7 @@ export function Library() {
         <label>
           Search titles and labels
           <input
-            aria-label="Search library"
+            aria-label="Search titles and labels"
             value={search}
             maxLength={120}
             onChange={(event) => {
