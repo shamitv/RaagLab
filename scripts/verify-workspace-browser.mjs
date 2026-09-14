@@ -20,6 +20,13 @@ try {
  await expect(page.getByRole('region',{name:'Generated result'})).toBeVisible({timeout:45000});
  await page.evaluate(()=>document.fonts.ready);
  observations.projectUrl=page.url();
+ const cdp=await context.newCDPSession(page);await cdp.send('DOM.enable');await cdp.send('CSS.enable');
+ const documentNode=await cdp.send('DOM.getDocument');const lyricsNode=await cdp.send('DOM.querySelector',{nodeId:documentNode.root.nodeId,selector:'.lyrics'});
+ observations.fonts=(await cdp.send('CSS.getPlatformFontsForNode',{nodeId:lyricsNode.nodeId})).fonts;
+ expect(observations.fonts.some(f=>f.isCustomFont && f.familyName.includes('Tamil') && f.glyphCount>0)).toBe(true);
+ await page.locator('.lyrics').screenshot({path:path.join(out,'native-script-lyrics.png')});
+ await page.emulateMedia({reducedMotion:'reduce'});observations.reducedMotion=await page.evaluate(()=>matchMedia('(prefers-reduced-motion:reduce)').matches);
+
  await page.getByRole('button',{name:'Copy lyrics',exact:true}).click();
  await expect(page.getByRole('status').filter({hasText:'Lyrics copied.'})).toBeVisible();
  observations.clipboardExact=(await page.evaluate(()=>navigator.clipboard.readText()))===lyrics;
@@ -56,7 +63,9 @@ try {
   expect(button.y+button.height).toBeLessThanOrEqual(nav.y);
   observations.zoom=await p.evaluate(()=>({innerWidth,outerWidth,dpr:devicePixelRatio,scrollWidth:document.documentElement.scrollWidth}));
   expect(observations.zoom.scrollWidth).toBeLessThanOrEqual(observations.zoom.innerWidth);
-  await p.screenshot({path:path.join(out,'zoom-200-percent.png')});
+  const zoomCdp=await zoom.newCDPSession(p);observations.zoomMetrics=await zoomCdp.send('Page.getLayoutMetrics');
+  const screenshot=await zoomCdp.send('Page.captureScreenshot',{format:'png',fromSurface:true,captureBeyondViewport:false});
+  fs.writeFileSync(path.join(out,'zoom-200-percent.png'),Buffer.from(screenshot.data,'base64'));
  }finally{await zoom.close();fs.rmSync(extension,{recursive:true});}
  fs.writeFileSync(path.join(out,'observations.json'),JSON.stringify(observations,null,2)+'\n');
  console.log('Keyboard, clipboard, viewport and native 200% zoom evidence:',out);

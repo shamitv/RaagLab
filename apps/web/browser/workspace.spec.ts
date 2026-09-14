@@ -164,9 +164,11 @@ test("focused actions, clipboard failure, offline draft and conditional save", a
     page.getByText("Version History (3)", { exact: true }),
   ).toBeVisible({ timeout: 45000 });
   await page.getByRole("button", { name: "Regenerate", exact: true }).click();
+  await page.getByRole("combobox",{name:"Completed versions",exact:true}).selectOption({index:0});
   await expect(
     page.getByText("Version History (4)", { exact: true }),
   ).toBeVisible({ timeout: 45000 });
+  await expect(page.getByRole("heading",{name:"Version 1",exact:true})).toBeVisible();
   await page.evaluate(() => {
     Object.defineProperty(navigator, "clipboard", {
       configurable: true,
@@ -220,4 +222,19 @@ test("focused actions, clipboard failure, offline draft and conditional save", a
         ),
     )
     .toBe(true);
+});
+
+test('cancellation and stale save keep the editable draft',async({page},testInfo)=>{
+ test.skip(testInfo.project.name!=='desktop','Shared state behavior is verified once.');test.setTimeout(90000);
+ await page.goto('/create');await page.getByLabel('Music brief').fill('Cancellation and save conflict acceptance');
+ await page.getByRole('button',{name:'Generate',exact:true}).click();await page.getByRole('button',{name:'Cancel generation',exact:true}).click();
+ await expect(page.getByRole('region',{name:'Generation status'})).toContainText('cancelled',{timeout:45000});await expect(page.getByRole('region',{name:'Generated result'})).toHaveCount(0);
+ await page.getByRole('button',{name:'Generate again',exact:true}).click();await expect(page.getByRole('region',{name:'Generated result'})).toBeVisible({timeout:45000});
+ const projectPath='/api/v1/projects/'+page.url().split('/').at(-1);const project=await(await page.request.get(projectPath)).json();
+ const changed=await page.request.patch(projectPath,{data:{title:'A newer server title'},headers:{'If-Match':`"${project.revision}"`}});expect(changed.status()).toBe(200);
+ await page.getByLabel('Music brief').fill('Keep this local text after a stale save');await page.getByRole('button',{name:'Save Project',exact:true}).click();
+ await expect(page.getByRole('alert')).toContainText('Save conflict');await expect(page.getByLabel('Music brief')).toHaveValue('Keep this local text after a stale save');
+ expect((await(await page.request.get(projectPath)).json()).title).toBe('A newer server title');
+ await page.getByRole('button',{name:'Reload server state',exact:true}).click();await expect(page.getByRole('alert')).toContainText('Server state reloaded');
+ await page.getByRole('button',{name:'Save Project',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Saved to server'})).toBeVisible();
 });
