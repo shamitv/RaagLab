@@ -24,12 +24,12 @@ def resolve(root: Path, key: str) -> Path:
         raise ProviderError('artifact_unavailable') from None
 
 
-def inspect(path: Path) -> dict:
+def inspect(path: Path, *, expected_sample_rate: int = 44100) -> dict:
     try:
         with wave.open(str(path), 'rb') as audio:
             rate, channels, width, frames = audio.getframerate(), audio.getnchannels(), audio.getsampwidth(), audio.getnframes()
             samples = audio.readframes(frames)
-            if rate != 44100 or channels != 2 or width != 2 or not frames or len(samples) != frames * channels * width or not any(samples):
+            if rate != expected_sample_rate or channels != 2 or width != 2 or not frames or len(samples) != frames * channels * width or not any(samples):
                 raise ValueError
         content = path.read_bytes()
         return dict(sha256=hashlib.sha256(content).hexdigest(), byte_size=len(content), media_type='audio/wav',
@@ -38,9 +38,10 @@ def inspect(path: Path) -> dict:
         raise ProviderError('malformed_media') from None
 
 
-def publish(root: Path, temporary: Path, job_id, fence: int, duration: int) -> dict:
-    metadata = inspect(temporary)
-    if metadata['duration_seconds'] != duration:
+def publish(root: Path, temporary: Path, job_id, fence: int, duration: int | None = None,
+            *, expected_sample_rate: int = 44100) -> dict:
+    metadata = inspect(temporary, expected_sample_rate=expected_sample_rate)
+    if duration is not None and metadata['duration_seconds'] != duration:
         raise ProviderError('malformed_media')
     key = f'{job_id}-{fence}-{uuid4()}.wav'
     with temporary.open('rb') as file:
