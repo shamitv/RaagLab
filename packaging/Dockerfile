@@ -11,8 +11,13 @@ FROM web-build AS web-test
 RUN npm test
 
 # Browser dependencies remain in this test-only image and never enter runtime stages.
-FROM web-build AS browser-test
+FROM node:24.21.0-bookworm-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553 AS browser-test
+WORKDIR /web
+RUN npm install --global npm@11.19.0
+COPY apps/web/package.json apps/web/package-lock.json ./
+RUN npm ci --no-audit --no-fund
 RUN npx playwright install --with-deps chromium
+COPY apps/web/ ./
 ENV API_BASE_URL=http://api:8000
 CMD ["npm", "run", "test:browser"]
 
