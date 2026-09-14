@@ -225,7 +225,7 @@ export function Library() {
   const [reload, setReload] = useState(0);
 
   useEffect(() => {
-    const controller = new AbortController();
+    let current = true;
     const query = queryString({
       q: search.trim(),
       favorite_only: favorite ? "true" : null,
@@ -235,15 +235,18 @@ export function Library() {
       limit: "20",
       cursor,
     });
-    api<LibraryPage>(`/api/v1/library${query}`, { signal: controller.signal })
+    api<LibraryPage>(`/api/v1/library${query}`)
       .then((result) => {
+        if (!current) return;
         setPage(result);
         setError("");
       })
       .catch((e) => {
-        if (!controller.signal.aborted) setError((e as Error).message);
+        if (current) setError((e as Error).message);
       });
-    return () => controller.abort();
+    return () => {
+      current = false;
+    };
   }, [search, favorite, genre, language, sort, cursor, reload]);
 
   function clearPaging() {

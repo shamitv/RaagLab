@@ -15,7 +15,8 @@ test('API-served workspace supports navigation, refresh, and accessible pages', 
   }
   await page.goto('/projects/00000000-0000-4000-8000-000000000001');
   await expect(page.getByRole('heading', { name: 'Project workspace', exact: true })).toBeVisible();
-  await expect(page.getByRole('alert')).toContainText('not found');
+  await expect(page.getByRole('alert').filter({ hasText: 'not found' })).toBeVisible();
+  await expect(page.getByRole('alert')).toHaveCount(1);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   expect(errors).toEqual([]);

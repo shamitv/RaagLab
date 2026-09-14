@@ -889,12 +889,12 @@ export function Composer() {
                 ))}
               </select>
             </label>
-            {!lyricsModeSupported && (
+            {caps && !lyricsModeSupported && (
               <p role="alert">
                 This saved lyrics source is unavailable with the active provider. Choose a supported source to generate.
               </p>
             )}
-            {!languageSupported && (
+            {caps && !languageSupported && (
               <p role="alert">
                 This saved language is unavailable with the active provider. Choose a supported language to generate.
               </p>
