@@ -50,9 +50,15 @@ def wait_success(accepted, timeout=120):
         assert time.monotonic()<deadline, f"Recovery job did not finish: {result}"
         time.sleep(.25)
 
+
+def ambiguous_confirm_helper(accepted, mode):
+    return run('run','--rm','--no-deps','-e',f'RECOVERY_JOB_ID={accepted["job_id"]}',
+        'tests','/app/.venv/bin/python','tests/integration/publish_ambiguous_confirm.py',mode,capture=True)
+
 try:
     run('build','api','dispatcher','worker-mock','tests',timeout=1800)
-    if os.environ.get('PHASE4_BROWSER')=='1':
+    recovery_only=os.environ.get('PHASE4_RECOVERY_ONLY')=='1'
+    if os.environ.get('PHASE4_BROWSER')=='1' and not recovery_only:
         run('build','browser-tests',timeout=1800)
     if prefix.startswith('museforge-phase4-test-'):
         run('up','-d','--scale','worker-mock=2','--wait','--wait-timeout','180','api','dispatcher','worker-mock')
@@ -60,13 +66,13 @@ try:
         run('up','-d','--wait','--wait-timeout','180','api','dispatcher','worker-mock')
     origin='http://'+run('port','api','8000',capture=True).strip()
     browser_only=os.environ.get('PHASE4_BROWSER_ONLY')=='1'
-    if not browser_only:
+    if not browser_only and not recovery_only:
         # Services are already healthy; avoid Compose reconciling away the extra
         # worker replicas used by the phase-four concurrency coverage.
         run('run','--rm','--no-deps','tests','/app/.venv/bin/pytest','tests/unit')
         output=run('run','--rm','--no-deps','tests',capture=True)
         (evidence/'integration.txt').write_text(output)
-    if os.environ.get('PHASE4_BROWSER')=='1':
+    if os.environ.get('PHASE4_BROWSER')=='1' and not recovery_only:
         browser=run('run','--rm','--no-deps','-e',f'PLAYWRIGHT_OUTPUT_DIR=/test-results/{project}/browser',
                     'browser-tests',capture=True,timeout=1200)
         (evidence/'browser.txt').write_text(browser)
@@ -124,6 +130,22 @@ try:
                 assert len(response.read())==version['audio']['byte_size']
     (evidence/'restart.json').write_text(json.dumps({'projects_preserved':len(after['items']), 'origin_before':origin_before_restart, 'origin_after':origin}))
     if prefix.startswith('museforge-phase4-test-'):
+        # Confirm at RabbitMQ, lose the publisher before its DB mark, then reclaim
+        # the expired claim and publish a duplicate while no worker can consume.
+        run('stop','dispatcher','worker-mock')
+        ambiguous_job=submit_probe('Phase four ambiguous publisher confirmation')
+        first_publish=ambiguous_confirm_helper(ambiguous_job,'publish')
+        run('up','-d','--wait','--wait-timeout','180','dispatcher')
+        reclaimed=ambiguous_confirm_helper(ambiguous_job,'wait-reclaimed')
+        run('up','-d','--scale','worker-mock=2','--wait','--wait-timeout','180','worker-mock')
+        ambiguous_result=wait_success(ambiguous_job)
+        single_result=ambiguous_confirm_helper(ambiguous_job,'verify-single-result')
+        (evidence/'ambiguous-confirm.json').write_text(json.dumps({
+            'first_confirmed_publish':json.loads(first_publish),
+            'expired_claim_recovery':json.loads(reclaimed),
+            'completed':ambiguous_result,
+            'single_result_check':json.loads(single_result)},indent=2))
+
         # Exercise real dispatcher and broker restarts while accepting new work.
         run('restart','dispatcher')
         dispatcher_job=submit_probe('Phase four dispatcher restart')
