@@ -1,9 +1,9 @@
 # Real model integration boundary
 
-This document is the application handoff boundary for a future real music
-provider. The portable application currently runs the `mock` provider. The
-standalone YuE2-3B image and its Ubuntu1 evidence are a Part 2 D03 checkpoint;
-they are not an adapter or an active application route.
+This document is the application handoff boundary for the selected YuE2 real
+music provider. The portable application still defaults to the `mock` provider.
+YuE2 is enabled only with the explicit real-worker Compose override and remains
+subject to the Ubuntu1 queued-generation acceptance gate.
 
 ## Provider contract
 
@@ -16,18 +16,22 @@ failures, and cancellation must be typed provider outcomes. The adapter must not
 return mock fixtures when model files, device access, or configuration are
 missing.
 
-For YuE2, the request mapping is explicit: `brief` and supported style fields
-become the style prompt, and user lyrics become the supplied lyric text. The
-current standalone fixture uses English lyrics, full symbolic planning, seeds
-42–44, and model-determined durations. It proves neither exact sung-lyric
-accuracy nor every product language, vocal, continuation, editing, or iteration
-control. The API/UI must expose only capabilities verified for the selected
-revision and mark the rest unsupported or pending.
+For YuE2, the request mapping is explicit: `brief`, genre, mood, instruments and
+tempo become the style prompt, and the persisted user-lyrics checkpoint becomes
+the supplied lyric text. The application adapter sends full symbolic planning
+and the accepted seed to the supervised YuE2 child. The current route accepts
+English user lyrics and the existing `Instrumental` request shape as a narrow
+compatibility path. The output may contain vocals; the application makes no
+claim about exact lyric adherence, vocal behavior, language coverage, or
+requested duration.
 
 ## Image and dependency isolation
 
 Keep the real worker in a separate image and dependency group. API, dispatcher,
 database, broker, and CPU mock images remain free of the YuE2/PyTorch CUDA stack.
+The integrated worker uses the separate hash-locked
+`packaging/yue2/requirements.museforge.lock` for its Python 3.12 application
+runtime; CUDA, PyTorch, and YuE2 remain confined to the YuE2 lock.
 The current reference image is `packaging/yue2/Dockerfile` with Python 3.12,
 PyTorch 2.10.0+cu128, CUDA 12.8 wheels, and `yue2-infer==0.1.5`. YuE2-3B and
 YuE2-Vae revisions, hashes, license, and acquisition rules are in
@@ -41,24 +45,28 @@ or frontend bundles.
 
 ## Queue and lifecycle
 
-Give the real provider its own queue and worker route. The worker must reject an
+Give the real provider its own queue and worker route. The implemented route is
+`museforge.yue2.v1`; `MUSIC_PROVIDER=yue2` selects it while `mock` remains the
+default. The worker must reject an
 envelope for another route or provider revision, and a mock worker must never
 consume a real request. Readiness becomes `ready` only after the selected image,
 weights, device, and model initialization succeed. The API remains live while the
 real worker warms up.
 
-Load the model in the inference child, with one active request per GPU and low
-prefetch. Keep the lease heartbeat responsive during planning, synthesis, and
-decoding. Cancellation must be cooperative where the runtime supports it and
-bounded by the worker watchdog otherwise. On timeout, OOM, cancellation, or
-worker loss, reap the child and preserve a typed failure; do not publish an
-unvalidated or partial artifact.
+Load the model in a supervised inference child, with one active request per GPU
+and low prefetch. The worker performs a CUDA/BF16/weights/model warmup before
+registering readiness. Keep the lease heartbeat responsive during planning,
+synthesis, decoding and FLAC-to-WAV conversion. Cancellation must be cooperative
+where the runtime supports it and bounded by the worker watchdog otherwise. On
+timeout, OOM, cancellation, or worker loss, reap the child and preserve a typed
+failure; do not publish an unvalidated or partial artifact.
 
-Before finalization, validate decodability, non-empty duration, sample rate,
-channels, finite samples, content type, and checksum. Persist provider ID,
-model/revision, effective settings, seed, actual duration, and measured resource
-metadata with the version. The existing artifact publication and fenced job
-finalization remain authoritative.
+Before finalization, decode the native FLAC, validate finite non-silent stereo
+48 kHz audio, transcode it to 16-bit PCM WAV, and validate the published WAV
+again before atomic publication. Persist provider ID, model/decoder revisions,
+effective settings, seed, actual duration, and child validation metadata with the
+version. The existing artifact publication and fenced job finalization remain
+authoritative; mock artifacts continue to use exact-duration 44.1 kHz WAV.
 
 ## Required application verification
 
@@ -74,6 +82,17 @@ all of these pass:
    API-served browser.
 4. Mock and real routes, missing model/device, unsupported controls, cancellation,
    worker loss, restart, and retry behavior have focused tests.
+
+## Enabling the real worker
+
+Build the integrated worker from the repository root with
+`packaging/yue2/Dockerfile.worker`, after the standalone model volume
+`musicgen-yue2-test_weights` has been acquired and verified. Start the API,
+dispatcher, and the `yue2` Compose profile with `compose.yue2.yaml`. The override
+sets `MUSIC_PROVIDER=yue2`, `LYRICS_PROVIDER=user`, the pinned model and decoder
+revisions, CUDA/BF16, one GPU inference, and measured 900-second execution
+limits. It does not start the mock worker and it never changes the default
+`compose.yaml` mock profile.
 
 Only then may D03 be marked completed. A standalone model command, image build,
 or successful import cannot close the application real-model gate.
