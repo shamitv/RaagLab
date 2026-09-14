@@ -41,7 +41,7 @@ test("projects, library, duplicate, archive, settings, and templates work", asyn
   await page.getByLabel("Project title", { exact: true }).fill("Phase 4 library song");
   await page.getByRole("button", { name: "Save Project", exact: true }).click();
   await expect(page).toHaveURL(/\/projects\/[0-9a-f-]+$/);
-  await expect(page.getByRole("status").filter({ hasText: "Saved to server" })).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: "Saved project" })).toBeVisible();
   await page.getByRole("button", { name: "Generate", exact: true }).click();
   await expect(page.getByRole("region", { name: "Generated result" })).toBeVisible({ timeout: 45000 });
   await expect(page.getByRole("button", { name: "Repeat: one", exact: true })).toBeVisible();
