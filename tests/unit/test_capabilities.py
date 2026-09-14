@@ -1,3 +1,4 @@
+import json
 from contextlib import nullcontext
 from types import SimpleNamespace
 
@@ -72,3 +73,10 @@ def test_old_version_provenance_defaults_to_empty_capability_matrix():
         "fixture_revision": None,
     })
     assert Provenance.model_validate(snapshot).capability_matrix == {}
+
+
+@pytest.mark.parametrize("provider", ["mock", "yue2"])
+def test_provider_capability_snapshot_is_json_serializable(provider):
+    snapshot = provider_capabilities(configured_settings(provider))
+    encoded = json.dumps(snapshot)
+    assert json.loads(encoded)["capability_matrix"]["lyrics_text_input"]["state"] == "supported"

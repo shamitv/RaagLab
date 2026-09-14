@@ -200,10 +200,14 @@ def capability_matrix(provider='mock'):
 
 
 def capabilities(provider='mock', *, model_id=None, model_revision=None, decoder_revision=None):
+    matrix = {
+        name: assessment.model_dump(mode='json')
+        for name, assessment in capability_matrix(provider).items()
+    }
     if provider == 'yue2':
         return dict(provider_id='yue2', provider_revision='yue2-infer-0.1.6', model_id=model_id,
                     model_revision=model_revision, decoder_revision=decoder_revision, is_demo=False,
-                    capability_matrix=capability_matrix('yue2'), lyrics_modes=['user'], lyrics_text=True,
+                    capability_matrix=matrix, lyrics_modes=['user'], lyrics_text=True,
                     text_to_instrumental=None, vocals=None, exact_lyrics_vocals=None, instruments=INSTRUMENTS,
                     moods=MOODS, languages=['English'], genres=GENRES, vocal_types=['Instrumental'],
                     operations=['generate'], duration={'min': 5, 'max': 30, 'default': 8},
@@ -214,7 +218,7 @@ def capabilities(provider='mock', *, model_id=None, model_revision=None, decoder
                     'Only English user lyrics have been exercised through the application route.',
                     'Refinement, variation, regeneration, audio editing, and continuation are unsupported.'])
     return dict(provider_id='mock', provider_revision='1', model_id=None, model_revision=None,
-                decoder_revision=None, is_demo=True, capability_matrix=capability_matrix('mock'),
+                decoder_revision=None, is_demo=True, capability_matrix=matrix,
                 lyrics_modes=['user', 'static', 'mock'], lyrics_text=True,
                 text_to_instrumental=False, vocals=False, exact_lyrics_vocals=False,
                 instruments=INSTRUMENTS, moods=MOODS, languages=LANGUAGES, genres=GENRES,

@@ -225,10 +225,10 @@ def test_yue2_capabilities_are_narrow_and_provider_specific():
     assert caps['text_to_instrumental'] is None
     assert caps['vocals'] is None
     assert caps['exact_lyrics_vocals'] is None
-    assert caps['capability_matrix']['instrumental_music_generation'].state == 'unknown'
-    assert caps['capability_matrix']['vocal_generation'].state == 'unknown'
-    assert caps['capability_matrix']['exact_lyrics_singing'].state == 'unknown'
-    assert caps['capability_matrix']['duration_control'].state == 'unsupported'
+    assert caps['capability_matrix']['instrumental_music_generation']['state'] == 'unknown'
+    assert caps['capability_matrix']['vocal_generation']['state'] == 'unknown'
+    assert caps['capability_matrix']['exact_lyrics_singing']['state'] == 'unknown'
+    assert caps['capability_matrix']['duration_control']['state'] == 'unsupported'
     assert any('may contain vocals' in warning for warning in caps['warnings'])
 
 
