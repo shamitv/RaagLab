@@ -43,3 +43,15 @@ def test_build_and_ignore_boundaries():
         for excluded in ('.env', 'weights', 'artifacts', 'node_modules', '*.safetensors'):
             assert excluded in content
     assert '--volumes' not in (ROOT / 'scripts/stop.sh').read_text()
+
+
+def test_yue2_worker_isolated_and_hash_locked():
+    dockerfile = (ROOT / 'packaging/yue2/Dockerfile.worker').read_text()
+    lock = (ROOT / 'packaging/yue2/requirements.museforge.lock').read_text()
+    compose = (ROOT / 'compose.yue2.yaml').read_text()
+    assert '--require-hashes' in dockerfile
+    assert 'requirements.museforge.lock' in dockerfile
+    assert 'museforge.yue2.v1' in compose and 'yue2_weights:/weights:ro' in compose
+    assert lock.count('==') == lock.count('--hash=sha256:')
+    assert 'torch' not in (ROOT / 'pyproject.toml').read_text()
+    assert 'transformers' not in (ROOT / 'pyproject.toml').read_text()
