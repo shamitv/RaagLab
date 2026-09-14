@@ -29,7 +29,11 @@ def test_frozen_initial_schema_matches_models():
     }
     for name in migration.metadata.tables:
         table = metadata.tables[name]
-        assert str(sa.schema.CreateTable(table).compile(dialect=dialect)) == str(sa.schema.CreateTable(migration.metadata.tables[name]).compile(dialect=dialect))
+        current = str(sa.schema.CreateTable(table).compile(dialect=dialect))
+        if name == 'worker_registrations':
+            # The additive 0004 migration intentionally extends this frozen table.
+            current = current.replace("\truntime_metadata JSONB DEFAULT '{}'::jsonb NOT NULL, \n", '')
+        assert current == str(sa.schema.CreateTable(migration.metadata.tables[name]).compile(dialect=dialect))
 
 
 def test_build_and_ignore_boundaries():
@@ -57,7 +61,9 @@ def test_yue2_worker_isolated_and_hash_locked():
     assert entries and all('--hash=sha256:' in entry for entry in entries)
     for dependency in ('python-dateutil', 'tzlocal', 'prompt-toolkit', 'tzdata', 'typing-inspection', 'six', 'wcwidth'):
         assert dependency + '==' in lock
-    assert 'driver: nvidia' in compose and 'count: 1' in compose
+    gpu = (ROOT / 'compose.yue2.gpu.yaml').read_text()
+    assert 'driver: nvidia' not in compose
+    assert 'driver: nvidia' in gpu and 'count: 1' in gpu
     assert 'env_file: .env' in compose and 'DATABASE_URL:' not in compose
     assert 'torch' not in (ROOT / 'pyproject.toml').read_text()
     assert 'transformers' not in (ROOT / 'pyproject.toml').read_text()

@@ -101,6 +101,8 @@ def submit(engine, settings, request, key, operation="generate", source_id=None)
                 fixture_revision='1' if mode == 'static' else None)
             if settings.mock_test_enabled:
                 snapshot['_test'] = settings.mock_test_scenarios.get(str(snapshot['seed']), {})
+            if settings.music_provider == 'yue2':
+                snapshot['yue2_test_smoke'] = settings.yue2_test_smoke
             job = dict(id=uuid4(), workspace_id=settings.workspace_id, project_id=project_id, operation=operation,
                 source_version_id=source_id, intent_hash=digest, execution_snapshot=snapshot,
                 provider_route=settings.provider_route, state='queued',

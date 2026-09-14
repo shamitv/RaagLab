@@ -50,20 +50,23 @@ def probe_loop(settings: Settings, role: str, instance: str, stop: threading.Eve
                         connection.execute(text("""
                             INSERT INTO worker_registrations (workspace_id, worker_name, provider_id, provider_revision,
                               model_id, model_revision, provider_route, capability_revision, readiness,
-                              last_heartbeat, expires_at)
+                              last_heartbeat, expires_at, runtime_metadata)
                             VALUES (:workspace, :instance, :provider, :provider_revision, :model_id, :model_revision,
-                              :route, :capability_revision, :readiness, now(), now() + :lease * interval '1 second')
+                              :route, :capability_revision, :readiness, now(), now() + :lease * interval '1 second',
+                              CAST(:runtime_metadata AS jsonb))
                             ON CONFLICT (worker_name) DO UPDATE SET last_heartbeat = now(),
                               expires_at = EXCLUDED.expires_at, readiness = EXCLUDED.readiness,
                               provider_id = EXCLUDED.provider_id, provider_revision = EXCLUDED.provider_revision,
                               model_id = EXCLUDED.model_id, model_revision = EXCLUDED.model_revision,
                               provider_route = EXCLUDED.provider_route,
-                              capability_revision = EXCLUDED.capability_revision
+                              capability_revision = EXCLUDED.capability_revision,
+                              runtime_metadata = EXCLUDED.runtime_metadata
                         """), {"workspace": settings.workspace_id, "instance": instance,
                                "provider": settings.provider_id, "provider_revision": settings.provider_revision,
                                "model_id": settings.model_id, "model_revision": settings.model_revision,
                                "route": settings.provider_route, "capability_revision": settings.provider_revision,
                                "readiness": readiness,
+                               "runtime_metadata": json.dumps(settings.runtime_metadata),
                                "lease": settings.lease_seconds})
                 healthy = True
             except Exception as exc:

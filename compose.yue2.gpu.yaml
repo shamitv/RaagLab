@@ -1,0 +1,14 @@
+# Optional: expose CUDA on hosts with the NVIDIA Container Toolkit.
+# Omit this file on GPU-free VMs. DEVICE=auto still falls back after probing.
+services:
+  worker-yue2:
+    environment:
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

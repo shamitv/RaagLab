@@ -24,9 +24,12 @@ from museforge.db.connection import engine_for
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--readiness-only', action='store_true')
+    parser.add_argument('--expected-device', choices=['cpu', 'cuda'])
+    parser.add_argument('--smoke', action='store_true')
     args = parser.parse_args()
     settings = Settings()
     assert settings.music_provider == 'yue2', 'Real provider configuration required'
+    assert settings.yue2_test_smoke == args.smoke, 'Smoke mode must match the isolated stack'
     origin = os.environ.get('D03_API_BASE', 'http://api:8000')
     evidence = Path(os.environ.get('D03_EVIDENCE_DIR', '/tmp/d03-evidence'))
     evidence.mkdir(parents=True, exist_ok=True)
@@ -56,7 +59,20 @@ def main():
         print('Readiness transitioned through initializing to ready with real-provider metadata.')
         return
 
-    caps = get_json('/api/v1/capabilities')
+    # Container liveness is intentionally healthy during model warmup. Wait for
+    # provider readiness separately before submitting the acceptance job.
+    observations = []
+    deadline = time.monotonic() + settings.yue2_warmup_timeout_seconds + 60
+    while True:
+        caps = get_json('/api/v1/capabilities')
+        observed = dict(caps['readiness'])
+        if not observations or observations[-1] != observed:
+            observations.append(observed)
+        if observed['state'] in ('ready', 'busy'):
+            break
+        assert time.monotonic() < deadline, caps
+        time.sleep(1)
+    (evidence / 'readiness.json').write_text(json.dumps(observations, indent=2) + '\n')
     assert caps['provider_id'] == 'yue2' and caps['readiness']['state'] in ('ready', 'busy'), caps
     lyrics = '[Verse]\nMorning light across the river\nEvery little moment shines\n\n[Chorus]\nCarry on together\nLet the music rise\n'
     request = dict(brief='A short warm acoustic folk song with a natural ending',
@@ -83,7 +99,28 @@ def main():
             ('model_id', settings.model_id), ('model_revision', settings.model_revision),
             ('decoder_revision', settings.decoder_revision), ('provider_route', settings.provider_route)):
         assert provenance[field] == value
-    assert provenance['runtime']['gpu_resource']
+    runtime = provenance['runtime']
+    assert runtime['device'] in ('cpu', 'cuda')
+    if args.expected_device:
+        assert runtime['device'] == args.expected_device
+        assert caps['readiness']['device'] == args.expected_device
+    assert runtime['backend'] == ('torch' if runtime['device'] == 'cuda' else 'torch-eager')
+    assert runtime['test_smoke'] == args.smoke
+    if args.expected_device == 'cpu':
+        assert runtime['fallback_reason'] == 'cuda_unavailable'
+    elif args.expected_device == 'cuda':
+        assert runtime['fallback_reason'] is None
+    if runtime['device'] == 'cuda':
+        assert runtime['gpu_resource']
+    else:
+        assert not runtime['gpu_resource']
+    assert runtime['validation']['passed']
+    if args.smoke:
+        assert runtime['effective_settings']['cot'] == 'off'
+        assert runtime['effective_settings']['semantic_sampling']['max_tokens'] == 32
+        assert 0 < version['audio']['duration_seconds'] < 5
+    else:
+        assert version['audio']['duration_seconds'] > 5
     assert provenance['runtime']['requested_duration_seconds'] == 8
     status, headers, audio = get(version['audio']['url'])
     assert status == 200 and hashlib.sha256(audio).hexdigest() == version['audio']['sha256']
@@ -105,6 +142,10 @@ def main():
             registration = connection.execute(sa.select(db.registrations).where(
                 db.registrations.c.id == UUID(job['attempts'][0]['worker_id']))).mappings().one()
             assert registration['provider_id'] == 'yue2'
+            assert registration['runtime_metadata']['device'] == runtime['device']
+            assert registration['runtime_metadata']['fallback_reason'] == runtime['fallback_reason']
+            snapshot = connection.scalar(sa.select(db.jobs.c.execution_snapshot).where(db.jobs.c.id == identifier))
+            assert snapshot['yue2_test_smoke'] == args.smoke
     finally:
         engine.dispose()
     (evidence / 'version.json').write_text(json.dumps(version, indent=2) + '\n')

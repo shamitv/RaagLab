@@ -136,7 +136,8 @@ def job_detail(c, settings, identifier):
 
 
 def readiness(c, settings):
-    rows = c.execute(sa.select(db.registrations.c.readiness, db.registrations.c.last_heartbeat).where(
+    rows = c.execute(sa.select(db.registrations.c.readiness, db.registrations.c.last_heartbeat,
+        db.registrations.c.runtime_metadata).where(
         scoped(db.registrations, settings), db.registrations.c.provider_route == settings.provider_route,
         db.registrations.c.provider_id == settings.provider_id,
         db.registrations.c.provider_revision == settings.provider_revision,
@@ -144,7 +145,11 @@ def readiness(c, settings):
         db.registrations.c.model_revision == settings.model_revision,
         db.registrations.c.capability_revision == settings.provider_revision,
         db.registrations.c.expires_at > sa.func.now()).order_by(db.registrations.c.last_heartbeat.desc())).mappings().all()
-    return dict(state=('busy' if any(r['readiness'] == 'busy' for r in rows) else rows[0]['readiness']) if rows else 'offline', last_observed_at=rows[0]['last_heartbeat'] if rows else None)
+    selected = next((r for r in rows if r['readiness'] == 'busy'), rows[0] if rows else None)
+    runtime = selected['runtime_metadata'] if selected else {}
+    return dict(state=selected['readiness'] if selected else 'offline',
+                last_observed_at=selected['last_heartbeat'] if selected else None,
+                device=runtime.get('device'), fallback_reason=runtime.get('fallback_reason'))
 
 
 @router.get('/capabilities', response_model=CapabilitiesResponse)

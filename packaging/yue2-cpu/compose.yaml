@@ -1,0 +1,31 @@
+name: musicgen-yue2-cpu
+
+services:
+  acquire:
+    build:
+      context: ../..
+      dockerfile: packaging/yue2-cpu/Dockerfile
+    volumes:
+      - weights:/weights
+    command: ["python", "acquire.py"]
+
+  smoke:
+    build:
+      context: ../..
+      dockerfile: packaging/yue2-cpu/Dockerfile
+    init: true
+    environment:
+      CUDA_VISIBLE_DEVICES: ""
+      HF_HUB_OFFLINE: "1"
+      TRANSFORMERS_OFFLINE: "1"
+      YUE2_CPU_THREADS: "4"
+    volumes:
+      - weights:/weights:ro
+      - outputs:/outputs
+    mem_limit: 28g
+    shm_size: 1g
+    command: ["python", "smoke.py"]
+
+volumes:
+  weights:
+  outputs:

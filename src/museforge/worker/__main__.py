@@ -19,6 +19,9 @@ try:
     if settings.music_provider == 'yue2':
         try:
             YuE2Music.preflight(settings)
+            logging.getLogger('museforge').info('yue2_startup device=%s backend=%s fallback_reason=%s',
+                settings.inference_device, settings.runtime_metadata['backend'],
+                settings.runtime_metadata['fallback_reason'])
         except ProviderError:
             logging.getLogger('museforge').error('yue2_preflight_failed')
             raise SystemExit(78)

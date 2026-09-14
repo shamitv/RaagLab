@@ -18,8 +18,17 @@ case "${1:-}" in
     require_engine
     python3 scripts/verify-phase4.py
     ;;
+  yue2-cpu|yue2-gpu)
+    require_env
+    require_engine
+    if [[ "$1" == yue2-gpu ]]; then
+      python3 scripts/verify-yue2-devices.py --gpu
+    else
+      python3 scripts/verify-yue2-devices.py
+    fi
+    ;;
   release)
     fail 'Full release acceptance belongs to Phase 06. Use unit, integration, or e2e for implementation checks.'
     ;;
-  *) fail 'Usage: bash scripts/test.sh unit|integration|e2e|release' ;;
+  *) fail 'Usage: bash scripts/test.sh unit|integration|e2e|yue2-cpu|yue2-gpu|release' ;;
 esac

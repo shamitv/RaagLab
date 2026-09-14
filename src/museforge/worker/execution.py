@@ -51,6 +51,8 @@ def execute(settings, envelope):
                     provider_snapshot.get('model_id') != settings.model_id or
                     provider_snapshot.get('model_revision') != settings.model_revision or
                     provider_snapshot.get('decoder_revision') != settings.decoder_revision or
+                    (settings.music_provider == 'yue2' and
+                     job['execution_snapshot'].get('yue2_test_smoke', False) != settings.yue2_test_smoke) or
                     envelope.provider_route != settings.provider_route):
                 raise ProviderError('incompatible_envelope')
             if settings.music_provider == 'yue2' and job['execution_snapshot'].get('operation') != 'generate':
@@ -71,13 +73,15 @@ def execute(settings, envelope):
                 provider_id=settings.provider_id, provider_revision=settings.provider_revision,
                 model_id=settings.model_id, model_revision=settings.model_revision,
                 provider_route=settings.provider_route, capability_revision=settings.provider_revision,
-                readiness='busy', last_heartbeat=timestamp, expires_at=timestamp + timedelta(seconds=limits['lease_seconds']))
+                readiness='busy', runtime_metadata=settings.runtime_metadata,
+                last_heartbeat=timestamp, expires_at=timestamp + timedelta(seconds=limits['lease_seconds']))
             worker_id = c.scalar(statement.on_conflict_do_update(index_elements=['worker_name'], set_={
                 'readiness': 'busy', 'last_heartbeat': timestamp, 'expires_at': statement.excluded.expires_at,
                 'provider_id': statement.excluded.provider_id, 'provider_revision': statement.excluded.provider_revision,
                 'model_id': statement.excluded.model_id, 'model_revision': statement.excluded.model_revision,
                 'provider_route': statement.excluded.provider_route,
-                'capability_revision': statement.excluded.capability_revision}).returning(db.registrations.c.id))
+                'capability_revision': statement.excluded.capability_revision,
+                'runtime_metadata': statement.excluded.runtime_metadata}).returning(db.registrations.c.id))
             fence = job['fence_token'] + 1
             c.execute(db.jobs.update().where(db.jobs.c.id == job['id']).values(state='running', stage='writing_lyrics',
                 attempt_count=job['attempt_count'] + 1, fence_token=fence, error_code=None,

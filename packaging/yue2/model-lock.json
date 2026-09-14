@@ -1,6 +1,9 @@
 {
   "model": {"repo": "m-a-p/YuE2-3B", "revision": "29b3558dd46954a0cd9021dc76d5c91864a0f1c7"},
   "vae": {"repo": "m-a-p/YuE2-Vae", "revision": "9a94e1d0ea9f8087e98f77fa88df4a4068104d2a"},
-  "wheel_sha256": "8801e2c0d969db02df78d2994150b4ccd86077d87c24fdb8509b1f6f31462641",
+  "runtime": {"version": "0.1.6", "repo": "https://github.com/multimodal-art-projection/YuE",
+    "revision": "0edaf2f4053ef4731334b8329834b107977f9637",
+    "source_sha256": "a692487a28a6ae20e891b9c4c7e843982f6ea7883a2aa0eb5829e44c9e553feb",
+    "license": "Apache-2.0"},
   "license": "CC-BY-NC-4.0"
 }

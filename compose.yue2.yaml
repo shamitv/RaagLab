@@ -7,7 +7,8 @@ services:
       MODEL_ID: m-a-p/YuE2-3B
       MODEL_REVISION: 29b3558dd46954a0cd9021dc76d5c91864a0f1c7
       DECODER_REVISION: 9a94e1d0ea9f8087e98f77fa88df4a4068104d2a
-      DEVICE: cuda
+      DEVICE: ${YUE2_DEVICE:-auto}
+      YUE2_TEST_SMOKE: ${YUE2_TEST_SMOKE:-false}
       PRECISION: bfloat16
       YUE2_MODEL_DIR: /weights/model
       YUE2_VAE_DIR: /weights/vae
@@ -29,7 +30,8 @@ services:
       MODEL_ID: m-a-p/YuE2-3B
       MODEL_REVISION: 29b3558dd46954a0cd9021dc76d5c91864a0f1c7
       DECODER_REVISION: 9a94e1d0ea9f8087e98f77fa88df4a4068104d2a
-      DEVICE: cuda
+      DEVICE: ${YUE2_DEVICE:-auto}
+      YUE2_TEST_SMOKE: ${YUE2_TEST_SMOKE:-false}
       PRECISION: bfloat16
       ATTEMPT_DEADLINE_SECONDS: 900
       HARD_WATCHDOG_SECONDS: 930
@@ -51,10 +53,10 @@ services:
       MODEL_REVISION: 29b3558dd46954a0cd9021dc76d5c91864a0f1c7
       DECODER_REVISION: 9a94e1d0ea9f8087e98f77fa88df4a4068104d2a
       ARTIFACT_ROOT: /var/lib/museforge/artifacts
-      DEVICE: cuda
+      DEVICE: ${YUE2_DEVICE:-auto}
+      YUE2_TEST_SMOKE: ${YUE2_TEST_SMOKE:-false}
+      YUE2_CPU_THREADS: ${YUE2_CPU_THREADS:-4}
       PRECISION: bfloat16
-      NVIDIA_VISIBLE_DEVICES: all
-      NVIDIA_DRIVER_CAPABILITIES: compute,utility
       WEIGHTS_DIR: /weights
       CACHE_DIR: /cache/hf
       YUE2_MODEL_DIR: /weights/model
@@ -70,13 +72,6 @@ services:
       HARD_WATCHDOG_SECONDS: 930
       QUEUE_DEADLINE_SECONDS: 1800
     networks: [backend]
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
     volumes:
       - artifacts:/var/lib/museforge/artifacts
       - yue2_weights:/weights:ro

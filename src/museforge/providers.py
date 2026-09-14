@@ -106,12 +106,19 @@ class YuE2Music:
     def preflight(settings):
         process = None
         try:
-            process = YuE2Music._spawn(
-                [sys.executable, str(settings.yue2_preflight), '--require-weights', '--load-model'], settings,
-                cwd=str(settings.yue2_preflight.parent))
-            if process.wait(timeout=settings.yue2_warmup_timeout_seconds) != 0:
-                raise ProviderError('initialization_failure')
-        except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+            with tempfile.TemporaryDirectory(prefix='yue2-preflight-') as folder:
+                report_path = Path(folder) / 'report.json'
+                process = YuE2Music._spawn(
+                    [sys.executable, str(settings.yue2_preflight), '--require-weights', '--load-model',
+                     '--report', str(report_path)], settings, cwd=str(settings.yue2_preflight.parent))
+                if process.wait(timeout=settings.yue2_warmup_timeout_seconds) != 0:
+                    raise ProviderError('initialization_failure')
+                report = json.loads(report_path.read_text())
+                if not report.get('model_initialized') or not report.get('verified_weights'):
+                    raise ValueError('incomplete preflight')
+                settings.set_yue2_runtime(report)
+                return report
+        except (OSError, ValueError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
             raise ProviderError('initialization_failure') from None
         finally:
             if process is not None:
@@ -127,6 +134,7 @@ class YuE2Music:
                    YUE2_VAE_DIR=str(settings.yue2_vae_dir),
                    YUE2_MEMORY_BUDGET_GIB=str(settings.yue2_memory_budget_gib),
                    YUE2_OFFLOAD_AR='1' if settings.yue2_offload_ar else '0',
+                   DEVICE=settings.inference_device, YUE2_CPU_THREADS=str(settings.yue2_cpu_threads),
                    MODEL_ID=settings.model_id, MODEL_REVISION=settings.model_revision,
                    DECODER_REVISION=settings.decoder_revision)
         return env
@@ -222,7 +230,7 @@ class YuE2Music:
             category = json.loads(failure.read_text()).get('category')
         except (OSError, ValueError):
             category = None
-        if category == 'cuda_oom':
+        if category in {'cuda_oom', 'cpu_oom'}:
             return 'resource_exhaustion', False
         if category in {'missing_weights', 'initialization_error', 'device_unavailable'}:
             return 'initialization_failure', False
@@ -232,6 +240,11 @@ class YuE2Music:
 
     def generate(self, request, progress_callback, cancellation_token):
         self.normalize(request)
+        if self.settings.inference_device not in {'cpu', 'cuda'}:
+            raise ProviderError('initialization_failure')
+        smoke = request.get('yue2_test_smoke', False)
+        if not isinstance(smoke, bool) or smoke != self.settings.yue2_test_smoke:
+            raise ProviderError('incompatible_envelope')
         progress_callback('composing_music')
         self.output.parent.mkdir(parents=True, exist_ok=True)
         work_dir = Path(tempfile.mkdtemp(prefix='.yue2-', dir=self.output.parent))
@@ -239,11 +252,15 @@ class YuE2Music:
         output_dir = work_dir / 'output'
         log_path = work_dir / 'process.log'
         yue_request = {'style': self._style(request), 'lyrics': request['lyrics']['text'],
-                       'seed': request['seed'], 'cot': 'full'}
+                       'seed': request['seed'], 'cot': 'off' if smoke else 'full'}
+        if smoke:
+            yue_request['semantic_sampling'] = dict(temperature=0.0, top_k=1, min_tokens=32, max_tokens=32)
         input_path.write_text(json.dumps(yue_request, ensure_ascii=False) + '\n')
         command = [sys.executable, str(self.settings.yue2_runner), str(input_path), str(output_dir)]
         if self.settings.yue2_offload_ar:
             command.append('--offload-ar')
+        if smoke:
+            command.append('--test-smoke')
         started = time.monotonic()
         process = None
         try:
@@ -266,7 +283,7 @@ class YuE2Music:
                 import numpy as np
                 import soundfile as sf
                 audio, rate = sf.read(source, dtype='float32', always_2d=True)
-                if rate != 48000 or audio.shape[1] != 2 or len(audio) <= 5 * rate:
+                if rate != 48000 or audio.shape[1] != 2 or len(audio) <= (0 if smoke else 5 * rate):
                     raise ValueError
                 if not np.isfinite(audio).all() or not np.any(audio):
                     raise ValueError
@@ -278,6 +295,12 @@ class YuE2Music:
             except (OSError, ValueError):
                 validation = {}
             self.metadata = {
+                'device': self.settings.inference_device,
+                'backend': 'torch' if self.settings.inference_device == 'cuda' else 'torch-eager',
+                'provider_revision': self.settings.provider_revision,
+                'runtime_revision': '0edaf2f4053ef4731334b8329834b107977f9637',
+                'fallback_reason': self.settings.runtime_metadata.get('fallback_reason'),
+                'test_smoke': smoke,
                 'decoder_revision': self.settings.decoder_revision,
                 'requested_duration_seconds': request.get('duration_seconds'),
                 'actual_duration_seconds': len(audio) / rate,
@@ -289,6 +312,7 @@ class YuE2Music:
                 'channels': int(audio.shape[1]),
                 'effective_settings': {
                     'style': yue_request['style'], 'cot': yue_request['cot'],
+                    'semantic_sampling': yue_request.get('semantic_sampling'),
                     'offload_ar': self.settings.yue2_offload_ar,
                     'memory_budget_gib': self.settings.yue2_memory_budget_gib,
                     'model_id': self.settings.model_id,

@@ -1,0 +1,63 @@
+# Disposable real-provider integration settings. Never use against a live stack.
+x-yue2-test-env: &yue2-test-env
+  DATABASE_URL: postgresql+psycopg://museforge:yue2-integration-test-only@db:5432/museforge
+  BROKER_URL: amqp://museforge:yue2-integration-test-only@broker:5672//
+  WORKSPACE_ID: 00000000-0000-4000-8000-000000000001
+  YUE2_TEST_SMOKE: "true"
+
+services:
+  db:
+    environment:
+      POSTGRES_USER: museforge
+      POSTGRES_PASSWORD: yue2-integration-test-only
+      POSTGRES_DB: museforge
+  broker:
+    environment:
+      RABBITMQ_DEFAULT_USER: museforge
+      RABBITMQ_DEFAULT_PASS: yue2-integration-test-only
+  migrate:
+    env_file: !reset []
+    environment:
+      DATABASE_URL: postgresql+psycopg://museforge:yue2-integration-test-only@db:5432/museforge
+      BROKER_URL: amqp://museforge:yue2-integration-test-only@broker:5672//
+      WORKSPACE_ID: 00000000-0000-4000-8000-000000000001
+  api:
+    env_file: !reset []
+    environment: *yue2-test-env
+    ports: !override ["127.0.0.1::8000"]
+  dispatcher:
+    env_file: !reset []
+    environment: *yue2-test-env
+  worker-yue2:
+    env_file: !reset []
+    environment: *yue2-test-env
+    restart: "no"
+    shm_size: 1gb
+    mem_limit: 28g
+  yue2-smoke-tests:
+    profiles: [yue2]
+    build:
+      context: .
+      dockerfile: packaging/Dockerfile
+      target: mock-worker
+    environment:
+      <<: *yue2-test-env
+      MUSIC_PROVIDER: yue2
+      LYRICS_PROVIDER: user
+      DEVICE: auto
+      PRECISION: bfloat16
+      MODEL_ID: m-a-p/YuE2-3B
+      MODEL_REVISION: 29b3558dd46954a0cd9021dc76d5c91864a0f1c7
+      DECODER_REVISION: 9a94e1d0ea9f8087e98f77fa88df4a4068104d2a
+      HARD_WATCHDOG_SECONDS: 930
+      D03_API_BASE: http://api:8000
+      D03_EVIDENCE_DIR: /evidence
+    networks: [backend]
+    volumes:
+      - ./scripts:/verification:ro
+      - ${YUE2_EVIDENCE_DIR:-./test-results/yue2-devices}:/evidence
+    depends_on:
+      api: {condition: service_healthy}
+      dispatcher: {condition: service_healthy}
+      worker-yue2: {condition: service_healthy}
+    command: [python, /verification/verify-d03.py, --smoke, --expected-device, cpu]

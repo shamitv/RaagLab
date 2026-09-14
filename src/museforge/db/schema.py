@@ -117,6 +117,7 @@ registrations = sa.Table("worker_registrations", metadata, identity(), workspace
     sa.Column("provider_route", sa.String(128), nullable=False),
     sa.Column("capability_revision", sa.String(80), nullable=False),
     sa.Column("readiness", sa.String(32), nullable=False),
+    sa.Column("runtime_metadata", JSONB, nullable=False, server_default=sa.text("'{}'::jsonb")),
     sa.Column("last_heartbeat", sa.DateTime(timezone=True), nullable=False),
     sa.Column("expires_at", sa.DateTime(timezone=True), nullable=False),
     sa.UniqueConstraint("workspace_id", "id", name="uq_workers_workspace_id_id"),

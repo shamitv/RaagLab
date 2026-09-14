@@ -88,7 +88,7 @@ class ProviderError(Exception):
 
 def capabilities(provider='mock', *, model_id=None, model_revision=None, decoder_revision=None):
     if provider == 'yue2':
-        return dict(provider_id='yue2', provider_revision='yue2-infer-0.1.5', model_id=model_id,
+        return dict(provider_id='yue2', provider_revision='yue2-infer-0.1.6', model_id=model_id,
                     model_revision=model_revision, decoder_revision=decoder_revision, is_demo=False,
                     lyrics_modes=['user'], lyrics_text=True, text_to_instrumental=False,
                     vocals=False, exact_lyrics_vocals=False, instruments=INSTRUMENTS,
@@ -110,9 +110,12 @@ def capabilities(provider='mock', *, model_id=None, model_revision=None, decoder
 
 
 def provider_capabilities(settings):
-    return capabilities(settings.music_provider, model_id=settings.model_id,
+    result = capabilities(settings.music_provider, model_id=settings.model_id,
                          model_revision=settings.model_revision,
                          decoder_revision=settings.decoder_revision) | {'provider_route': settings.provider_route}
+    if settings.yue2_test_smoke:
+        result['warnings'].append('TEST SMOKE MODE: deliberately short/truncated audio; not a completed song.')
+    return result
 
 # Response contracts are generated into the browser client from OpenAPI.
 from datetime import datetime
@@ -121,6 +124,8 @@ from typing import Any
 class ReadinessInfo(StrictModel):
     state: str
     last_observed_at: datetime | None
+    device: str | None = None
+    fallback_reason: str | None = None
 
 class SafeJobError(StrictModel):
     code: str

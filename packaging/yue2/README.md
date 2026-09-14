@@ -1,7 +1,7 @@
 # Standalone YuE2 test
 
-This isolated image uses the official YuE2 inference wheel and default YuE2-Vae.
-The base image, all Python dependencies, wheel hash, and both model revisions are
+This isolated image uses official YuE2 0.1.6 source and default YuE2-Vae.
+The base image, all Python/build dependencies, source hash, and both model revisions are
 pinned. Model and decoder weights are CC BY-NC 4.0; this is a local test deployment.
 Nothing is added to the MuseForge API or existing worker dependency environment.
 
@@ -14,9 +14,9 @@ restarts Docker; stop unrelated workloads before running it.
 From this directory in WSL:
 
 ```bash
-docker build -t musicgen-yue2:0.1.5 .
+docker build -t musicgen-yue2:0.1.6 .
 docker volume create musicgen-yue2-test_weights
-docker run --rm -v musicgen-yue2-test_weights:/weights musicgen-yue2:0.1.5
+docker run --rm -v musicgen-yue2-test_weights:/weights musicgen-yue2:0.1.6
 ```
 
 Acquisition uses `hf download` with immutable revisions, downloads only runtime

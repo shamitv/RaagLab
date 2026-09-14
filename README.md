@@ -32,8 +32,10 @@ bash scripts/test.sh e2e           # pinned API-served browser plus recovery/res
 Integration performs clean image builds, package/service boundary checks, schema and concurrent migration tests, API-hosted static checks, and ordinary stop/start persistence verification. It deletes only its uniquely named test project and volumes. It overrides application connection settings so it cannot use a configured external database.
 
 The portable application remains mock-first and does not require a GPU or model
-weights. A separate YuE2-3B standalone GPU image has been built and tested on the
-Ubuntu1 WSL2 host; it is not wired into the application queue yet. See the
+weights. The optional YuE2-3B application worker selects CUDA at startup and
+falls back to CPU when CUDA is unavailable. Run `bash scripts/test.sh yue2-cpu`
+for a real short-audio integration test without a GPU; verified weights and
+sufficient RAM are required. See [device configuration](docs/development.md#yue2-cuda-first--cpu-fallback), the
 [Part 2 deployment plan](docs/deployment/master-plan.md), [model integration
 boundary](docs/model-integration.md), and [dated YuE2 evidence](docs/deployment/evidence/2026-09-14-yue2/README.md).
 

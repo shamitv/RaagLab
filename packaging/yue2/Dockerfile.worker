@@ -9,7 +9,9 @@ RUN groupadd --gid 10001 museforge && useradd --uid 10001 --gid 10001 --no-creat
     && mkdir -p /var/lib/museforge/artifacts /cache/hf /weights \
     && chown -R 10001:10001 /var/lib/museforge /cache /weights
 COPY packaging/yue2/requirements.lock /opt/yue2-test/requirements.lock
-RUN python -m pip install --no-cache-dir --require-hashes \
+COPY packaging/yue2/requirements.build.lock /opt/yue2-test/requirements.build.lock
+RUN python -m pip install --no-cache-dir --require-hashes -r /opt/yue2-test/requirements.build.lock \
+    && python -m pip install --no-cache-dir --require-hashes --no-build-isolation \
     --extra-index-url https://download.pytorch.org/whl/cu128 -r /opt/yue2-test/requirements.lock \
     && python -m pip check
 COPY packaging/yue2/requirements.museforge.lock /opt/museforge/requirements.lock
@@ -17,6 +19,6 @@ RUN python -m pip install --no-cache-dir --require-hashes -r /opt/museforge/requ
     && python -m pip check
 COPY src/ /app/src/
 COPY packaging/yue2/acquire.py packaging/yue2/generate.py packaging/yue2/preflight.py \
-     packaging/yue2/validate.py packaging/yue2/model-lock.json /opt/yue2-test/
+     packaging/yue2/validate.py packaging/yue2/runtime.py packaging/yue2/model-lock.json /opt/yue2-test/
 USER 10001:10001
 CMD ["python", "-m", "museforge.worker"]

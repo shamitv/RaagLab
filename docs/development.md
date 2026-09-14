@@ -107,6 +107,57 @@ Deletion requires `--apply`, retains a minimum 24-hour grace period, and recheck
 docker compose --env-file .env --profile mock run --rm --no-deps worker-mock python -m museforge.maintenance --apply --grace-hours 24
 ```
 
+## YuE2 CUDA-first / CPU fallback
+
+The real worker uses the official YuE2 0.1.6 source pinned in
+`packaging/yue2/model-lock.json`, with the existing pinned model/decoder weights.
+The CUDA-enabled PyTorch image also runs on CPU; API and dispatcher images still
+contain no inference dependencies. `DEVICE=auto` probes CUDA availability, BF16,
+and tensor computation once at startup, then falls back to CPU if that probe
+fails. `DEVICE=cuda` is strict; `DEVICE=cpu` bypasses CUDA. The Compose override
+uses `YUE2_DEVICE=auto` by default. BF16 model weights and FP32 VAE are unchanged.
+
+Use `compose.yaml` + `compose.yue2.yaml` with the `yue2` profile on GPU-free VMs.
+Add `compose.yue2.gpu.yaml` only on hosts with NVIDIA Container Toolkit to expose
+the GPU. Docker cannot fall back from a failed container-level GPU reservation;
+omit the GPU override if the host cannot provide it. Verified weights are still
+required in the external `musicgen-yue2-test_weights` volume.
+
+Weight checksum/identity failures, model load errors, startup timeouts, and
+inference failures do not trigger device fallback. The selected device is kept
+before Celery forks; each isolated job uses CUDA `torch` or CPU `torch-eager`.
+Readiness reports the actual device and fallback reason, and result provenance
+records device, backend, runtime revision, and validation.
+For an existing deployment, apply migrations before starting the upgraded
+services. Queued jobs remain runtime-revision pinned: drain old 0.1.5 work with
+a compatible worker or resubmit it explicitly; the upgrade does not rewrite it.
+
+Real-service integration commands (Ubuntu1 or another Linux Docker engine):
+
+```bash
+bash scripts/test.sh yue2-cpu
+bash scripts/test.sh yue2-gpu  # optional, requires GPU passthrough
+```
+
+These create unique, disposable PostgreSQL/RabbitMQ/API/dispatcher/worker stacks
+with isolated test credentials, verify one queued job and API-served PCM WAV
+(including HEAD/range/hash checks), then remove only their own test volumes.
+External verified weights and evidence under `test-results/yue2-devices` remain.
+For additional offline startup checks, build `museforge-yue2:0.1.6` with
+`packaging/yue2/Dockerfile.worker`, then run `python3 scripts/verify-yue2-startup.py`.
+It checks strict CUDA without a GPU, explicit CPU, missing weights, identity
+mismatch, and warmup timeout without fallback.
+CPU execution requires substantial RAM (tested with 28 GiB container limit,
+four CPU threads); this is a real 3B model test, not a mock.
+
+`YUE2_TEST_SMOKE=false` is the deployment default. The isolated test overlay
+explicitly enables it across services. Smoke jobs freeze the flag in their
+snapshot and use `cot=off`, greedy 32-token semantic sampling, and the default
+32 synthesis steps. Only smoke validation permits short/truncated audio; it
+still requires nonempty, finite, nonzero 48 kHz stereo and a published PCM WAV.
+It does not test full-song completion or perceptual quality. Production keeps
+full symbolic planning and its original >5-second/nontruncation thresholds.
+
 ## Remote Linux execution
 
 The original foundation verification used the user-provided VM at `10.42.0.42` as `yolo1`, with a key in the ignored `secrets/` directory. That historical checkout is `/home/yolo1/raaglab-foundation-20260913`; credentials are not present in this checkout. The review corrections use the existing `Ubuntu1` WSL2 distribution and its Linux Docker engine, reachable from PowerShell with `wsl -d Ubuntu1 -- bash scripts/test.sh integration`. Use the same checkout and commands on another Linux engine; do not copy keys, a developer `.env`, weights, or generated audio into the build context.

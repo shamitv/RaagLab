@@ -2,10 +2,11 @@ from contextlib import contextmanager
 from unittest.mock import Mock
 from museforge.api.app import storage_readiness
 from museforge.config import Settings
+from museforge.db.migrate import SCHEMA_HEAD
 
 
 class Engine:
-    def __init__(self, settings, head='0003_workspace_settings', workspace=True):
+    def __init__(self, settings, head=SCHEMA_HEAD, workspace=True):
         self.settings, self.head, self.workspace = settings, head, workspace
 
     @contextmanager

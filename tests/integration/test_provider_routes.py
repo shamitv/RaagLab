@@ -55,12 +55,14 @@ def test_incompatible_worker_preserves_job_for_compatible_worker(settings, engin
     envelope = GenerationEnvelope(schema_version=1, message_id=message['id'], job_id=identifier,
         correlation_id=message['correlation_id'], dispatch_sequence=1,
         dispatched_at=datetime.now(timezone.utc), provider_route=real.provider_route)
-    for incompatible in (settings, real.model_copy(update={'model_revision': 'wrong'})):
+    for incompatible in (settings, real.model_copy(update={'model_revision': 'wrong'}),
+                         real.model_copy(update={'yue2_test_smoke': True})):
         with pytest.raises(ProviderError, match='incompatible_envelope'):
             execute(incompatible, envelope)
         with engine.connect() as connection:
             job = connection.execute(sa.select(db.jobs).where(db.jobs.c.id == identifier)).mappings().one()
             assert job['state'] == 'queued' and job['attempt_count'] == 0 and job['error_code'] is None
+            assert job['execution_snapshot']['yue2_test_smoke'] is False
 
     class SyntheticProvider:
         def __init__(self, config, output): self.output = output
@@ -98,3 +100,19 @@ def test_readiness_ignores_incompatible_registrations(settings, engine):
             readiness='ready', last_heartbeat=sa.func.now(),
             expires_at=sa.func.now() + sa.text("interval '30 seconds'")))
         assert readiness(connection, real)['state'] == 'offline'
+
+
+def test_readiness_reports_selected_cpu_runtime(settings, engine):
+    from museforge.api.routes import readiness
+    real = real_settings(settings).model_copy(update={'model_id': 'cpu-readiness-' + str(uuid4())})
+    with engine.connect() as connection, connection.begin():
+        connection.execute(db.registrations.insert().values(workspace_id=settings.workspace_id,
+            worker_name='cpu-readiness-' + str(uuid4()), provider_id='yue2',
+            provider_revision=real.provider_revision, model_id=real.model_id,
+            model_revision=real.model_revision, provider_route=real.provider_route,
+            capability_revision=real.provider_revision, readiness='ready',
+            runtime_metadata=dict(device='cpu', backend='torch-eager', fallback_reason='cuda_unavailable'),
+            last_heartbeat=sa.func.now(), expires_at=sa.func.now() + sa.text("interval '30 seconds'")))
+        result = readiness(connection, real)
+        assert result['state'] == 'ready' and result['device'] == 'cpu'
+        assert result['fallback_reason'] == 'cuda_unavailable'

@@ -20,7 +20,8 @@ missing.
 For YuE2, the request mapping is explicit: `brief`, genre, mood, instruments and
 tempo become the style prompt, and the persisted user-lyrics checkpoint becomes
 the supplied lyric text. The application adapter sends full symbolic planning
-and the accepted seed to the supervised YuE2 child. The current route accepts
+and the accepted seed to the supervised YuE2 child (except the explicitly marked
+32-token integration smoke mode described in [development](development.md#yue2-cuda-first--cpu-fallback)). The current route accepts
 English user lyrics and the existing `Instrumental` request shape as a narrow
 compatibility path. The output may contain vocals; the application makes no
 claim about exact lyric adherence, vocal behavior, language coverage, or
@@ -34,7 +35,8 @@ The integrated worker uses the separate hash-locked
 `packaging/yue2/requirements.museforge.lock` for its Python 3.12 application
 runtime; CUDA, PyTorch, and YuE2 remain confined to the YuE2 lock.
 The current reference image is `packaging/yue2/Dockerfile` with Python 3.12,
-PyTorch 2.10.0+cu128, CUDA 12.8 wheels, and `yue2-infer==0.1.5`. YuE2-3B and
+PyTorch 2.10.0+cu128, CUDA 12.8 wheels, and hash-verified official
+`yue2-infer==0.1.6` source at `0edaf2f4053ef4731334b8329834b107977f9637`. YuE2-3B and
 YuE2-Vae revisions, hashes, license, and acquisition rules are in
 `packaging/yue2/model-lock.json` and `acquire.py`.
 
@@ -55,12 +57,16 @@ weights, device, and model initialization succeed. The API remains live while th
 real worker warms up.
 
 Load the model in a supervised inference child, with one active request per GPU
-and low prefetch. The worker performs a CUDA/BF16/weights/model warmup before
+and low prefetch (one request per CPU worker too). The worker verifies weights,
+resolves `DEVICE=auto` to CUDA with BF16 or CPU, and loads the model before
 registering readiness. Keep the lease heartbeat responsive during planning,
 synthesis, decoding and FLAC-to-WAV conversion. Cancellation must be cooperative
 where the runtime supports it and bounded by the worker watchdog otherwise. On
 timeout, OOM, cancellation, or worker loss, reap the child and preserve a typed
-failure; do not publish an unvalidated or partial artifact.
+failure; do not publish an unvalidated or partial artifact in production.
+Only startup device-probe failures allow CPU fallback; job errors never switch
+devices. Smoke-test artifacts are deliberately tiny/truncated and marked in
+the accepted snapshot and provenance, never substituted for production output.
 
 Before finalization, decode the native FLAC, validate finite non-silent stereo
 48 kHz audio, transcode it to 16-bit PCM WAV, and validate the published WAV
@@ -91,9 +97,14 @@ Build the integrated worker from the repository root with
 `musicgen-yue2-test_weights` has been acquired and verified. Start the API,
 dispatcher, and the `yue2` Compose profile with `compose.yue2.yaml`. The override
 sets `MUSIC_PROVIDER=yue2`, `LYRICS_PROVIDER=user`, the pinned model and decoder
-revisions, CUDA/BF16, one GPU inference, and measured 900-second execution
+revisions, auto device selection/BF16, one inference process, and 900-second execution
 limits. It does not start the mock worker and it never changes the default
 `compose.yaml` mock profile.
+
+The base YuE2 override has no mandatory GPU reservation. Add
+`compose.yue2.gpu.yaml` for GPU exposure on a configured NVIDIA host. CPU-only
+VM integration uses `bash scripts/test.sh yue2-cpu`, which explicitly enables
+short smoke mode in a disposable stack; production smoke mode remains disabled.
 
 D03 closure is supported by the recorded durable application result, not merely
 a standalone model command, image build, or successful import. Broader provider

@@ -67,6 +67,13 @@ def test_forward_upgrade_from_current_pre_phase4_head(engine, settings):
                 assert 'ix_versions_library_created' in {
                     index['name'] for index in sa.inspect(connection).get_indexes('song_versions')
                 }
+                assert connection.scalar(sa.text('SELECT version_num FROM alembic_version')) == '0003_workspace_settings'
+                connection.commit()
+                command.upgrade(config, 'head')
+                connection.commit()
+                assert 'runtime_metadata' in {
+                    column['name'] for column in sa.inspect(connection).get_columns('worker_registrations')
+                }
                 assert connection.scalar(sa.text('SELECT version_num FROM alembic_version')) == SCHEMA_HEAD
                 connection.commit()
             finally:

@@ -67,6 +67,9 @@ def test_warmup_uses_same_effective_environment_as_generation(tmp_path, monkeypa
         def wait(self, **kwargs): return 0
     def spawn(command, settings, **kwargs):
         captured['env'] = YuE2Music.child_environment(settings)
+        Path(command[command.index('--report') + 1]).write_text(json.dumps({
+            'device': 'cuda', 'backend': 'torch', 'fallback_reason': None,
+            'model_initialized': True, 'verified_weights': True}))
         return Process()
     monkeypatch.setattr(YuE2Music, '_spawn', spawn)
     monkeypatch.setattr(YuE2Music, '_terminate', lambda *_: None)
@@ -103,6 +106,7 @@ def test_readiness_requires_compatible_identity(tmp_path):
 def test_preflight_rejects_identity_mismatch_before_initialization(monkeypatch, field):
     root = Path(__file__).resolve().parents[2]
     monkeypatch.setitem(sys.modules, 'torch', types.SimpleNamespace())
+    monkeypatch.syspath_prepend(str(root / 'packaging/yue2'))
     spec = importlib.util.spec_from_file_location('yue_preflight', root / 'packaging/yue2/preflight.py')
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -185,32 +189,37 @@ time.sleep(120)
             except ProcessLookupError: pass
 
 
-def test_actual_flac_is_transcoded_to_valid_pcm_wav(tmp_path):
+@pytest.mark.parametrize('smoke,seconds', [(False, 6), (True, 1)])
+def test_actual_flac_is_transcoded_to_valid_pcm_wav(tmp_path, smoke, seconds):
     np = pytest.importorskip('numpy')
     sf = pytest.importorskip('soundfile')
-    config = settings(tmp_path)
+    config = settings(tmp_path).model_copy(update={'device': 'cpu', 'yue2_test_smoke': smoke})
     runner = tmp_path / 'runner.py'
     runner.write_text('''import sys
 from pathlib import Path
 import numpy as np
 import soundfile as sf
 out = Path(sys.argv[2]); out.mkdir(parents=True)
-t = np.arange(48000 * 6) / 48000
+t = np.arange(48000 * SECONDS) / 48000
 audio = np.column_stack([.1*np.sin(2*np.pi*440*t), .1*np.sin(2*np.pi*441*t)])
 sf.write(out / 'audio.flac', audio, 48000, format='FLAC')
 (out / 'validation.json').write_text('{"passed":true}')
-''')
+'''.replace('SECONDS', str(seconds)))
     config = config.model_copy(update={'yue2_runner': runner})
     output = tmp_path / 'audio.wav'
     request = dict(operation='generate', language='English', vocal_type='Instrumental',
         lyrics={'mode': 'user', 'text': '[Verse]\nExact lyrics'}, seed=42, genre='Folk',
-        mood='Calm', tempo='Medium', instruments=['Guitar'], brief='test', duration_seconds=8)
+        mood='Calm', tempo='Medium', instruments=['Guitar'], brief='test', duration_seconds=8,
+        yue2_test_smoke=smoke)
     provider = YuE2Music(config, output)
     provider.generate(request, lambda *_: None, lambda: None)
     from museforge.storage import inspect
-    assert inspect(output, expected_sample_rate=48000)['duration_seconds'] == 6
+    assert inspect(output, expected_sample_rate=48000)['duration_seconds'] == seconds
     assert sf.info(output).subtype == 'PCM_16'
     assert provider.metadata['requested_duration_seconds'] == 8
+    assert provider.metadata['test_smoke'] == smoke
+    assert provider.metadata['device'] == 'cpu'
+    assert provider.metadata['backend'] == 'torch-eager'
 
 
 @pytest.mark.skipif(sys.platform != 'linux', reason='Linux real-worker shutdown')

@@ -22,14 +22,21 @@ def main():
             values = [services[service]['environment'][name] for service in ('api', 'dispatcher', 'worker-yue2')]
             assert len(set(values)) == 1
         worker = services['worker-yue2']
-        assert worker['deploy']['resources']['reservations']['devices'] == [
+        assert not worker.get('deploy', {}).get('resources', {}).get('reservations', {}).get('devices')
+        assert all(services[name]['environment']['DEVICE'] == 'auto'
+                   for name in ('api', 'dispatcher', 'worker-yue2'))
+        gpu_output = subprocess.check_output(['docker', 'compose', '--project-directory', directory,
+            '--env-file', str(temporary / '.env'), '--profile', 'yue2', '-f', str(root / 'compose.yaml'),
+            '-f', str(root / 'compose.yue2.yaml'), '-f', str(root / 'compose.yue2.gpu.yaml'),
+            'config', '--format', 'json'], text=True)
+        assert json.loads(gpu_output)['services']['worker-yue2']['deploy']['resources']['reservations']['devices'] == [
             {'capabilities': ['gpu'], 'driver': 'nvidia', 'count': 1}]
         weights = next(mount for mount in worker['volumes'] if mount['target'] == '/weights')
         artifacts = next(mount for mount in worker['volumes'] if mount['target'].endswith('/artifacts'))
         assert weights['read_only'] and not artifacts.get('read_only', False)
         assert services['api']['volumes'][0]['read_only']
         assert 'worker-mock' not in services, 'YuE2 profile unexpectedly enabled mock worker'
-        print('Custom credentials/workspace, GPU reservation, and mount access checks passed.')
+        print('Custom credentials/workspace, GPU-free base, optional GPU reservation, and mounts passed.')
 
 
 if __name__ == '__main__':

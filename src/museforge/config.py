@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Literal
 from uuid import UUID
 
-from pydantic import Field, SecretStr, field_validator, model_validator
+from pydantic import Field, PrivateAttr, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import make_url
 
@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     decoder_revision: str | None = None
     weights_dir: Path = Path("/var/lib/museforge/weights")
     cache_dir: Path = Path("/var/cache/museforge")
-    device: Literal["cpu", "cuda", "mps"] = "cpu"
+    device: Literal["auto", "cpu", "cuda", "mps"] = "cpu"
     precision: Literal["float32", "float16", "bfloat16"] = "float32"
     yue2_model_dir: Path = Path("/weights/model")
     yue2_vae_dir: Path = Path("/weights/vae")
@@ -38,6 +38,9 @@ class Settings(BaseSettings):
     yue2_warmup_timeout_seconds: int = Field(900, gt=0)
     yue2_memory_budget_gib: int = Field(16, gt=0)
     yue2_offload_ar: bool = False
+    yue2_cpu_threads: int = Field(4, ge=1)
+    yue2_test_smoke: bool = False
+    _yue2_runtime: dict = PrivateAttr(default_factory=dict)
     worker_concurrency: int = Field(1, ge=1, le=1)
     duration_seconds: int = Field(8, ge=5, le=30)
     dispatcher_poll_seconds: float = Field(1, gt=0)
@@ -88,11 +91,15 @@ class Settings(BaseSettings):
         if not self.mock_test_enabled and (self.mock_test_scenarios or self.mock_test_delay_seconds or self.mock_test_outcome != 'success'):
             raise ValueError("mock test controls require explicit test mode")
         if self.music_provider == "mock":
+            if self.yue2_test_smoke:
+                raise ValueError("YuE2 smoke mode requires the real provider")
             if self.device != "cpu" or self.model_id or self.model_revision or self.decoder_revision:
                 raise ValueError("mock provider requires CPU and no model identity")
         else:
-            if self.device != "cuda" or self.precision != "bfloat16":
-                raise ValueError("yue2 requires CUDA and bfloat16 precision")
+            if 'device' not in self.model_fields_set:
+                self.device = 'auto'
+            if self.device not in {"auto", "cuda", "cpu"} or self.precision != "bfloat16":
+                raise ValueError("yue2 requires auto, CUDA, or CPU and bfloat16 precision")
             if self.lyrics_provider != "user":
                 raise ValueError("yue2 requires LYRICS_PROVIDER=user")
             if not self.model_id or not self.model_revision or not self.decoder_revision:
@@ -105,7 +112,27 @@ class Settings(BaseSettings):
 
     @property
     def provider_revision(self) -> str:
-        return "1" if self.music_provider == "mock" else "yue2-infer-0.1.5"
+        return "1" if self.music_provider == "mock" else "yue2-infer-0.1.6"
+
+    def set_yue2_runtime(self, report: dict):
+        device = report.get('device')
+        if device not in {'cpu', 'cuda'} or (self.device != 'auto' and device != self.device):
+            raise ValueError('invalid preflight device')
+        backend = 'torch' if device == 'cuda' else 'torch-eager'
+        if report.get('backend') != backend:
+            raise ValueError('invalid preflight backend')
+        self._yue2_runtime = dict(device=device, backend=backend,
+            fallback_reason=report.get('fallback_reason'), requested_device=self.device,
+            provider_revision=self.provider_revision, test_smoke=self.yue2_test_smoke)
+
+    @property
+    def runtime_metadata(self) -> dict:
+        return dict(self._yue2_runtime) if self.music_provider == 'yue2' else {}
+
+    @property
+    def inference_device(self) -> str:
+        # Only startup may resolve auto. Pool children must never select again.
+        return self._yue2_runtime.get('device', self.device)
 
     @property
     def provider_route(self) -> str:

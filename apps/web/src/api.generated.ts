@@ -398,10 +398,14 @@ export interface components {
             provider_id: string;
             /** Provider Revision */
             provider_revision: string;
+            /** Provider Route */
+            provider_route?: string | null;
             /** Model Id */
             model_id: string | null;
             /** Model Revision */
             model_revision: string | null;
+            /** Decoder Revision */
+            decoder_revision?: string | null;
             /** Is Demo */
             is_demo: boolean;
             /** Lyrics Modes */
@@ -806,10 +810,14 @@ export interface components {
             provider_id: string;
             /** Provider Revision */
             provider_revision: string;
+            /** Provider Route */
+            provider_route?: string | null;
             /** Model Id */
             model_id: string | null;
             /** Model Revision */
             model_revision: string | null;
+            /** Decoder Revision */
+            decoder_revision?: string | null;
             /** Is Demo */
             is_demo: boolean;
             /** Lyrics Modes */
@@ -851,6 +859,10 @@ export interface components {
             /** Warnings */
             warnings: string[];
             lyrics: components["schemas"]["LyricsCheckpoint"];
+            /** Runtime */
+            runtime?: {
+                [key: string]: unknown;
+            };
         };
         /** Readiness */
         Readiness: {
@@ -880,6 +892,10 @@ export interface components {
             state: string;
             /** Last Observed At */
             last_observed_at: string | null;
+            /** Device */
+            device?: string | null;
+            /** Fallback Reason */
+            fallback_reason?: string | null;
         };
         /** SafeJobError */
         SafeJobError: {
