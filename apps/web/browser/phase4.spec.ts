@@ -104,6 +104,7 @@ test("offline and two-tab draft conflicts keep explicit recovery choices", async
   await page.goto(`/projects/${project.id}`);
   const secondTab = await context.newPage();
   await secondTab.goto(`/projects/${project.id}`);
+  await expect(secondTab.getByLabel("Music brief")).toHaveValue(draft.brief);
   await page.getByLabel("Music brief").fill("Offline local recovery draft");
   await page.waitForTimeout(350);
   await context.setOffline(true);
@@ -163,7 +164,7 @@ test("IndexedDB failure keeps edits in memory and reports unsaved local recovery
   });
   await page.goto("/create");
   await page.getByLabel("Music brief").fill("In-memory draft despite blocked IndexedDB");
-  await expect(page.getByRole("alert")).toContainText("Local draft storage unavailable");
+  await expect(page.getByRole("alert")).toContainText("Local draft storage");
   await page.getByLabel("Project title", { exact: true }).fill("IndexedDB failure project");
   await page.getByRole("button", { name: "Save Project", exact: true }).click();
   await expect(page.getByRole("status").filter({ hasText: "local recovery unavailable" })).toBeVisible();

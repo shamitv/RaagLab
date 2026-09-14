@@ -10,6 +10,12 @@ RUN npm run build
 FROM web-build AS web-test
 RUN npm test
 
+# Browser dependencies remain in this test-only image and never enter runtime stages.
+FROM web-build AS browser-test
+RUN npx playwright install --with-deps chromium
+ENV API_BASE_URL=http://api:8000
+CMD ["npm", "run", "test:browser"]
+
 FROM python:3.13.15-slim-bookworm@sha256:ed86c82274b3c69b52fb5820f358f0bd7df0b603332063cb5c6e32bd220c3e6e AS python-base
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 UV_NO_PROGRESS=1 UV_LINK_MODE=copy
 WORKDIR /app

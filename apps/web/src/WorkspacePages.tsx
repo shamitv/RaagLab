@@ -159,7 +159,7 @@ export function Projects() {
                 {project.title}
               </Link>
               <span className="muted">
-                {project.archived_at ? "Archived" : "Active"} · updated{" "}
+                {project.archived_at ? "Archived" : "Active"} · created{" "}
                 {new Date(project.created_at).toLocaleDateString()}
               </span>
             </div>
