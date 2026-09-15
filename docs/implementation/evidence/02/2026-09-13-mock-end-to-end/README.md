@@ -4,9 +4,9 @@ The playable mock generation checkpoint passed on 2026-09-13. This is real HTTP 
 
 ## Environment and commands
 
-The isolated Linux Docker VM was `10.42.0.42`; the browser used an SSH tunnel to the loopback-only API port. See [runtime inventory](runtime.json). Frozen container builds used Python 3.13.15, Node 24.21.0, and npm 11.19.0. Local frontend checks used Node 24.14.1/npm 11.11.0 with the same frozen package lock.
+The isolated Linux Docker VM was `<verification-host-address>`; the browser used an SSH tunnel to the loopback-only API port. See [runtime inventory](runtime.json). Frozen container builds used Python 3.13.15, Node 24.21.0, and npm 11.19.0. Local frontend checks used Node 24.14.1/npm 11.11.0 with the same frozen package lock.
 
-- `bash scripts/test.sh integration`: passed the complete isolated build/unit/integration/restart/smoke runner. Its generated project was `museforge-phase2-test-9e5d486ce410`; cleanup removed only that project's containers and volumes.
+- `bash scripts/test.sh integration`: passed the complete isolated build/unit/integration/restart/smoke runner. Its generated project was `museforge-phase2-test`; cleanup removed only that project's containers and volumes.
 - `.venv/bin/python -m pytest tests/unit -q`: [97 passed locally](phase2-unit-local.txt). The container run had [96 passed and one expected Git-only skip](container-unit.txt); the checkout regression passed on the authoring host.
 - `npm run build` and `npm test`: typecheck/build passed and [2 frontend tests passed](phase2-web-unit.txt). The final public error-schema correction passed [targeted contract checks](final-contract-check.txt), generated TypeScript, and a rebuilt API image.
 - Real-service integration: [24 passed](integration.txt), including exact lyrics, scoped concurrent idempotency, duplicate delivery, isolation, failure/timeout/bounded retry, queued/running cancellation, range/HEAD/410, stale fences, selection sequencing, expired publication claims, expired execution leases, checkpoint reuse, and configured-default replay.

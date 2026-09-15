@@ -1,6 +1,6 @@
 # Phase 04 projects and recovery evidence
 
-Phase 04 acceptance completed on 2026-09-14 using isolated Compose projects on the authorized Linux runner `yolo1@10.42.0.42`. Docker was 29.8.0 and Compose was 5.5.1. The pinned containers supplied Python 3.13.15, PostgreSQL 18.6, RabbitMQ 4.3.5, Node 24.21.0 and npm 11.19.0. The final implementation and verification harness is recorded in [source-revisions.txt](source-revisions.txt).
+Phase 04 acceptance completed on 2026-09-14 using isolated Compose projects on the authorized Linux runner `<verification-host>`. Docker was 29.8.0 and Compose was 5.5.1. The pinned containers supplied Python 3.13.15, PostgreSQL 18.6, RabbitMQ 4.3.5, Node 24.21.0 and npm 11.19.0. The final implementation and verification harness is recorded in [source-revisions.txt](source-revisions.txt).
 
 ## Results
 

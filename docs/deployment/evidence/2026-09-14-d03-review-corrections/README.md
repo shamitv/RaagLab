@@ -1,6 +1,6 @@
 # D03 real application and review-correction evidence
 
-Date: 2026-09-14. Runtime: Ubuntu1 WSL2, Docker Engine 29.8.0, RTX 5080 Laptop
+Date: 2026-09-14. Runtime: reference host, Docker Engine 29.8.0, compatible NVIDIA GPU
 GPU, pinned Python 3.12/YuE2 0.1.5/CUDA 12.8 inference runtime. Integration branch:
 `integration/d03-review-corrections`, based on Phase 4 merge `c546152`.
 
@@ -28,7 +28,7 @@ The final worker build completed the public API → PostgreSQL/outbox → Rabbit
 | Browser | Desktop Chromium playback advanced; seeking to 3 seconds passed |
 
 The real Compose profile did not start a mock worker. Model weights were mounted
-read-only from `musicgen-yue2-test_weights`; only the worker mounted application
+read-only from `museforge-yue2-weights`; only the worker mounted application
 artifacts read-write. A separate earlier application probe also succeeded before
 the final guardian refinement; the table records the final-build probe.
 
@@ -78,15 +78,15 @@ combined acceptance run then passed with these complete fixtures:
 - Queued/idempotent API restart, artifact retrieval sweep, ambiguous confirmed
   publication, dispatcher restart, broker recovery, killed-worker lease/fencing
   recovery, volume-preserving full restart, and the existing demo smoke passed.
-- Final combined evidence: `test-results/museforge-phase4-test-5d592bb34587/`;
+- Final combined evidence: `test-results/museforge-phase4-test/`;
   command log: `test-results/d03-mock-regression-final.log`. D03 is completed.
 
-Run from `/mnt/c/work/musicgen` on Ubuntu1. Build/start an isolated stack with:
+Run from `<repository-root>` on the reference host. Build/start an isolated stack with:
 
 ```sh
-docker compose --project-name museforge-d03-review --profile yue2 \
+docker compose --project-name museforge-reference-validation --profile yue2 \
   -f compose.yaml -f compose.yue2.yaml build api dispatcher worker-yue2
-APP_PORT=0 docker compose --project-name museforge-d03-review --profile yue2 \
+APP_PORT=0 docker compose --project-name museforge-reference-validation --profile yue2 \
   -f compose.yaml -f compose.yue2.yaml up -d api dispatcher worker-yue2
 ```
 

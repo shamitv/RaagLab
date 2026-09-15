@@ -1,6 +1,7 @@
 {
-  "available_memory_gib": 37.059234619140625,
+  "available_memory_requirement_met": true,
   "required_memory_gib": 32,
   "worker_memory_limit_gib": 28,
-  "cpu_threads": 4
+  "cpu_threads": 4,
+  "note": "Exact observed host capacity is retained only in ignored local originals."
 }

@@ -3,8 +3,8 @@
   "run_id": "20260915-074347-79dfab6d",
   "source_revision": "1d2b1ca0f271557f93b64e45572858b28cbd521d",
   "candidate_revision": "1d2b1ca0f271557f93b64e45572858b28cbd521d",
-  "phase_project": "museforge-phase6-test-0dd2b2ec41",
-  "runtime_project": "museforge-phase6-runtime-31cc5c5f9f",
+  "phase_project": "museforge-phase6-test",
+  "runtime_project": "museforge-phase6-runtime",
   "environment_allowlist": [
     "CI",
     "DOCKER_CONFIG",
@@ -73,7 +73,7 @@
       "packaging/yue2/model-lock.json": "8f375ed85814c18e727bb525b25de2449aaadf0a8f6d54f58dc4c58ebbbaf945"
     },
     "runtime_overrides": {
-      "COMPOSE_PROJECT_NAME": "museforge-phase6-runtime-31cc5c5f9f",
+      "COMPOSE_PROJECT_NAME": "museforge-phase6-runtime",
       "APP_PORT": "45911 (ephemeral loopback port)"
     },
     "node": "v24.21.0",
@@ -160,7 +160,7 @@
         "docker",
         "compose",
         "--project-name",
-        "museforge-phase6-test-0dd2b2ec41",
+        "museforge-phase6-test",
         "--env-file",
         ".env",
         "--profile",
@@ -198,7 +198,7 @@
         "docker",
         "compose",
         "--project-name",
-        "museforge-phase6-test-0dd2b2ec41",
+        "museforge-phase6-test",
         "--env-file",
         ".env",
         "--profile",
@@ -227,7 +227,7 @@
         "docker",
         "compose",
         "--project-name",
-        "museforge-phase6-test-0dd2b2ec41",
+        "museforge-phase6-test",
         "--env-file",
         ".env",
         "--profile",
@@ -254,7 +254,7 @@
         "docker",
         "compose",
         "--project-name",
-        "museforge-phase6-test-0dd2b2ec41",
+        "museforge-phase6-test",
         "--env-file",
         ".env",
         "--profile",
@@ -281,7 +281,7 @@
         "docker",
         "compose",
         "--project-name",
-        "museforge-phase6-test-0dd2b2ec41",
+        "museforge-phase6-test",
         "--env-file",
         ".env",
         "--profile",
@@ -317,7 +317,7 @@
         "docker",
         "compose",
         "--project-name",
-        "museforge-phase6-runtime-31cc5c5f9f",
+        "museforge-phase6-runtime",
         "--env-file",
         ".env",
         "--profile",
@@ -393,7 +393,7 @@
         "docker",
         "compose",
         "--project-name",
-        "museforge-phase6-runtime-31cc5c5f9f",
+        "museforge-phase6-runtime",
         "--env-file",
         ".env",
         "--profile",
@@ -439,7 +439,7 @@
         "docker",
         "compose",
         "--project-name",
-        "museforge-phase6-runtime-31cc5c5f9f",
+        "museforge-phase6-runtime",
         "--env-file",
         ".env",
         "--profile",
@@ -459,7 +459,7 @@
         "docker",
         "compose",
         "--project-name",
-        "museforge-phase6-runtime-31cc5c5f9f",
+        "museforge-phase6-runtime",
         "--env-file",
         ".env",
         "--profile",
@@ -486,7 +486,7 @@
         "docker",
         "compose",
         "--project-name",
-        "museforge-phase6-runtime-31cc5c5f9f",
+        "museforge-phase6-runtime",
         "--env-file",
         ".env",
         "--profile",
@@ -505,7 +505,7 @@
         "docker",
         "image",
         "inspect",
-        "museforge-phase6-runtime-31cc5c5f9f-api",
+        "museforge-phase6-runtime-api",
         "--format",
         "{{json .}}"
       ],
@@ -520,7 +520,7 @@
         "docker",
         "image",
         "inspect",
-        "museforge-phase6-runtime-31cc5c5f9f-dispatcher",
+        "museforge-phase6-runtime-dispatcher",
         "--format",
         "{{json .}}"
       ],
@@ -535,7 +535,7 @@
         "docker",
         "image",
         "inspect",
-        "museforge-phase6-runtime-31cc5c5f9f-worker-mock",
+        "museforge-phase6-runtime-worker-mock",
         "--format",
         "{{json .}}"
       ],
@@ -580,7 +580,7 @@
         "docker",
         "image",
         "inspect",
-        "museforge-phase6-runtime-31cc5c5f9f-migrate",
+        "museforge-phase6-runtime-migrate",
         "--format",
         "{{json .}}"
       ],
@@ -595,7 +595,7 @@
         "docker",
         "compose",
         "--project-name",
-        "museforge-phase6-test-0dd2b2ec41",
+        "museforge-phase6-test",
         "--env-file",
         ".env",
         "--profile",
@@ -618,7 +618,7 @@
         "docker",
         "image",
         "inspect",
-        "museforge-phase6-test-0dd2b2ec41-migrate",
+        "museforge-phase6-test-migrate",
         "--format",
         "{{json .}}"
       ],
@@ -633,7 +633,7 @@
         "docker",
         "image",
         "inspect",
-        "museforge-phase6-test-0dd2b2ec41-dispatcher",
+        "museforge-phase6-test-dispatcher",
         "--format",
         "{{json .}}"
       ],
@@ -663,7 +663,7 @@
         "docker",
         "image",
         "inspect",
-        "museforge-phase6-test-0dd2b2ec41-api",
+        "museforge-phase6-test-api",
         "--format",
         "{{json .}}"
       ],
@@ -678,7 +678,7 @@
         "docker",
         "image",
         "inspect",
-        "museforge-phase6-test-0dd2b2ec41-tests",
+        "museforge-phase6-test-tests",
         "--format",
         "{{json .}}"
       ],
@@ -693,7 +693,7 @@
         "docker",
         "image",
         "inspect",
-        "museforge-phase6-test-0dd2b2ec41-worker-mock",
+        "museforge-phase6-test-worker-mock",
         "--format",
         "{{json .}}"
       ],
@@ -708,7 +708,7 @@
         "docker",
         "image",
         "inspect",
-        "museforge-phase6-test-0dd2b2ec41-browser-tests",
+        "museforge-phase6-test-browser-tests",
         "--format",
         "{{json .}}"
       ],
@@ -780,7 +780,7 @@
         "docker",
         "compose",
         "--project-name",
-        "museforge-phase6-runtime-31cc5c5f9f",
+        "museforge-phase6-runtime",
         "--env-file",
         ".env",
         "--profile",
@@ -799,7 +799,7 @@
         "docker",
         "compose",
         "--project-name",
-        "museforge-phase6-test-0dd2b2ec41",
+        "museforge-phase6-test",
         "--env-file",
         ".env",
         "--profile",
@@ -838,24 +838,24 @@
   "images": {
     "runtime": [
       {
-        "name": "museforge-phase6-runtime-31cc5c5f9f-api",
+        "name": "museforge-phase6-runtime-api",
         "id": "sha256:4bdc5d2ccf3f291f5f6f7ee9192dcbe21aa7832a4ab3763e89ad02c1c7e0d221",
         "repo_digests": [
-          "museforge-phase6-runtime-31cc5c5f9f-api@sha256:4bdc5d2ccf3f291f5f6f7ee9192dcbe21aa7832a4ab3763e89ad02c1c7e0d221"
+          "museforge-phase6-runtime-api@sha256:4bdc5d2ccf3f291f5f6f7ee9192dcbe21aa7832a4ab3763e89ad02c1c7e0d221"
         ]
       },
       {
-        "name": "museforge-phase6-runtime-31cc5c5f9f-dispatcher",
+        "name": "museforge-phase6-runtime-dispatcher",
         "id": "sha256:6f77fb40a1430d872f223e717404fe3cf4c97375bf1faa57ccbbcdd5057dce85",
         "repo_digests": [
-          "museforge-phase6-runtime-31cc5c5f9f-dispatcher@sha256:6f77fb40a1430d872f223e717404fe3cf4c97375bf1faa57ccbbcdd5057dce85"
+          "museforge-phase6-runtime-dispatcher@sha256:6f77fb40a1430d872f223e717404fe3cf4c97375bf1faa57ccbbcdd5057dce85"
         ]
       },
       {
-        "name": "museforge-phase6-runtime-31cc5c5f9f-worker-mock",
+        "name": "museforge-phase6-runtime-worker-mock",
         "id": "sha256:629edb870131bf990b06cb05647f627b8df6ddd3c66df320062621e2365f4104",
         "repo_digests": [
-          "museforge-phase6-runtime-31cc5c5f9f-worker-mock@sha256:629edb870131bf990b06cb05647f627b8df6ddd3c66df320062621e2365f4104"
+          "museforge-phase6-runtime-worker-mock@sha256:629edb870131bf990b06cb05647f627b8df6ddd3c66df320062621e2365f4104"
         ]
       },
       {
@@ -873,26 +873,26 @@
         ]
       },
       {
-        "name": "museforge-phase6-runtime-31cc5c5f9f-migrate",
+        "name": "museforge-phase6-runtime-migrate",
         "id": "sha256:7a9e005cf9b31e28dc98a3f3f47aec58bd196e5c3f8223ac48f1f66d8cd6cdcb",
         "repo_digests": [
-          "museforge-phase6-runtime-31cc5c5f9f-migrate@sha256:7a9e005cf9b31e28dc98a3f3f47aec58bd196e5c3f8223ac48f1f66d8cd6cdcb"
+          "museforge-phase6-runtime-migrate@sha256:7a9e005cf9b31e28dc98a3f3f47aec58bd196e5c3f8223ac48f1f66d8cd6cdcb"
         ]
       }
     ],
     "phase": [
       {
-        "name": "museforge-phase6-test-0dd2b2ec41-migrate",
+        "name": "museforge-phase6-test-migrate",
         "id": "sha256:2942eea3dcdd058db4d8654d01d8dc60bd06413e9d340d282812f8b61cd6b31a",
         "repo_digests": [
-          "museforge-phase6-test-0dd2b2ec41-migrate@sha256:2942eea3dcdd058db4d8654d01d8dc60bd06413e9d340d282812f8b61cd6b31a"
+          "museforge-phase6-test-migrate@sha256:2942eea3dcdd058db4d8654d01d8dc60bd06413e9d340d282812f8b61cd6b31a"
         ]
       },
       {
-        "name": "museforge-phase6-test-0dd2b2ec41-dispatcher",
+        "name": "museforge-phase6-test-dispatcher",
         "id": "sha256:6e14e129ef7159bfb3eca4045ca4de6ee9d09c1c563a647930bd48aeee6953f5",
         "repo_digests": [
-          "museforge-phase6-test-0dd2b2ec41-dispatcher@sha256:6e14e129ef7159bfb3eca4045ca4de6ee9d09c1c563a647930bd48aeee6953f5"
+          "museforge-phase6-test-dispatcher@sha256:6e14e129ef7159bfb3eca4045ca4de6ee9d09c1c563a647930bd48aeee6953f5"
         ]
       },
       {
@@ -903,31 +903,31 @@
         ]
       },
       {
-        "name": "museforge-phase6-test-0dd2b2ec41-api",
+        "name": "museforge-phase6-test-api",
         "id": "sha256:78188e936df5aa48081b74104b7f0649b6a72d3bfed83dcf6066c0be304de863",
         "repo_digests": [
-          "museforge-phase6-test-0dd2b2ec41-api@sha256:78188e936df5aa48081b74104b7f0649b6a72d3bfed83dcf6066c0be304de863"
+          "museforge-phase6-test-api@sha256:78188e936df5aa48081b74104b7f0649b6a72d3bfed83dcf6066c0be304de863"
         ]
       },
       {
-        "name": "museforge-phase6-test-0dd2b2ec41-tests",
+        "name": "museforge-phase6-test-tests",
         "id": "sha256:91d5b5ef9f7f5603f8f82601c31fd45d51d7833c238274f83b6a3854c976e0f3",
         "repo_digests": [
-          "museforge-phase6-test-0dd2b2ec41-tests@sha256:91d5b5ef9f7f5603f8f82601c31fd45d51d7833c238274f83b6a3854c976e0f3"
+          "museforge-phase6-test-tests@sha256:91d5b5ef9f7f5603f8f82601c31fd45d51d7833c238274f83b6a3854c976e0f3"
         ]
       },
       {
-        "name": "museforge-phase6-test-0dd2b2ec41-worker-mock",
+        "name": "museforge-phase6-test-worker-mock",
         "id": "sha256:8f6f8a5fff1fdff39efae8a0d301689b45f46737b178eca6c2663dac708f5514",
         "repo_digests": [
-          "museforge-phase6-test-0dd2b2ec41-worker-mock@sha256:8f6f8a5fff1fdff39efae8a0d301689b45f46737b178eca6c2663dac708f5514"
+          "museforge-phase6-test-worker-mock@sha256:8f6f8a5fff1fdff39efae8a0d301689b45f46737b178eca6c2663dac708f5514"
         ]
       },
       {
-        "name": "museforge-phase6-test-0dd2b2ec41-browser-tests",
+        "name": "museforge-phase6-test-browser-tests",
         "id": "sha256:ef9f913d0c8d1cd9f85e8e7db38f265739ff5d6ea313f9b5999a71539812f3b1",
         "repo_digests": [
-          "museforge-phase6-test-0dd2b2ec41-browser-tests@sha256:ef9f913d0c8d1cd9f85e8e7db38f265739ff5d6ea313f9b5999a71539812f3b1"
+          "museforge-phase6-test-browser-tests@sha256:ef9f913d0c8d1cd9f85e8e7db38f265739ff5d6ea313f9b5999a71539812f3b1"
         ]
       },
       {

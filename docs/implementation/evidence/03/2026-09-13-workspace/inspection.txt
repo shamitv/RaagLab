@@ -1,1 +1,1 @@
-Keyboard, clipboard, viewport and native 200% zoom evidence: /home/shamit/work/RaagLab/test-results/workspace-inspection
+Keyboard, clipboard, viewport and native 200% zoom evidence: <repository-root>/test-results/workspace-inspection

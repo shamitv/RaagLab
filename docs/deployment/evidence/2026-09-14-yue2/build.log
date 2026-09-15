@@ -178,9 +178,9 @@
 #10 exporting config sha256:6dd7732e354fb231a66534d028550d5103092fd7ea0628601f6de1092b80aed1 0.0s done
 #10 exporting attestation manifest sha256:68edb262cab2d7e3e1c1f11a5e49e1769bf3dbcfb574b692ac67b10b48d81559 0.0s done
 #10 exporting manifest list sha256:e9dd746272955e7dd0ce24bda5ec99f30ce82562aaececf9b914654bb4456876 0.0s done
-#10 naming to docker.io/library/musicgen-yue2:0.1.5 done
-#10 unpacking to docker.io/library/musicgen-yue2:0.1.5
-#10 unpacking to docker.io/library/musicgen-yue2:0.1.5 23.5s done
+#10 naming to docker.io/library/museforge-yue2:0.1.5 done
+#10 unpacking to docker.io/library/museforge-yue2:0.1.5
+#10 unpacking to docker.io/library/museforge-yue2:0.1.5 23.5s done
 #10 DONE 138.6s
 
  [33m1 warning found (use docker --debug to expand):

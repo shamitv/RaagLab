@@ -1,1 +1,7 @@
-{"CreatedAt":"2026-09-13T14:55:41Z","Driver":"local","Labels":{"com.docker.compose.config-hash":"d080589fe1230986e3ee835f42ba1a067a6d19c5e31b3fe74252550a05257ee6","com.docker.compose.project":"musicgen-yue2-test","com.docker.compose.version":"5.5.1","com.docker.compose.volume":"weights"},"Mountpoint":"/var/lib/docker/volumes/musicgen-yue2-test_weights/_data","Name":"musicgen-yue2-test_weights","Options":null,"Scope":"local"}
+{
+  "driver": "local",
+  "name": "museforge-yue2-weights",
+  "scope": "local",
+  "verified": true,
+  "note": "Machine-specific labels, mountpoint, and creation metadata are retained only in the ignored local record."
+}

@@ -1,6 +1,6 @@
 # Phase 06 release verification — 2026-09-15
 
-The final release gate passed on the authorized Linux VM `yolo1@10.42.0.42` at
+The final release gate passed on the authorized Linux VM `<verification-host>` at
 source revision `7b017e05a7e63aeb185d14a97777834923d8f1b8`. Docker Engine was
 29.8.0 and Compose was 5.5.1. The run used fresh, uniquely named Compose
 projects and removed only those test-owned volumes after verification.

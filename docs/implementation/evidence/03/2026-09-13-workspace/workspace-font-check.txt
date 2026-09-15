@@ -27,11 +27,11 @@ Running 12 tests using 1 worker
 
   1) [narrow] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection 
 
-    Error: apiRequestContext._wrapApiCall: ENOENT: no such file or directory, copyfile '/home/shamit/work/RaagLab/test-results/browser/.playwright-artifacts-3/traces/b163ed09f68681248ada-bd638ba94ad78766dbe5-recording1.network' -> '/home/shamit/work/RaagLab/test-results/browser/.playwright-artifacts-3/traces/b163ed09f68681248ada-bd638ba94ad78766dbe5-recording1-pwnetcopy-1.network'
+    Error: apiRequestContext._wrapApiCall: ENOENT: no such file or directory, copyfile '<repository-root>/test-results/browser/.playwright-artifacts-3/traces/b163ed09f68681248ada-bd638ba94ad78766dbe5-recording1.network' -> '<repository-root>/test-results/browser/.playwright-artifacts-3/traces/b163ed09f68681248ada-bd638ba94ad78766dbe5-recording1-pwnetcopy-1.network'
 
-    Error: browserContext._wrapApiCall: ENOENT: no such file or directory, open '/home/shamit/work/RaagLab/test-results/browser/.playwright-artifacts-3/traces/b163ed09f68681248ada-bd638ba94ad78766dbe5.network'
+    Error: browserContext._wrapApiCall: ENOENT: no such file or directory, open '<repository-root>/test-results/browser/.playwright-artifacts-3/traces/b163ed09f68681248ada-bd638ba94ad78766dbe5.network'
 
-    Error: ENOENT: no such file or directory, open '/home/shamit/work/RaagLab/test-results/browser/.playwright-artifacts-3/3c3090ae2ae1b71ee16b714851089069.zip'
+    Error: ENOENT: no such file or directory, open '<repository-root>/test-results/browser/.playwright-artifacts-3/3c3090ae2ae1b71ee16b714851089069.zip'
 
   1 failed
     [narrow] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection 

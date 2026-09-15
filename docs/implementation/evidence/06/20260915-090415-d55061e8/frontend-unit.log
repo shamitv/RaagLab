@@ -1,17 +1,17 @@
- Volume museforge-phase6-test-a4a6223437_database Creating
- Volume museforge-phase6-test-a4a6223437_database Creating
- Network museforge-phase6-test-a4a6223437_backend Creating
- Network museforge-phase6-test-a4a6223437_backend Creating
- Volume museforge-phase6-test-a4a6223437_artifacts Creating
- Volume museforge-phase6-test-a4a6223437_artifacts Creating
- Volume museforge-phase6-test-a4a6223437_database Created
- Volume museforge-phase6-test-a4a6223437_database Created
- Volume museforge-phase6-test-a4a6223437_artifacts Created
- Volume museforge-phase6-test-a4a6223437_artifacts Created
- Network museforge-phase6-test-a4a6223437_backend Created
- Network museforge-phase6-test-a4a6223437_backend Created
- Container museforge-phase6-test-a4a6223437-browser-tests-run-fe3cf647d5ed Creating
- Container museforge-phase6-test-a4a6223437-browser-tests-run-fe3cf647d5ed Created
+ Volume museforge-phase6-test_database Creating
+ Volume museforge-phase6-test_database Creating
+ Network museforge-phase6-test_backend Creating
+ Network museforge-phase6-test_backend Creating
+ Volume museforge-phase6-test_artifacts Creating
+ Volume museforge-phase6-test_artifacts Creating
+ Volume museforge-phase6-test_database Created
+ Volume museforge-phase6-test_database Created
+ Volume museforge-phase6-test_artifacts Created
+ Volume museforge-phase6-test_artifacts Created
+ Network museforge-phase6-test_backend Created
+ Network museforge-phase6-test_backend Created
+ Container museforge-phase6-test-browser-tests-run-<run-id> Creating
+ Container museforge-phase6-test-browser-tests-run-<run-id> Created
 
 > museforge-web@0.1.0 test
 > vitest run

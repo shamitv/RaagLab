@@ -2,9 +2,9 @@
 
 - Recorded: 2026-09-13T08:36:55+00:00
 - Base revision: `768f313745712318eb56144d08c5dbca6b249729`; implementation is the working-tree change described by this report.
-- Runtime host: user-authorized VM `10.42.0.42`, SSH user `yolo1`, Linux x86_64, rootless Docker 29.8.0, Compose plugin 5.5.1, overlayfs.
-- Remote checkout: `/home/yolo1/raaglab-foundation-20260913`.
-- Final isolated test project: `museforge-foundation-test-e3c7fce93a75` (removed with its test-owned volumes).
+- Runtime host: user-authorized VM `<verification-host-address>`, SSH user `<verification-user>`, Linux x86_64, rootless Docker 29.8.0, Compose plugin 5.5.1, overlayfs.
+- Remote checkout: `<remote-checkout>`.
+- Final isolated test project: `museforge-foundation-test` (removed with its test-owned volumes).
 - Preview project: `museforge-foundation-preview`, host port 18080; stopped after browser verification, three named volumes preserved.
 - Tested runtimes: Python 3.13.15, Node 24.21.0, npm 11.19.0, PostgreSQL 18.6, RabbitMQ 4.3.5. All four documented image digests pulled/built for Linux amd64.
 - Schema head: `0001_foundation`; actual PostgreSQL data directory `/var/lib/postgresql/18/docker`, volume mounted at `/var/lib/postgresql`.

@@ -1,6 +1,6 @@
 # Phase 03 responsive workspace evidence
 
-Run started 2026-09-13 and completed 2026-09-14. The compiled UI was served by FastAPI on the existing Docker VM at `10.42.0.42`, reached through a loopback SSH tunnel. No Vite server, HTTP request stubs, eager Celery or SQLite supplied the integrated result. The mock worker, PostgreSQL and RabbitMQ ran as separate containers. The original isolated runner used project `museforge-phase2-test-372e18c13809`; browser verification used the separate `museforge-phase3-browser` project.
+Run started 2026-09-13 and completed 2026-09-14. The compiled UI was served by FastAPI on the existing Docker VM at `<verification-host-address>`, reached through a loopback SSH tunnel. No Vite server, HTTP request stubs, eager Celery or SQLite supplied the integrated result. The mock worker, PostgreSQL and RabbitMQ ran as separate containers. The original isolated runner used project `museforge-phase2-test`; browser verification used the separate `museforge-phase3-browser` project.
 
 ## Results and reproduction
 

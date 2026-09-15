@@ -1,6 +1,6 @@
 postgres:18.6-bookworm@sha256:1c59e2c3c818eaa0f0628f695b36e7c9e362d6b219b36a54a32df645cbd7e1af
 rabbitmq:4.3.5@sha256:078107e036374f4d9bbeab8766799abe474bf252aedb4617ddd2edfa8e2c2c05
-museforge-phase6-runtime-d01de65907-migrate
-museforge-phase6-runtime-d01de65907-api
-museforge-phase6-runtime-d01de65907-dispatcher
-museforge-phase6-runtime-d01de65907-worker-mock
+museforge-phase6-runtime-migrate
+museforge-phase6-runtime-api
+museforge-phase6-runtime-dispatcher
+museforge-phase6-runtime-worker-mock

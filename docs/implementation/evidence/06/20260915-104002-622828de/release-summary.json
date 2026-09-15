@@ -6,8 +6,8 @@
   "source_revision": "c7b2a87c55d1c80b2142c7bd179adff9290808ff",
   "candidate_revision": "c7b2a87c55d1c80b2142c7bd179adff9290808ff",
   "clean_checkout": true,
-  "phase_project": "museforge-phase6-test-75bf5dc1ab",
-  "runtime_project": "museforge-phase6-runtime-750ea43f86",
+  "phase_project": "museforge-phase6-test",
+  "runtime_project": "museforge-phase6-runtime",
   "environment": {
     "host_python": "Python 3.14.4",
     "host_node": "v22.22.1",

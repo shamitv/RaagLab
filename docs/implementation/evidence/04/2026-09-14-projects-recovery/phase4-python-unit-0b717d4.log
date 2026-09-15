@@ -1,20 +1,20 @@
- Volume museforge-phase4-unit-final-0b717d4_database Creating
- Volume museforge-phase4-unit-final-0b717d4_database Creating
- Network museforge-phase4-unit-final-0b717d4_backend Creating
- Network museforge-phase4-unit-final-0b717d4_backend Creating
- Volume museforge-phase4-unit-final-0b717d4_artifacts Creating
- Volume museforge-phase4-unit-final-0b717d4_artifacts Creating
- Volume museforge-phase4-unit-final-0b717d4_broker Creating
- Volume museforge-phase4-unit-final-0b717d4_broker Creating
- Volume museforge-phase4-unit-final-0b717d4_database Created
- Volume museforge-phase4-unit-final-0b717d4_database Created
- Volume museforge-phase4-unit-final-0b717d4_broker Created
- Volume museforge-phase4-unit-final-0b717d4_broker Created
- Volume museforge-phase4-unit-final-0b717d4_artifacts Created
- Volume museforge-phase4-unit-final-0b717d4_artifacts Created
- Network museforge-phase4-unit-final-0b717d4_backend Created
- Network museforge-phase4-unit-final-0b717d4_backend Created
- Image museforge-phase4-unit-final-0b717d4-tests Building
+ Volume museforge-phase4-unit_database Creating
+ Volume museforge-phase4-unit_database Creating
+ Network museforge-phase4-unit_backend Creating
+ Network museforge-phase4-unit_backend Creating
+ Volume museforge-phase4-unit_artifacts Creating
+ Volume museforge-phase4-unit_artifacts Creating
+ Volume museforge-phase4-unit_broker Creating
+ Volume museforge-phase4-unit_broker Creating
+ Volume museforge-phase4-unit_database Created
+ Volume museforge-phase4-unit_database Created
+ Volume museforge-phase4-unit_broker Created
+ Volume museforge-phase4-unit_broker Created
+ Volume museforge-phase4-unit_artifacts Created
+ Volume museforge-phase4-unit_artifacts Created
+ Network museforge-phase4-unit_backend Created
+ Network museforge-phase4-unit_backend Created
+ Image museforge-phase4-unit-tests Building
 #1 [internal] load local bake definitions
 #1 reading from stdin 602B done
 #1 DONE 0.0s
@@ -119,15 +119,15 @@
 #31 exporting config sha256:a9bfc758561cb5f3b11dc909b7001d424bf8fa4430d0ff61e6bf805736e5dcad 0.0s done
 #31 exporting attestation manifest sha256:87dcafc9ffa50af75f98c80c74cb786360d39b7def5669e15c554a1e5e3cad05 0.0s done
 #31 exporting manifest list sha256:697049c06e064170598ff4bc5faac76b8f64a70bf885843f72ee266b07d32982 0.0s done
-#31 naming to docker.io/library/museforge-phase4-unit-final-0b717d4-tests:latest done
-#31 unpacking to docker.io/library/museforge-phase4-unit-final-0b717d4-tests:latest 0.0s done
+#31 naming to docker.io/library/museforge-phase4-unit-tests:latest done
+#31 unpacking to docker.io/library/museforge-phase4-unit-tests:latest 0.0s done
 #31 DONE 0.2s
 
 #32 resolving provenance for metadata file
 #32 DONE 0.0s
- Image museforge-phase4-unit-final-0b717d4-tests Built
- Container museforge-phase4-unit-final-0b717d4-tests-run-c17ef8e4fa29 Creating
- Container museforge-phase4-unit-final-0b717d4-tests-run-c17ef8e4fa29 Created
+ Image museforge-phase4-unit-tests Built
+ Container museforge-phase4-unit-tests-run-<run-id> Creating
+ Container museforge-phase4-unit-tests-run-<run-id> Created
 ============================= test session starts ==============================
 platform linux -- Python 3.13.15, pytest-9.1.1, pluggy-1.6.0
 rootdir: /app

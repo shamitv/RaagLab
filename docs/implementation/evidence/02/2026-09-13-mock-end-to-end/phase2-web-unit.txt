@@ -3,7 +3,7 @@
 > vitest run
 
 
- RUN  v5.0.0 /home/shamit/work/RaagLab/apps/web
+ RUN  v5.0.0 <repository-root>/apps/web
 
 
  Test Files  1 passed (1)

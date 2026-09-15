@@ -4,7 +4,7 @@ Date: 2026-09-14. Branch: `phase-5-provider-readiness`. The integrated run used
 source commit `d40fccc` after rebasing on `origin/main` (`359eb89`, YuE2
 CUDA-first/CPU-fallback support). Docker runs used the configured Linux VM with
 Docker Engine 29.8.0 and Compose 5.5.1. All test services used the isolated
-Compose project `museforge-phase2-test-phase5-ad6105be2a15`; the VM's unrelated
+Compose project `museforge-phase2-test-phase5`; the VM's unrelated
 `survey_app` containers were left running and untouched.
 
 ## Results

@@ -1,4 +1,4 @@
- Image musicgen-yue2:0.1.5 Building
+ Image museforge-yue2:0.1.5 Building
 #1 [internal] load local bake definitions
 #1 reading from stdin 541B done
 #1 DONE 0.0s
@@ -45,10 +45,10 @@
 #12 exporting attestation manifest sha256:74b5e4fabc97a37c404f2abc91ef93dc6bc5d7d5f9a172ca5e595e6f0b38861f
 #12 exporting attestation manifest sha256:74b5e4fabc97a37c404f2abc91ef93dc6bc5d7d5f9a172ca5e595e6f0b38861f 0.0s done
 #12 exporting manifest list sha256:625a4cc64bc869b1d6b0a642d2803b5ab5939bfcc513b6d95468bb1968b000ac 0.0s done
-#12 naming to docker.io/library/musicgen-yue2:0.1.5 done
-#12 unpacking to docker.io/library/musicgen-yue2:0.1.5 0.0s done
+#12 naming to docker.io/library/museforge-yue2:0.1.5 done
+#12 unpacking to docker.io/library/museforge-yue2:0.1.5 0.0s done
 #12 DONE 0.2s
 
 #13 resolving provenance for metadata file
 #13 DONE 0.0s
- Image musicgen-yue2:0.1.5 Built
+ Image museforge-yue2:0.1.5 Built

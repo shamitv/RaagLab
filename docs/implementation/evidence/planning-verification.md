@@ -12,6 +12,10 @@
 
 SHA-256 recorded before writing planning docs:
 
+These hashes describe the Phase 00 baseline. The machine-deployment prompt was
+later sanitized in the tracked tree; its original remains available only in Git
+history and ignored local records.
+
 | Original file | SHA-256 |
 | --- | --- |
 | `design.md` | `0dd5a363794e4a299e0a5665042ddac4f9b3673ac1b4edbcb2922a6b4bcdc771` |

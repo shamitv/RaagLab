@@ -8,16 +8,16 @@ declared resource and model prerequisites.
 
 | Check | Observation | Required |
 | --- | --- | --- |
-| Host | `yolo1@10.42.0.42` | Authorized Linux Docker host |
+| Host | `<verification-host>` | Authorized Linux Docker host |
 | Docker Engine | 29.8.0 | Linux Docker engine |
-| CPUs | 4 | 4 configured worker threads |
-| Total memory | 10 GiB | At least 32 GiB available host memory prerequisite |
-| Available memory | About 7.3 GiB | At least 32 GiB before model startup |
-| Verified weights volume | `musicgen-yue2-test_weights` absent | Pinned read-only model and VAE volume |
+| CPU configuration | Four worker threads configured | Four configured worker threads |
+| Memory gate | Below the required threshold | At least 32 GiB before model startup |
+| Verified weights volume | `museforge-yue2-weights` absent | Pinned read-only model and VAE volume |
 
 The host is therefore unsuitable for normal-mode 3B CPU inference. The runner
 was invoked from the disposable release checkout and stopped at its bounded
-preflight with `host has 7.2 GiB available; 32 GiB required` (exit code 1).
+32 GiB memory preflight (exit code 1). Exact host inventory is retained only in
+the ignored local originals.
 It retained `failure.json`, `services.log`, `resource-samples.json`, and
 `cleanup-down.log`; no model container was started, no weights were copied, and
 no deployment volumes were deleted. The mock release evidence remains valid
@@ -26,7 +26,7 @@ and independent.
 ## Required follow-up
 
 Run the gate from a clean checkout on a Linux Docker host with at least 32 GiB
-available RAM and the existing verified `musicgen-yue2-test_weights` volume:
+available RAM and the existing verified `museforge-yue2-weights` volume:
 
 ```bash
 bash scripts/test.sh release --real-cpu

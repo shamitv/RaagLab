@@ -1,5 +1,5 @@
 {
-  "docker_vm": "10.42.0.42",
+  "docker_vm": "<verification-host-address>",
   "remote": [
     "29.8.0",
     "Docker Compose version v5.5.1",
@@ -10,6 +10,6 @@
   "container_python": "3.13.15",
   "container_node": "24.21.0",
   "container_npm": "11.19.0",
-  "isolated_project": "museforge-phase2-test-9e5d486ce410",
-  "browser_project": "museforge-phase2-test-20260913"
+  "isolated_project": "museforge-phase2-test",
+  "browser_project": "museforge-phase2-test"
 }

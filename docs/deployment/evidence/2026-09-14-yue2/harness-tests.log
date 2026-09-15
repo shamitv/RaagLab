@@ -1,5 +1,5 @@
- Container musicgen-yue2-test-test-run-6e58436ede30 Creating
- Container musicgen-yue2-test-test-run-6e58436ede30 Created
+ Container <yue2-test-container> Creating
+ Container <yue2-test-container> Created
 test_clipped_audio_fails (test_harness.AudioChecks.test_clipped_audio_fails) ... ok
 test_nonfinite_audio_fails (test_harness.AudioChecks.test_nonfinite_audio_fails) ... ok
 test_silent_audio_fails (test_harness.AudioChecks.test_silent_audio_fails) ... ok

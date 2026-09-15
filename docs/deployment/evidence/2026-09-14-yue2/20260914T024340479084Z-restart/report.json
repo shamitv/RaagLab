@@ -1,6 +1,6 @@
 {
   "run_id": "20260914T024340479084Z-restart",
-  "driver": "592.01",
+  "driver": "<local-record>",
   "models": {
     "model": {
       "repo": "m-a-p/YuE2-3B",

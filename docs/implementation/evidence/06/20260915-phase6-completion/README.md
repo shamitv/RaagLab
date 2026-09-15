@@ -19,7 +19,7 @@ Date: 2026-09-15. The implementation branch was
   are in [cpu](cpu/).
 - The final Compose-profile correction at `4b2d425` was validated with a clean
   merged `config --services` check and a targeted browser run against an
-  existing completed YuE2 version in the preserved Ubuntu1 deployment. The
+  existing completed YuE2 version in the preserved reference host deployment. The
   browser test passed playback, seeking, download checksum, refresh, and
   project reopening. See [browser-run.log](browser/browser-run.log),
   [compose-profile-services.log](browser/compose-profile-services.log), and
@@ -36,7 +36,7 @@ revisions are identified above.
 
 | Evidence | Result |
 | --- | --- |
-| [host-resources.json](cpu/host-resources.json) | 37.06 GiB available; 32 GiB required; 28 GiB worker limit; four CPU threads |
+| [host-resources.json](cpu/host-resources.json) | 32 GiB availability gate passed; 28 GiB worker limit; four CPU threads |
 | [readiness.json](cpu/readiness.json) | real provider transitioned to CPU ready |
 | [timing.json](cpu/timing.json) | readiness, queue wait, and submit-to-terminal timings retained separately |
 | [worker-inspect.json](cpu/worker-inspect.json) | `DEVICE=cpu`, no GPU requests, `WORKER_CONCURRENCY=1`, 3,600 s deadlines |

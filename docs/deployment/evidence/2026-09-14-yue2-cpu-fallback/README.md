@@ -1,24 +1,24 @@
 # YuE2 startup fallback and short queued audio
 
-Verified on Ubuntu1 WSL2 with Linux Docker Engine 29.8.0 / Compose v5.5.1.
+Verified on the reference host with Linux Docker Engine 29.8.0 / Compose v5.5.1.
 Runtime: official YuE2 0.1.6 source at
 `0edaf2f4053ef4731334b8329834b107977f9637`, PyTorch 2.10.0+cu128,
 Python 3.12. The source archive SHA-256 and independently pinned model/decoder
 revisions are in `packaging/yue2/model-lock.json`; dependencies and build tools
 are hash-locked. Weights were reused from the verified, read-only external
-`musicgen-yue2-test_weights` volume. No mock inference or network was used by
+`museforge-yue2-weights` volume. No mock inference or network was used by
 the inference children.
 
 ## Real service checks
 
 `python3 scripts/verify-yue2-devices.py` created the disposable project
-`museforge-yue2-test-2d6cfc160cb1` with no GPU reservation. `DEVICE=auto`
+`<isolated-cpu-project>` with no GPU reservation. `DEVICE=auto`
 selected CPU, `torch-eager`, and `fallback_reason=cuda_unavailable`.
 Four CPU threads and a 28 GiB container memory limit were configured.
 
-The CUDA variant (`--gpu`) created `museforge-yue2-test-fba3397bba6d` with the
+The CUDA variant (`--gpu`) created `<isolated-gpu-project>` with the
 optional GPU override, selected CUDA/`torch`, and reported no fallback reason.
-The GPU host was the existing RTX 5080 Laptop GPU. This confirms the CUDA-first
+The GPU host was the existing compatible NVIDIA GPU. This confirms the CUDA-first
 path remains available, not cross-device determinism.
 
 Both used the real PostgreSQL/RabbitMQ/API/dispatcher/Celery prefork worker,
@@ -38,7 +38,7 @@ removed; external weights and the existing application stack were preserved.
 The initial CPU acceptance attempt ended early because the harness treated
 container health as completed model warmup. The harness now waits separately
 for provider readiness; that failed attempt's log is retained under project
-`museforge-yue2-test-6d473008b448`.
+`<isolated-test-project>`.
 
 ## Supporting regression checks
 

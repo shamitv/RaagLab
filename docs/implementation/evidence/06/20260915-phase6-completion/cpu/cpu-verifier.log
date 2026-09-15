@@ -1,5 +1,5 @@
- Container museforge-yue2-test-db98603851ab-yue2-smoke-tests-run-3b1cc1dbbfed Creating 
- Container museforge-yue2-test-db98603851ab-yue2-smoke-tests-run-3b1cc1dbbfed Created 
+ Container <isolated-yue2-project>-yue2-smoke-tests-run-<run-id> Creating
+ Container <isolated-yue2-project>-yue2-smoke-tests-run-<run-id> Created
 {
   "result": "passed",
   "project_id": "bd0c6969-4b85-419e-a8f9-f0be936a636a",

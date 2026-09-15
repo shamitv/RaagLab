@@ -1,9 +1,9 @@
- Network musicgen-yue2-test_default Creating
- Network musicgen-yue2-test_default Creating
- Network musicgen-yue2-test_default Created
- Network musicgen-yue2-test_default Created
- Container musicgen-yue2-test-acquire-run-f78f219b1e62 Creating
- Container musicgen-yue2-test-acquire-run-f78f219b1e62 Created
+ Network museforge-yue2-validation_default Creating
+ Network museforge-yue2-validation_default Creating
+ Network museforge-yue2-validation_default Created
+ Network museforge-yue2-validation_default Created
+ Container <yue2-acquire-container> Creating
+ Container <yue2-acquire-container> Created
 
 Fetching 12 files:   0%|          | 0/12 [00:00<?, ?it/s]Downloading 'LICENSE' to '/weights/model/.cache/huggingface/download/DhCjcNQuMpl4FL346qr3tvNUCgY=.5b4b50fd3e4d4cadbc54c49cab3552d0eb303d48.incomplete'
 Download complete. Moving file to /weights/model/LICENSE

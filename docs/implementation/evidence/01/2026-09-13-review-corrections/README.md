@@ -3,8 +3,8 @@
 - Recorded: 2026-09-13T12:21:11Z
 - Branch: `fix/phase-1-review`, created from `main` at `7d75c57`.
 - Changes are the three focused commits on this branch, identified by [source checksums](source-sha256.txt).
-- Runtime: existing `Ubuntu1` WSL2 distribution; Linux amd64 Docker Engine 29.8.0, Compose 5.5.1. No host runtime installation was needed.
-- Final isolated integration project: `museforge-foundation-test-b18dd27b582b`; its containers, network, and three test-owned volumes were removed by the runner.
+- Runtime: reference WSL2 host; Linux amd64 Docker Engine 29.8.0, Compose 5.5.1. No host runtime installation was needed.
+- Final isolated integration project: `museforge-foundation-test`; its containers, network, and three test-owned volumes were removed by the runner.
 - Pinned runtime/dependency versions and schema head `0001_foundation` are unchanged.
 
 ## Corrections
@@ -15,7 +15,8 @@
 
 ## Verification
 
-Commands below ran from the repository through `wsl -d Ubuntu1 -- ...`.
+Commands below ran from the repository through
+`wsl -d <reference-wsl-distribution> -- ...`.
 
 | Check | Command / procedure | Result |
 | --- | --- | --- |

@@ -12,7 +12,7 @@ bash scripts/test.sh release
 ```
 
 Add `--real-cpu` when the host has at least 32 GiB available memory and the
-external verified `musicgen-yue2-test_weights` volume:
+external verified `museforge-yue2-weights` volume:
 
 ```bash
 bash scripts/test.sh release --real-cpu

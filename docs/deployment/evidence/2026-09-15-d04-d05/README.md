@@ -1,11 +1,12 @@
-# Ubuntu1 D04/D05 deployment evidence
+# Reference-host D04/D05 deployment evidence
 
-Date: 2026-09-15. Host: Ubuntu 24.04.5 in WSL2, Docker Engine 29.8.0, Compose
-5.5.1, RTX 5080 Laptop GPU with 16,303 MiB VRAM. Project: `museforge-ubuntu1`.
+Date: 2026-09-15. The gate ran on Ubuntu/WSL2 with a compatible Linux Docker,
+Compose, and NVIDIA stack. Exact host inventory and local resource names are
+retained only in ignored local documentation.
 
 ## D02 target mock gate
 
-The disposable target project `museforge-phase4-test-7376f5f707c2` passed 49
+The disposable target project `<isolated-d02-project>` passed 49
 integration checks and 34 browser checks, with 22 intentional skips. Evidence
 included API-served generation, playback/seek/download, version iteration and
 reopen, queued restart, broker recovery, dispatcher restart, worker loss, full
@@ -21,7 +22,7 @@ successful durable job with one attempt, model `m-a-p/YuE2-3B`, revision
 `9a94e1d0ea9f8087e98f77fa88df4a4068104d2a`, CUDA runtime, 48 kHz stereo WAV,
 full GET/HEAD/byte-range retrieval, and a measured duration of 77.2387 seconds
 for an 8-second request. The private JSON/WAV evidence is under
-`/home/shamit/.local/share/museforge-ubuntu1/evidence/20260915T030821Z-real`.
+`$EVIDENCE_ROOT/20260915T030821Z-real`.
 
 The real queued cancellation checkpoint is implemented in
 `scripts/deploy/recovery.sh`; broader repeatable broker, dispatcher, worker-loss,
@@ -34,4 +35,5 @@ The integrated runbook and manifest describe the persistent project, private
 credentials, separate volumes, model pin, WSL recovery, drain, logical PostgreSQL
 backup, artifact archive, isolated restore, update, and rollback guardrails. The
 backup, isolated restore/playback, update, and rollback restore gates passed. The
-primary project was restarted after the checks and remains healthy on port 8000.
+primary project passed its final recorded readiness check. Current live state
+and local port ownership are recorded outside Git.

@@ -1,6 +1,6 @@
 # Phase 06 release verification — exact committed revision
 
-Date: 2026-09-15. The mock release gate ran on `yolo1@10.42.0.42` from a
+Date: 2026-09-15. The mock release gate ran on `<verification-host>` from a
 disposable clean worktree created from committed revision
 `c7b2a87c55d1c80b2142c7bd179adff9290808ff`.
 
@@ -26,8 +26,8 @@ check, and native 200% zoom capture referenced by this gate. WebKit was
 unavailable and remains unclaimed.
 
 The run used unique projects
-`museforge-phase6-test-75bf5dc1ab` and
-`museforge-phase6-runtime-750ea43f86`, an ephemeral loopback API port
+`museforge-phase6-test` and
+`museforge-phase6-runtime`, an ephemeral loopback API port
 (`35155`), and sanitized configuration recorded in `release-summary.json`.
 Image IDs and available repository digests are in `image-records.json`; the
 individual command results and durations are in `command-outcomes.json`.

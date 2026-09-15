@@ -24,7 +24,7 @@ dist/assets/index-Cj-1EVQQ.js                285.64 kB │ gzip: 90.60 kB
 > vitest run
 
 
- RUN  v5.0.0 /home/shamit/work/RaagLab/apps/web
+ RUN  v5.0.0 <repository-root>/apps/web
 
 
  Test Files  2 passed (2)
