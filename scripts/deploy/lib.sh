@@ -28,7 +28,9 @@ configured_yue2_device() {
     return
   fi
   if [[ -r "$DEPLOY_ROOT/.mode.env" ]]; then
-    awk -F= '$1 == "YUE2_DEVICE" { value=$2 } END { if (value != "") print value }' "$DEPLOY_ROOT/.mode.env"
+    local saved
+    saved="$(awk -F= '$1 == "YUE2_DEVICE" { value=$2 } END { if (value != "") print value }' "$DEPLOY_ROOT/.mode.env")"
+    printf '%s\n' "${saved:-auto}"
     return
   fi
   printf '%s\n' auto
