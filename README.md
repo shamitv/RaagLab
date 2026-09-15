@@ -13,6 +13,14 @@ Turn a musical idea into a playable song. Describe the sound, choose instruments
 
 ![MuseForge mobile song screen](docs/implementation/evidence/07/20260915-song-first/song-mobile.png)
 
+## Model used
+
+MuseForge uses the open-source [`m-a-p/YuE2-3B`](https://huggingface.co/m-a-p/YuE2-3B) model with the [`m-a-p/YuE2-Vae`](https://huggingface.co/m-a-p/YuE2-Vae) listening decoder. The deployment pins the model, decoder, and `yue2-infer==0.1.6` runtime to verified revisions instead of downloading a changing latest release at startup. The model weights are licensed under CC BY-NC 4.0.
+
+The app turns the selected genre, instruments, mood, tempo, language, and music brief into YuE2's style prompt and supplies the user's structured lyrics separately. Ordinary generation uses full symbolic planning and produces validated 48 kHz stereo audio. MuseForge currently exposes the verified English route; a Hindi CUDA probe completed technically, but Hindi pronunciation and lyric adherence have not been evaluated. YuE2 also does not guarantee exact lyrics, instrumental-only output, prompt fidelity, or requested duration.
+
+See the [YuE2 parameter reference](docs/yue2-parameters.md) for every supported model input, sampling default, runtime option, example, and MuseForge mapping. The [model integration boundary](docs/model-integration.md) records the evidence behind the capabilities shown in the product.
+
 ## Set up MuseForge
 
 The standard setup creates a real YuE2 environment and the standard start command selects the real provider:
