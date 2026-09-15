@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
+DEPLOY_ROOT="${MUSEFORGE_DEPLOY_ROOT:-$HOME/.local/share/museforge-ubuntu1}"
+PROJECT_NAME="${MUSEFORGE_PROJECT_NAME:-museforge-ubuntu1}"
+DEPLOY_ENV_FILE="$DEPLOY_ROOT/.env"
+EVIDENCE_ROOT="${MUSEFORGE_EVIDENCE_ROOT:-$DEPLOY_ROOT/evidence}"
+BACKUP_ROOT="${MUSEFORGE_BACKUP_ROOT:-$DEPLOY_ROOT/backups}"
+export DEPLOY_ENV_FILE
+COMPOSE_BASE=(docker compose --project-name "$PROJECT_NAME" --env-file "$DEPLOY_ENV_FILE" --profile mock --profile yue2
+  -f "$ROOT/compose.yaml" -f "$ROOT/deploy/compose/compose.ubuntu1.yaml")
+
+fail() { echo "deploy_error: $*" >&2; exit 1; }
+require_env() { [[ -r "$DEPLOY_ENV_FILE" ]] || fail "missing $DEPLOY_ENV_FILE; run scripts/deploy/setup.sh"; }
+require_engine() {
+  command -v docker >/dev/null || fail 'Docker is unavailable; run inside the selected Linux/WSL environment.'
+  local compose_version
+  compose_version="$(docker compose version --short 2>/dev/null)" || fail 'Docker Compose v2 is required.'
+  compose_version="${compose_version#v}"
+  [[ "$(printf '%s\n' 2.24.4 "$compose_version" | sort -V | head -n 1)" == 2.24.4 ]] || fail 'Docker Compose >= 2.24.4 is required.'
+  docker info --format '{{.OSType}}' 2>/dev/null | grep -qx linux || fail 'The selected Docker engine must run Linux containers.'
+}
+compose() { "${COMPOSE_BASE[@]}" "$@"; }
+mode_compose() {
+  local mode="${1:?mode mock or real}"; shift
+  case "$mode" in
+    mock) compose --profile mock "$@" ;;
+    real) compose --profile yue2 -f "$ROOT/compose.yue2.yaml" -f "$ROOT/compose.yue2.gpu.yaml" -f "$ROOT/deploy/compose/compose.ubuntu1.yue2.yaml" "$@" ;;
+    *) fail "unknown mode: $mode" ;;
+  esac
+}
+mode_services() {
+  case "${1:?mode}" in
+    mock) echo 'api dispatcher worker-mock' ;;
+    real) echo 'api dispatcher worker-yue2' ;;
+    *) fail "unknown mode: $1" ;;
+  esac
+}
+deployment_env() {
+  set -a
+  # shellcheck disable=SC1090
+  source "$DEPLOY_ENV_FILE"
+  set +a
+}
+write_mode_env() {
+  local mode="${1:?mode}"
+  deployment_env
+  cp "$DEPLOY_ENV_FILE" "$DEPLOY_ROOT/.mode.env"
+  if [[ "$mode" == real ]]; then
+    export MUSIC_PROVIDER=yue2 LYRICS_PROVIDER=user DEVICE=auto PRECISION=bfloat16
+    export MODEL_ID=m-a-p/YuE2-3B MODEL_REVISION=29b3558dd46954a0cd9021dc76d5c91864a0f1c7
+    export DECODER_REVISION=9a94e1d0ea9f8087e98f77fa88df4a4068104d2a
+    export YUE2_DEVICE="${YUE2_DEVICE:-auto}" YUE2_TEST_SMOKE=false YUE2_CPU_THREADS="${YUE2_CPU_THREADS:-4}"
+    export YUE2_MODEL_DIR=/weights/model YUE2_VAE_DIR=/weights/vae
+    export YUE2_MEMORY_BUDGET_GIB=16 YUE2_PROCESS_TIMEOUT_SECONDS=900 YUE2_WARMUP_TIMEOUT_SECONDS=900
+    export YUE2_OFFLOAD_AR=false WORKER_CONCURRENCY=1 ATTEMPT_DEADLINE_SECONDS=900 HARD_WATCHDOG_SECONDS=930 QUEUE_DEADLINE_SECONDS=1800
+    cat >> "$DEPLOY_ROOT/.mode.env" <<EOF
+MUSIC_PROVIDER=$MUSIC_PROVIDER
+LYRICS_PROVIDER=$LYRICS_PROVIDER
+DEVICE=$DEVICE
+PRECISION=$PRECISION
+MODEL_ID=$MODEL_ID
+MODEL_REVISION=$MODEL_REVISION
+DECODER_REVISION=$DECODER_REVISION
+YUE2_DEVICE=$YUE2_DEVICE
+YUE2_TEST_SMOKE=$YUE2_TEST_SMOKE
+YUE2_CPU_THREADS=$YUE2_CPU_THREADS
+YUE2_MODEL_DIR=$YUE2_MODEL_DIR
+YUE2_VAE_DIR=$YUE2_VAE_DIR
+YUE2_MEMORY_BUDGET_GIB=$YUE2_MEMORY_BUDGET_GIB
+YUE2_PROCESS_TIMEOUT_SECONDS=$YUE2_PROCESS_TIMEOUT_SECONDS
+YUE2_WARMUP_TIMEOUT_SECONDS=$YUE2_WARMUP_TIMEOUT_SECONDS
+YUE2_OFFLOAD_AR=$YUE2_OFFLOAD_AR
+WORKER_CONCURRENCY=$WORKER_CONCURRENCY
+ATTEMPT_DEADLINE_SECONDS=$ATTEMPT_DEADLINE_SECONDS
+HARD_WATCHDOG_SECONDS=$HARD_WATCHDOG_SECONDS
+QUEUE_DEADLINE_SECONDS=$QUEUE_DEADLINE_SECONDS
+EOF
+  else
+    cat >> "$DEPLOY_ROOT/.mode.env" <<'EOF'
+MUSIC_PROVIDER=mock
+LYRICS_PROVIDER=mock
+DEVICE=cpu
+PRECISION=float32
+EOF
+  fi
+  chmod 600 "$DEPLOY_ROOT/.mode.env"
+}
+compose_with_mode() {
+  local mode="${1:?mode}"; shift
+  mode_compose "$mode" --env-file "$DEPLOY_ROOT/.mode.env" "$@"
+}
+ensure_dirs() { mkdir -p "$DEPLOY_ROOT" "$EVIDENCE_ROOT" "$BACKUP_ROOT"; chmod 700 "$DEPLOY_ROOT" "$EVIDENCE_ROOT" "$BACKUP_ROOT"; }
+stop_other_worker() {
+  local mode="${1:?mode}"
+  local other_service=worker-mock
+  [[ "$mode" == mock ]] && other_service=worker-yue2
+  local containers
+  containers="$(docker ps -q --filter "label=com.docker.compose.project=$PROJECT_NAME" --filter "label=com.docker.compose.service=$other_service")"
+  [[ -z "$containers" ]] || docker stop --time 30 $containers >/dev/null
+}

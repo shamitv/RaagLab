@@ -1,9 +1,11 @@
 # D04 status
 
-- State: `not_started`
-- Updated: 2026-09-14
-- D03's narrow persisted API result and playback gate is complete. No broader
-  system-level real-provider checks have run.
-- D04 depends on D02 proving the application stack and mock workflow on Ubuntu1.
-- Next: validate real workflow, cancellation, restart/recovery, and measured
-  resource limits after D02.
+- State: `completed`
+- Updated: 2026-09-15
+- Completed: real readiness, API queue routing, provenance, persisted audio retrieval,
+  WAV metadata/range checks, browser-ready API path, and queued cancellation.
+- Latest verification: evidence under `/home/shamit/.local/share/museforge-ubuntu1/evidence/20260915T030821Z-real`;
+  job succeeded with CUDA runtime and 77.2387-second measured output.
+- Limitations: no listening tool was available; lyric adherence, language breadth,
+  exact duration, style controls, and native-Linux execution remain unverified.
+- Next: D05 backup/restore and operational handoff.

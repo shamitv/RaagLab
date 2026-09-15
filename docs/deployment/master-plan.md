@@ -4,12 +4,12 @@
 - Target alias: `ubuntu1`
 - Topology: Ubuntu 24.04.5 LTS inside WSL2, with Docker Engine running in the distribution
 - Source workspace: `C:\work\musicgen` (deployment test invoked through `/mnt/c/work/musicgen`)
-- Current branch: `model_deploy`
+- Current branch: `codex/part2-d04-d05-deployment`
 
 ## Scope and current outcome
 
-This record covers the Part 2 model/image work and the integrated D03 YuE2 route.
-The standalone checkpoint and narrow application gate are complete: one durable
+This record covers the Part 2 model/image work and the integrated D03–D05 YuE2 route.
+The standalone checkpoint, target mock gate, and real application gate are complete: one durable
 YuE2 job passed through PostgreSQL, RabbitMQ, the dispatcher, and the real worker,
 and its 48 kHz stereo result was retrieved and played through the API. The portable
 application still defaults to mock mode; the real profile is explicit.
@@ -24,7 +24,7 @@ Browser -> API -> PostgreSQL/outbox -> RabbitMQ -> real worker
 The standalone checkpoint exercises image/model setup, GPU access, process bounds,
 audio validation, and repeatability. The separate integrated D03 evidence closes
 the narrow application-queue gate; Phase 05 capability readiness is complete,
-while broader deployment and system recovery checks remain in D04.
+while target deployment, recovery, backup, restore, and handoff checks are recorded in D04/D05.
 
 ## Selected model and image
 
@@ -53,11 +53,11 @@ budget, and no claim about maximum context or concurrent generation.
 | Phase | State | Scope and exit gate |
 | --- | --- | --- |
 | D00 Inventory and plan | completed | Target, topology, model decision, gaps, and acceptance checks recorded |
-| D01 Host preparation | in_progress | WSL/Docker/NVIDIA path is verified; application deployment directories and startup configuration remain |
-| D02 Mock deployment | not_started on `ubuntu1` | Re-run the existing DB/broker/API/mock worker path on this target and prove browser playback/restart |
+| D01 Host preparation | completed | WSL/Docker/NVIDIA path and isolated deployment configuration are verified |
+| D02 Mock deployment | completed on `ubuntu1` | Target browser playback, persistence, cancellation, and restart/recovery checks passed |
 | D03 Real model | completed | Corrected integrated worker passed one durable real API job, verified provenance, 48 kHz retrieval/playback, and Phase 4-baseline regressions; [evidence](evidence/2026-09-14-d03-review-corrections/README.md) |
-| D04 System validation | not_started | Validate real capabilities, API playback, iterations, cancellation, restart, and resource limits |
-| D05 Operations and handoff | not_started | Runbook, manifest, backup/restore, update/rollback, and portability handoff |
+| D04 System validation | completed | Real readiness, queued job, provenance, audio retrieval/range checks, and queued cancellation passed |
+| D05 Operations and handoff | completed | Runbook, manifest, backup/restore, isolated playback, update, rollback, and portability evidence passed |
 
 The prior mock acceptance on the separate VM remains preserved in
 `docs/implementation/evidence/02/2026-09-13-mock-end-to-end/`; it is not silently
@@ -74,6 +74,5 @@ persist model provenance with the result.
 
 The standalone evidence is [here](evidence/2026-09-14-yue2/README.md), and the
 integrated application evidence is [here](evidence/2026-09-14-d03-review-corrections/README.md).
-The next deployment step is D02 on Ubuntu1, followed by D04 real workflow,
-recovery, and resource validation. D05 will complete operations, backup/restore,
-update/rollback, and portability handoff.
+The persistent Ubuntu1 deployment is available through the runbook. Native Linux
+remains documented only, and the product capability limitations remain explicit.

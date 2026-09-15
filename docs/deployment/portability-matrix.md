@@ -8,12 +8,12 @@
 | NVIDIA Container Toolkit | verified: 1.19.0 | documented only |
 | Container GPU passthrough | verified with `--gpus all` | documented only |
 | PyTorch CUDA/BF16/tensor operation | verified in YuE2 image | documented only |
-| YuE2 model load and inference | verified for standalone batch | documented only |
-| MuseForge mock application | verified on separate VM; not re-run on Ubuntu1 | documented only |
-| MuseForge real queued application path | pending | pending |
-| Linux filesystem deployment path | configuration checked; test source was under `/mnt/c` | documented only |
+| YuE2 model load and inference | verified through MuseForge queue | documented only |
+| MuseForge mock application | verified on Ubuntu1 with isolated D02 project | documented only |
+| MuseForge real queued application path | verified on Ubuntu1 persistent project | pending |
+| Linux filesystem deployment path | configuration checked; deployment data is under WSL Linux home | documented only |
 
 The WSL result uses the existing Linux Docker Engine and Windows-provided WSL GPU
 integration. It does not claim a native-Linux deployment or a Docker Desktop
-topology. Production model/cache and database/artifact I/O should use Linux
-filesystem locations where practical rather than a Windows-mounted source path.
+topology. Production model/cache and database/artifact I/O use Linux filesystem
+locations; the source checkout remains under `/mnt/c/work/musicgen`.

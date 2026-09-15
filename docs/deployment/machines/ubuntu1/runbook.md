@@ -1,61 +1,88 @@
-# YuE2 standalone runbook: ubuntu1
+# MuseForge integrated deployment runbook: ubuntu1
 
-Run these commands from `/mnt/c/work/musicgen/packaging/yue2` inside the Ubuntu1
-WSL distribution. They are the tested standalone commands; they do not start the
-MuseForge API or alter its database.
+Run these commands from `/mnt/c/work/musicgen` inside the Ubuntu1 WSL distribution.
+The deployment uses Docker Engine inside WSL2, Compose project `museforge-ubuntu1`,
+loopback port 8000, private settings under
+`/home/shamit/.local/share/museforge-ubuntu1`, and separate database, broker, and
+artifact volumes. The existing D03 review project is independent and preserved.
 
-## Build and acquire
-
-```bash
-docker build -t musicgen-yue2:0.1.5 .
-docker compose config --quiet
-docker compose run --rm test python preflight.py
-docker compose run --rm acquire
-```
-
-`preflight.py` must report CUDA, BF16, capability 12.0, and a successful CUDA
-matrix operation. `acquire` verifies both pinned model revisions and writes
-`/weights/verified.json`. Keep the weights volume when rebuilding the image.
-
-If the existing Docker Engine needs GPU configuration, run `setup-gpu.sh` as root
-inside WSL. It installs only NVIDIA Container Toolkit 1.19.0, configures Docker,
-and restarts that existing daemon; it does not install a Linux GPU driver. Verify
-with `docker run --rm --gpus all nvidia/cuda:13.0.0-base-ubuntu24.04 nvidia-smi`.
-
-## Test and restart
+## First setup and preflight
 
 ```bash
-docker compose run --rm test python -m unittest -v test_harness
-docker compose run --rm test
-docker compose run --rm test python run.py --only acoustic-folk --label restart
+MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 \
+  bash scripts/deploy/setup.sh
+MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 \
+  bash scripts/deploy/preflight.sh mock
 ```
 
-The test service has no network, no published ports, read-only weights, a 28 GiB
-container memory limit, and one GPU. `run.py` creates a timestamped report under
-`/outputs`, supervises each inference in a separate process, retries only CUDA OOM
-with AR offloading, and refuses the next request if GPU memory does not recover.
+Setup generates credentials once and preserves them. Change the port in the
+private `.env` when needed; preflight rejects a port already used by another
+process. The YuE2 weights volume is the immutable, previously verified
+`musicgen-yue2-test_weights` volume.
 
-## Inspect and preserve results
+## Start, stop, status, and logs
 
 ```bash
-docker volume inspect musicgen-yue2-test_outputs
-docker run --rm --network none \
-  -v musicgen-yue2-test_outputs:/source:ro \
-  -v musicgen-yue2-test_weights:/weights:ro \
-  -v /mnt/c/work/musicgen/.local:/export \
-  -v /mnt/c/work/musicgen/.local/yue2-evidence/export.py:/export.py:ro \
-  --entrypoint python musicgen-yue2:0.1.5 /export.py
+MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 bash scripts/deploy/start.sh mock
+MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 bash scripts/deploy/status.sh
+MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 bash scripts/deploy/logs.sh
+MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 bash scripts/deploy/stop.sh
 ```
 
-Do not use `docker compose down -v` while evidence or weights are needed. Generated
-audio is ignored by Git. The standalone test has no application URL; API/mock
-start, stop, migration, and browser commands remain in the portable application
-runbook and have not been reclassified as real-model commands.
+`stop.sh` preserves all named volumes. `start.sh mock` runs the portable CPU
+worker. `start.sh real` stops only the project mock worker, starts the API,
+dispatcher, and one GPU YuE2 worker, and leaves the D03 project untouched.
 
-## Failure handling
+## Real provider and verification
 
-An OOM creates `failure.json` and triggers one offload retry. Other inference
-errors, a timeout, failed audio validation, missing weights, or unrecovered GPU
-memory leave the attempt evidence and make the supervisor exit nonzero. Do not
-switch model, prompt, duration, precision, or provider silently. Inspect the
-attempt `process.log` and `failure.json`, then resolve the stated requirement.
+```bash
+MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 bash scripts/deploy/start.sh real
+MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 bash scripts/deploy/verify.sh real
+MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 bash scripts/deploy/recovery.sh real
+```
+
+The real verifier submits through the API and queue, checks model and revision
+provenance, persists and retrieves audio, validates WAV metadata and byte ranges,
+and records evidence under the private deployment root. Recovery covers a real
+queued cancellation. Repeatable broker, dispatcher, worker-loss, and full
+restart checks run in the isolated mock verifier:
+
+```bash
+MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 bash scripts/deploy/verify.sh mock
+```
+
+## Drain, backup, restore, and update
+
+```bash
+MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 bash scripts/deploy/drain.sh real
+MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 bash scripts/deploy/backup.sh real
+MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 bash scripts/deploy/update.sh real
+MUSEFORGE_PROJECT_NAME=museforge-ubuntu1-restore \
+MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1-restore \
+  bash scripts/deploy/restore.sh /home/shamit/.local/share/museforge-ubuntu1/backups/<timestamp>
+```
+
+Backup stops the dispatcher and workers after a bounded drain, dumps PostgreSQL
+with `pg_dump -Fc`, archives the project artifact volume, writes a non-secret
+manifest, and records SHA-256 checksums. Restore refuses the production project
+name and requires a new database, broker, and artifact target. `rollback.sh`
+refuses an unverified or incomplete backup; use restore as the tested rollback
+path when a schema downgrade is not compatible.
+
+Model initialization failures, missing weights, missing GPU access, OOM, timeout,
+and invalid audio leave an actionable failure and never fall back to mock output.
+
+## WSL recovery
+
+After a WSL shutdown or Windows reboot, start the selected WSL distribution and
+Docker Engine, then rerun `scripts/deploy/status.sh` and `start.sh real` if the
+project is stopped. Do not use a host-wide `docker stop`, `wsl --shutdown`, or
+volume deletion as part of ordinary application updates; the D03 review project
+and its volumes are separate and must remain undisturbed.
+
+## Portability and limitations
+
+The WSL2 path is verified on Ubuntu1. Native Linux is configuration-checked and
+documented only. The real model gate proves one English user-lyrics technical
+route. It does not prove sung lyric adherence, language breadth, exact duration,
+musical control fidelity, instrumental quality, or subjective listening quality.

@@ -1,8 +1,10 @@
 # D02 status
 
-- State: `not_started`
-- Updated: 2026-09-14
-- Completed: none on Ubuntu1; prior VM mock evidence is linked from the master plan.
-- Remaining: full target stack, browser, persistence, and restart checks.
-- Blocker: application deployment configuration has not yet been created for this target.
-- Next: finish D01 application host configuration, then run the documented mock smoke.
+- State: `completed`
+- Updated: 2026-09-15
+- Completed: isolated Ubuntu1 stack, API-served browser flow, playback/seek/download,
+  iteration/reopen, cancellation, broker/dispatcher restart, worker-loss recovery,
+  full restart persistence, and service isolation.
+- Latest verification: 49 integration checks passed; 34 browser checks passed and
+  22 intentional skips were recorded in `test-results/museforge-phase4-test-7376f5f707c2`.
+- Next: D04 real workflow and D05 operations.

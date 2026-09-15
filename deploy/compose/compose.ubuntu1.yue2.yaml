@@ -1,0 +1,4 @@
+services:
+  worker-yue2:
+    env_file: !override
+      - ${DEPLOY_ENV_FILE}

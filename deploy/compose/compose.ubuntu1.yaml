@@ -1,0 +1,19 @@
+services:
+  db:
+    env_file: !override
+      - ${DEPLOY_ENV_FILE}
+  broker:
+    env_file: !override
+      - ${DEPLOY_ENV_FILE}
+  migrate:
+    env_file: !override
+      - ${DEPLOY_ENV_FILE}
+  api:
+    env_file: !override
+      - ${DEPLOY_ENV_FILE}
+  dispatcher:
+    env_file: !override
+      - ${DEPLOY_ENV_FILE}
+  worker-mock:
+    env_file: !override
+      - ${DEPLOY_ENV_FILE}
