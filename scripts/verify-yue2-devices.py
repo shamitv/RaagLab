@@ -224,7 +224,11 @@ def main() -> int:
             }, indent=2) + "\n")
             # Keep the CPU API and accepted project alive while Chromium checks
             # playback, seeking, download bytes, and refresh/reopen behavior.
-            browser_compose = [*compose, "-f", "compose.test.yaml"]
+            # compose.test.yaml also declares the integration-test service's
+            # worker-mock dependency. Activate its profile so Compose can
+            # validate the merged project while --no-deps keeps this browser
+            # check attached to the live CPU stack.
+            browser_compose = [*compose, "--profile", "mock", "-f", "compose.test.yaml"]
             run("run", "--rm", "--no-deps",
                 "-e", f"D03_PROJECT_ID={accepted['project_id']}",
                 "-e", "PLAYWRIGHT_OUTPUT_DIR=/evidence/browser",
