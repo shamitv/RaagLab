@@ -1,8 +1,8 @@
 # Verification strategy and acceptance catalogue
 
 - Date: 2026-09-14
-- Current evidence: [planning verification](evidence/planning-verification.md), [Phase 01 implementation](evidence/01/2026-09-13-foundation/README.md), [Phase 04 projects and recovery](evidence/04/2026-09-14-projects-recovery/README.md), [Phase 05 provider readiness](evidence/05/2026-09-14-provider-readiness/README.md), [Phase 06 release](evidence/06/20260915-090415-d55061e8/README.md)
-- Status: Phases 01–06 are implemented and verified for Part 1; Part 2 D04/D05 remain open.
+- Current evidence: [planning verification](evidence/planning-verification.md), [Phase 01 implementation](evidence/01/2026-09-13-foundation/README.md), [Phase 04 projects and recovery](evidence/04/2026-09-14-projects-recovery/README.md), [Phase 05 provider readiness](evidence/05/2026-09-14-provider-readiness/README.md), [Phase 06 mock release](evidence/06/20260915-104002-622828de/README.md), [blocked CPU gate](evidence/06/20260915-cpu-gate-blocked/README.md)
+- Status: Phases 01–05 and Part 2 D03–D05 are verified on their recorded gates. Phase 06 mock release passed at `c7b2a87`; CPU/release corrections, individual acceptance evidence, and final certification remain open alongside the CPU host prerequisite blocker. See the [remaining work](phases/06-release-verification-and-handoff/plan.md).
 
 ## Execution environments and evidence discipline
 
@@ -16,11 +16,11 @@ Create evidence under `docs/implementation/evidence/<phase>/<run-id>/` as meanin
 
 Phase 04 passed on the user-authorized isolated runner at `yolo1@10.42.0.42` with Docker 29.8.0, Compose 5.5.1, Python 3.13.15, PostgreSQL 18.6, RabbitMQ 4.3.5, Node 24.21.0 and npm 11.19.0. Python unit tests had 102 passes and one expected Git-only skip; real-service integration had 42 passes, including upgrade from `0002_version_favorites` to `0003_workspace_settings`; the pinned frontend target passed build/typecheck and 3 unit tests. API-served Playwright ran 48 cases: 30 passed and 18 were intentionally skipped because shared stateful scenarios run once at desktop width. Playback, routing and responsive checks passed at 1440, 390, 360 and 320 px.
 
-Separate uniquely named Compose runs proved confirmed-publish ambiguity/reclaim, dispatcher restart, broker outage recovery, whole-worker loss with a bounded second attempt, queued acceptance through API restart, and full Compose stop/start preserving projects, settings and playable artifacts. Evidence and test outputs are linked from the Phase 04 report. The Phase 05 mock/provider regression is also complete; semantic YuE2 capability evidence and release certification remain outside that gate.
+Separate uniquely named Compose runs proved confirmed-publish ambiguity/reclaim, dispatcher restart, broker outage recovery, whole-worker loss with a bounded second attempt, queued acceptance through API restart, and full Compose stop/start preserving projects, settings and playable artifacts. Evidence and test outputs are linked from the Phase 04 report. The Phase 05 mock/provider regression and Part 2 D04/D05 deployment gates are complete on their recorded environments; Phase 06 normal-mode CPU release certification remains host-blocked.
 
 ## Command interfaces
 
-Phase 01 owns the initial script entry points; subsequent phases extend them. Phase 04 adds a real isolated end-to-end runner; Phase 06 owns the completed release certification and handoff record.
+Phase 01 owns the initial script entry points; subsequent phases extend them. Phase 04 adds a real isolated end-to-end runner; Phase 06 owns the clean-checkout mock release, optional normal CPU certification, and handoff record.
 
 | Command | Required behavior |
 | --- | --- |
@@ -36,7 +36,8 @@ Phase 01 owns the initial script entry points; subsequent phases extend them. Ph
 | `bash scripts/test.sh integration` | Start/validate isolated real-service stack and run pytest integration cases |
 | `bash scripts/test.sh e2e` | Build API SPA, start isolated stack and run Playwright/axe at the API origin |
 | `python3 scripts/verify-phase4.py` | Run pinned Python/frontend/API-served browser checks plus isolated dispatch, worker, and volume-restart recovery evidence |
-| `bash scripts/test.sh release` | Clean-build mock acceptance, integration/e2e suites and persistence smoke in an isolated project |
+| `bash scripts/test.sh release` | Clean-checkout mock acceptance, integration/e2e suites and persistence smoke in an isolated project |
+| `bash scripts/test.sh release --real-cpu` | Add normal-mode pinned YuE2 CPU generation, provenance, resource and CPU persistence checks; requires >=32 GiB host memory and verified weights |
 | `bash scripts/stop.sh` | Stop/remove containers while preserving data, broker and artifact volumes |
 
 Wrappers must fail with nonzero exit status on a failed required assertion and use bounded waits, not arbitrary sleeps as success. Add a separate explicitly named reset command only if needed; ordinary start/stop/update cannot use `down --volumes`. A future real start command must fail if the selected adapter/image/configuration is absent.
@@ -99,4 +100,4 @@ Validate WAV headers and decode samples, measured frame-count duration/rate/chan
 
 At each phase, run its focused checks and affected earlier checks; expand only for actual changes/risks. Record exact commands/outcomes/environment in its report. A completed phase cannot hide an unrun required container/browser test. Phase 06 reproduces A01–A12 and checks the complete requirement matrix, docs, secret/artifact exclusions, restart persistence and provider boundary from a clean configured checkout.
 
-Part 2 owns real GPU/CPU inference, host access, resource measurements, model license/revision evidence and an isolated coordinated backup/restore. Part 1's release handoff must identify those as pending and supply the mock command, storage/migration/routing contracts and evidence needed to begin D00.
+Part 2 owns persistent deployment and host operations; its D00–D05 records are complete on Ubuntu1. Phase 06 additionally repeats normal CPU inference for release certification when an eligible host and verified weights are available. Semantic quality and native-Linux execution remain unverified.

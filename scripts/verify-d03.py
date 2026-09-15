@@ -6,6 +6,7 @@ or fall back to mock. Browser verification is a separate Playwright check.
 """
 import hashlib
 import argparse
+from datetime import datetime
 import io
 import json
 import os
@@ -62,6 +63,7 @@ def main():
     # Container liveness is intentionally healthy during model warmup. Wait for
     # provider readiness separately before submitting the acceptance job.
     observations = []
+    readiness_started = time.monotonic()
     deadline = time.monotonic() + settings.yue2_warmup_timeout_seconds + 60
     while True:
         caps = get_json('/api/v1/capabilities')
@@ -73,6 +75,7 @@ def main():
         assert time.monotonic() < deadline, caps
         time.sleep(1)
     (evidence / 'readiness.json').write_text(json.dumps(observations, indent=2) + '\n')
+    readiness_seconds = time.monotonic() - readiness_started
     assert caps['provider_id'] == 'yue2' and caps['readiness']['state'] in ('ready', 'busy'), caps
     lyrics = '[Verse]\nMorning light across the river\nEvery little moment shines\n\n[Chorus]\nCarry on together\nLet the music rise\n'
     request = dict(brief='A short warm acoustic folk song with a natural ending',
@@ -83,13 +86,34 @@ def main():
         assert response.status == 202
         accepted = json.load(response)
     (evidence / 'accepted.json').write_text(json.dumps(accepted, indent=2) + '\n')
+    submitted_at = time.monotonic()
     deadline = time.monotonic() + settings.hard_watchdog_seconds + 120
+    job = {}
     while time.monotonic() < deadline:
         job = get_json(accepted['status_url'])
         if job['state'] in ('succeeded', 'failed', 'timed_out', 'cancelled'):
             break
         time.sleep(2)
     (evidence / 'job.json').write_text(json.dumps(job, indent=2) + '\n')
+    def timestamp(value):
+        if not value:
+            return None
+        try:
+            return datetime.fromisoformat(str(value).replace('Z', '+00:00')).timestamp()
+        except ValueError:
+            return None
+
+    queue_wait_seconds = None
+    created_at = timestamp(job.get('created_at'))
+    attempt_started = timestamp((job.get('attempts') or [{}])[0].get('started_at'))
+    if created_at is not None and attempt_started is not None:
+        queue_wait_seconds = max(0.0, attempt_started - created_at)
+    (evidence / 'timing.json').write_text(json.dumps({
+        'readiness_seconds': round(readiness_seconds, 3),
+        'submit_to_terminal_seconds': round(time.monotonic() - submitted_at, 3),
+        'queue_wait_seconds': queue_wait_seconds,
+        'generation_elapsed_seconds': (job.get('attempts') or [{}])[0].get('elapsed_seconds'),
+    }, indent=2) + '\n')
     assert job['state'] == 'succeeded', job
     assert job['attempt_count'] == 1 and len(job['attempts']) == 1
     version = get_json(job['version_url'])
@@ -107,7 +131,8 @@ def main():
     assert runtime['backend'] == ('torch' if runtime['device'] == 'cuda' else 'torch-eager')
     assert runtime['test_smoke'] == args.smoke
     if args.expected_device == 'cpu':
-        assert runtime['fallback_reason'] == 'cuda_unavailable'
+        expected_fallback = 'cuda_unavailable' if settings.device == 'auto' else None
+        assert runtime['fallback_reason'] == expected_fallback
     elif args.expected_device == 'cuda':
         assert runtime['fallback_reason'] is None
     if runtime['device'] == 'cuda':

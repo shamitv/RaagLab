@@ -50,5 +50,7 @@ Migration `0003_workspace_settings` adds revisioned settings and the verified pr
 
 The current release schema head is `0004_worker_runtime`; apply it with the
 guarded `bash scripts/migrate.sh` command before starting an upgraded stack.
-The complete mock release and persistence evidence is recorded in the [Phase 06
-release report](implementation/evidence/06/20260915-090415-d55061e8/README.md).
+The mock release and persistence evidence is recorded in the [Phase 06 release
+report](implementation/evidence/06/20260915-090415-d55061e8/README.md). The
+normal-mode CPU YuE2 release gate is separately tracked and requires a host
+with at least 32 GiB available memory and the verified weights volume.

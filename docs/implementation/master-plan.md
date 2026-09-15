@@ -2,9 +2,9 @@
 
 - Plan date: 2026-09-13
 - Scope: Part 1 portable application plus Part 2 model integration and deployment handoff.
-- Branch: `phase-6-release-verification`
+- Implementation branch: `phase-6-rest`; integration target: `main`
 - Baseline commit: `ac46f5a535e4461250322351e31b3433bbf96988`
-- Execution state: see [overall status](status.md); Phases 00–06 are complete for Part 1. Part 2 D03 has a narrow integrated YuE2 success; D04/D05 remain.
+- Execution state: see [overall status](status.md); Phases 00–05 and Part 2 D03–D05 are complete on their recorded gates. Phase 06 mock release passed at `c7b2a87`; CPU/release corrections, dependency/evidence work, and final certification remain open alongside the host prerequisite blocker. See the [Phase 06 plan](phases/06-release-verification-and-handoff/plan.md).
 
 ## Outcome and source of truth
 
@@ -53,12 +53,11 @@ Use Python/FastAPI/Pydantic, SQLAlchemy/Alembic with psycopg, PostgreSQL, Rabbit
 
 Included: three lyrics modes; composer selections; asynchronous generation; real playable demo WAVs; progress/cancellation/error states; full player; immutable iteration and variation; project/library organization; local draft recovery and server save/reopen; templates and local preferences; capability handling; reproducible containers; tests and operating documentation.
 
-Deferred to Part 2 D04/D05: full-stack target deployment validation, broader
-real-provider capability and recovery checks, verified backup/restore, and the
-operations/portability handoff. Ubuntu1 host inventory, GPU access, YuE2 model
-selection, immutable weight acquisition, the isolated image, standalone runs, and
-the narrow queued application result are recorded in the [Part 2 deployment
-plan](../deployment/master-plan.md) and [evidence](../deployment/evidence/2026-09-14-d03-review-corrections/README.md).
+Deferred product validation: broader real-provider capability and recovery
+checks, semantic audio quality, and native-Linux execution remain explicitly
+unverified. Part 2 D04/D05 deployment validation, backup/restore, rollback, and
+operations handoff are recorded as complete in the merged deployment reports.
+The normal-mode CPU release gate is still a Phase 06 host acceptance prerequisite.
 
 Deferred product scope: collaboration/comments, billing/credits/upgrades, notifications, multi-user permissions/authentication, public exposure, DAW stems, and multitrack notation. Omit those controls in Part 1. Keep every required local Create, Library, Projects, Settings, Templates, Advanced Options, and version action accessible. Optional decorative waterfront art is not a release gate. No fixture, example duration, or version count is presented as a measured live result.
 
@@ -72,7 +71,7 @@ Deferred product scope: collaboration/comments, billing/credits/upgrades, notifi
 | [03 Complete responsive workspace](phases/03-complete-responsive-workspace/plan.md) | Designed composer/player/lyrics/iteration/history with responsive and accessible behavior | 02 | Wired controls, desktop/mobile/keyboard checks against the API-served UI |
 | [04 Projects, versions, and recovery](phases/04-projects-versions-and-recovery/plan.md) | Complete library/save/preferences and verified concurrency, cancellation and recovery | 03; core persistence/reliability starts in 02 | Immutable history, organization flows, race/fault tests and reconnect handling pass |
 | [05 Provider readiness](phases/05-provider-readiness/plan.md) | Audited capability UI/API and model integration handoff | 04; interfaces start in 00–02 | Honest capability matrix, isolated worker configuration and no silent real-to-mock fallback |
-| [06 Release verification and handoff](phases/06-release-verification-and-handoff/plan.md) | Clean-checkout mock release and reproducible operating/development instructions | 01–05 | All Part 1 acceptance gates pass with traceable evidence and current phase reports |
+| [06 Release verification and handoff](phases/06-release-verification-and-handoff/plan.md) | Clean-checkout mock release, normal CPU model verification, and reproducible operating/development instructions | 01–05 | Mock and CPU gates pass with traceable evidence and current phase reports |
 
 Critical path: `00 -> 01 -> 02 -> 03 -> 04 -> 05 -> 06`. Contracts and evidence are refined as implementation reveals facts. Basic idempotency, transactional outbox, claims, artifact validation, and version uniqueness are part of Phase 02, not retrofits postponed to Phase 04. Phase 04 supplies exhaustive fault/race verification and recovery completion.
 
@@ -130,10 +129,10 @@ Runtime documentation will be delivered as `README.md`, `docs/architecture.md`, 
 Part 1 passes on the resolved mock startup command, source/image versions, migration head, internal service names, data and artifact mount contracts, provider routing, effective limits, fixture provenance, and test evidence. It lists exact missing musical capabilities and explains real-image construction without choosing a model by folder name.
 
 Part 2 has its separate `docs/deployment/` record and D00–D05 phases. It contains
-the Ubuntu1 inventory, YuE2 model/image manifest, standalone verification, and the
-narrow successful user-facing queued inference. D04 must still verify broader
-real workflow, recovery, and resource limits; D05 must verify an isolated restore,
-operations, and portability evidence.
+the Ubuntu1 inventory, YuE2 model/image manifest, standalone verification, the
+narrow successful user-facing queued inference, and completed D04/D05 evidence
+for the persistent deployment. The Phase 06 CPU gate repeats technical model
+verification on a host with sufficient RAM and pinned weights.
 WSL/native-Linux portability is reported separately as verified, configuration
 checked, documented only, or blocked. The standalone image is not an application
 deployment completion claim.

@@ -31,7 +31,10 @@ MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 bash scripts/d
 
 `stop.sh` preserves all named volumes. `start.sh mock` runs the portable CPU
 worker. `start.sh real` stops only the project mock worker, starts the API,
-dispatcher, and one GPU YuE2 worker, and leaves the D03 project untouched.
+dispatcher, and one YuE2 worker, and leaves the D03 project untouched. Real
+mode honors `YUE2_DEVICE=cpu|cuda|auto`: CPU omits the NVIDIA override, CUDA
+requires the NVIDIA runtime, and auto adds it only when the Docker engine
+advertises an NVIDIA runtime before the model performs its own startup probe.
 
 ## Real provider and verification
 
@@ -39,6 +42,25 @@ dispatcher, and one GPU YuE2 worker, and leaves the D03 project untouched.
 MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 bash scripts/deploy/start.sh real
 MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 bash scripts/deploy/verify.sh real
 MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 bash scripts/deploy/recovery.sh real
+```
+
+For an explicit CPU deployment, use the same commands with
+`YUE2_DEVICE=cpu`. The worker uses the pinned YuE2 model with normal planning
+and `torch-eager`; no GPU device request is added:
+
+```bash
+YUE2_DEVICE=cpu MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 \
+  bash scripts/deploy/start.sh real
+YUE2_DEVICE=cpu MUSEFORGE_DEPLOY_ROOT=/home/shamit/.local/share/museforge-ubuntu1 \
+  bash scripts/deploy/verify.sh real
+```
+
+The complete Phase 6 CPU release gate is isolated from this persistent project
+and also checks a normal-mode generation, resource samples, persistence, and
+cleanup. It requires at least 32 GiB available host memory:
+
+```bash
+bash scripts/test.sh release --real-cpu
 ```
 
 The real verifier submits through the API and queue, checks model and revision

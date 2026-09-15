@@ -24,12 +24,13 @@ case "${1:-}" in
     if [[ "$1" == yue2-gpu ]]; then
       python3 scripts/verify-yue2-devices.py --gpu
     else
-      python3 scripts/verify-yue2-devices.py
+      python3 scripts/verify-yue2-devices.py --cpu
     fi
     ;;
   release)
     require_engine
-    python3 scripts/verify-release.py
+    shift
+    python3 scripts/verify-release.py "$@"
     ;;
   *) fail 'Usage: bash scripts/test.sh unit|integration|e2e|yue2-cpu|yue2-gpu|release' ;;
 esac

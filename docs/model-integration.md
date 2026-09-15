@@ -134,12 +134,23 @@ The base YuE2 override has no mandatory GPU reservation. Add
 VM integration uses `bash scripts/test.sh yue2-cpu`, which explicitly enables
 short smoke mode in a disposable stack; production smoke mode remains disabled.
 
+The Phase 6 release gate runs the pinned model in normal mode on CPU:
+
+```bash
+bash scripts/test.sh release --real-cpu
+```
+
+That gate requires 32 GiB available host memory, a 28 GiB worker limit, four
+CPU threads, one active job, and the external verified weights volume. It checks
+normal planning, nontruncated validated audio, CPU/`torch-eager` provenance,
+durable persistence, API playback/range/hash retrieval, and sampled resources.
+It does not establish lyric adherence, musical quality, or exact duration.
+
 D03 closure is supported by the recorded durable application result, not merely
 a standalone model command, image build, or successful import. Broader provider
 semantics and quality remain outside this narrow verification.
 
-Part 1 release verification is complete for the mock provider. The release gate
-does not widen any YuE2 capability claim; host resource measurements, real
-browser validation, rollback, coordinated backup/restore, and operational
-handoff remain Part 2 D04/D05 work. See the [deployment handoff](deployment-handoff.md)
-and [Phase 06 evidence](implementation/evidence/06/20260915-090415-d55061e8/README.md).
+Part 1 release verification covers the mock provider and, when requested, the
+normal CPU YuE2 gate. The release gate does not widen any YuE2 semantic quality
+claim. See the [deployment handoff](deployment-handoff.md) and [Phase 06
+evidence](implementation/evidence/06/20260915-090415-d55061e8/README.md).

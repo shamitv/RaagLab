@@ -3,13 +3,13 @@
 - State: in_progress
 - Planning state: completed
 - Application state: in_progress
-- Scope of current run: Phase 06 release verification and Part 2 D04/D05 handoff
+- Scope of current run: Phase 06 full CPU model verification and release closure
 - Planning started: 2026-09-13T12:25:42+05:30
 - Planning completed: 2026-09-13T07:27:05Z
 - Application started: 2026-09-13T08:12:41Z
 - Last updated: 2026-09-15
 - Application completed: not completed
-- Current focus: Part 2 D04/D05 deployment hardening and operations handoff remain
+- Current focus: finish CPU/release verification gaps and evidence, satisfy host memory/weights prerequisites, and certify the final committed revision
 
 ## Phase summary
 
@@ -21,7 +21,7 @@
 | [03 Complete responsive workspace](phases/03-complete-responsive-workspace/status.md) | completed | Responsive workspace, immutable iterations and browser acceptance verified | [Completion report](phases/03-complete-responsive-workspace/implementation-status.md) |
 | [04 Projects, versions, and recovery](phases/04-projects-versions-and-recovery/status.md) | completed | Project/library lifecycle, workspace settings/templates, draft recovery, retries, and artifact/worker recovery verified | [Completion report](phases/04-projects-versions-and-recovery/implementation-status.md) |
 | [05 Provider readiness](phases/05-provider-readiness/status.md) | completed | Evidence-backed provider capability contract, capability-driven composer, and integrated mock regression verified | [Completion report](phases/05-provider-readiness/implementation-status.md) |
-| [06 Release verification and handoff](phases/06-release-verification-and-handoff/status.md) | completed | Mock release gate, lifecycle persistence, browser evidence, documentation, and Part 2 handoff published | Part 2 D04/D05 |
+| [06 Release verification and handoff](phases/06-release-verification-and-handoff/status.md) | in_progress | Mock gate passed; CPU verifier and initial handoff delivered; implementation/evidence follow-ups remain | Finish verification gaps and provide >=32 GiB available RAM plus pinned weights |
 
 ## Completed work
 
@@ -51,36 +51,53 @@ audio retrieval, playback, and seeking. See [application evidence](../deployment
 The [Phase 05 completion report](phases/05-provider-readiness/implementation-status.md)
 records which provider behaviors are supported, unsupported and unknown.
 
-Phase 06 is complete: the isolated release gate passed 172 container unit tests,
-49 real-service integration tests, 34 Chromium browser checks with 22 intentional
-skips, 3 frontend tests, recovery/restart/update persistence, the documented
-lifecycle, artifact inspection, native zoom/keyboard evidence, and static
-audits. See the [Phase 06 completion report](phases/06-release-verification-and-handoff/implementation-status.md),
-[release evidence](evidence/06/20260915-090415-d55061e8/README.md), and
-[deployment handoff](../deployment-handoff.md).
+Phase 06's mock gate passed at committed revision `c7b2a87`: 42 recorded command
+outcomes, including integration/recovery, frontend, API-served Chromium,
+documented lifecycle, restart/update persistence, and Compose cleanup. CPU
+verification code and the initial handoff are delivered, with remaining
+device/deadline/browser/safety corrections and evidence work recorded in the
+[Phase 06 plan](phases/06-release-verification-and-handoff/plan.md).
+The target's 10 GiB RAM and absent verified weights independently block CPU
+model execution. See the [Phase 06 report](phases/06-release-verification-and-handoff/implementation-status.md),
+[release evidence](evidence/06/20260915-104002-622828de/README.md), and
+[CPU gate record](evidence/06/20260915-cpu-gate-blocked/README.md).
 
 The repository/design/reference audit, [architecture decision](decisions/0001-application-architecture.md), [contracts](contracts.md), [job reliability](job-reliability.md), [UI decisions](ui-behavior.md), [dependency baseline](dependency-baseline.md), [master plan](master-plan.md), seven phase plans and [requirement matrix](requirements-matrix.md) are written. Primary metadata checks and temporary dependency resolution completed. See [planning verification](evidence/planning-verification.md) for limits and final audit status.
 
 ## Remaining work
 
-Phase 06 release acceptance is complete for the mock Part 1 release. Part 2 D03 is complete for the narrow
+Phase 06 must finish the dated dependency review, CPU/release runner corrections,
+behavioral regressions, CPU browser/lifecycle checks, individual acceptance
+mapping, and final evidence retention/publication. Tasks 06-02, 06-04, 06-05,
+06-06, 06-10, and 06-11 remain open or partial. A passing final committed-revision
+run is required for closure; providing an eligible host alone does not complete
+the work. See the [checklist](phases/06-release-verification-and-handoff/todo.md).
+
+Part 2 D03 is complete for the narrow
 English user-lyrics route. Broader capability semantics, language support, lyric
 adherence, and true instrumental output are not established by that technical
-acceptance gate; Part 2 D04/D05 deployment validation and handoff are also open.
+acceptance gate; Part 2 D04/D05 deployment validation and handoff are complete
+on Ubuntu1 with their documented limitations.
 
 ## Blockers and decisions needed
 
-No Phase 05 or Phase 06 implementation decisions remain. Part 2 D04/D05
-deployment validation and operations handoff remain open; neither is represented
-as complete by the mock release.
+No Phase 05 or Part 2 D04/D05 implementation decisions remain. Phase 06 CPU
+preflight failed at 7.2 GiB available versus 32 GiB required, before model startup.
+The pinned weights volume is also absent. Runtime verification requires these
+prerequisites; independent runner/evidence follow-ups can proceed meanwhile.
 
 ## Latest verification
 
-Phase 06 release verification passed: 172 container unit tests (6 expected
-skips), 49 PostgreSQL/RabbitMQ integration tests, 34 Chromium browser checks
-with 22 intentional skips, 3 frontend tests, and 3 release-runner safety tests. Recovery, lifecycle,
-persistence, and static audits passed; WebKit was unavailable and remains
-unclaimed. See [Phase 06 evidence](evidence/06/20260915-090415-d55061e8/README.md).
+The latest mock record reports 42 passing command outcomes at `c7b2a87`, migration
+head `0004_worker_runtime`, and passing Compose cleanup. Ten focused
+runner/deployment checks passed separately; some deployment checks are
+source-based and need behavioral coverage. Frontend tests (3) and the production
+build passed. Individual A01–A12 results and final-run attachments still need
+publication; the latest summary links earlier same-day screenshots. Historical
+suite totals remain in their dated records below. WebKit was unavailable and
+remains unclaimed. CPU preflight ran and failed; normal CPU inference did not
+start. See [mock evidence](evidence/06/20260915-104002-622828de/README.md) and
+the [blocked CPU record](evidence/06/20260915-cpu-gate-blocked/README.md).
 
 Phase 05 local tests passed: 173 Python unit tests (5 optional NumPy skips), 3
 frontend tests, and the TypeScript/Vite production build. On the configured
@@ -111,5 +128,7 @@ and fresh-container reproducibility passed. See [the dated deployment record](..
 
 ## Next action
 
-Continue Part 2 D04/D05 deployment hardening, resource validation, backup/restore,
-rollback, and operations handoff using [deployment-handoff.md](../deployment-handoff.md).
+Finish the [Phase 06 implementation/evidence follow-ups](phases/06-release-verification-and-handoff/plan.md),
+provide at least 32 GiB available host RAM and the pinned weights volume, then
+run `bash scripts/test.sh release --revision HEAD --real-cpu` on the final
+committed candidate. Publish all required acceptance evidence before closing.

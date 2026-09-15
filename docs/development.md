@@ -166,6 +166,21 @@ mismatch, and warmup timeout without fallback.
 CPU execution requires substantial RAM (tested with 28 GiB container limit,
 four CPU threads); this is a real 3B model test, not a mock.
 
+The Phase 6 release gate adds a normal-mode CPU generation to the mock release
+verification. It requires at least 32 GiB available host memory, keeps the
+28 GiB worker limit and four CPU threads, and records readiness, queue,
+generation, resource, provenance, audio checksum, and cleanup evidence:
+
+```bash
+bash scripts/test.sh release --real-cpu
+```
+
+The default `bash scripts/test.sh release` remains mock-only. The release runner
+creates a detached checkout at the candidate revision and gives each Compose
+project a fresh configuration, unique name, loopback port, and disposable
+storage. YuE2 CPU verification requires the external pinned weights volume;
+weights and credentials stay outside the checkout.
+
 `YUE2_TEST_SMOKE=false` is the deployment default. The isolated test overlay
 explicitly enables it across services. Smoke jobs freeze the flag in their
 snapshot and use `cot=off`, greedy 32-token semantic sampling, and the default

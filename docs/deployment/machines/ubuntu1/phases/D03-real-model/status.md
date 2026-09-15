@@ -16,6 +16,6 @@
   are unverified.
 - Evidence: [YuE2 standalone report](../../../../evidence/2026-09-14-yue2/README.md).
 - Application evidence: [review corrections and real gate](../../../../evidence/2026-09-14-d03-review-corrections/README.md).
-- Next: D04 deployment hardening and Phase 06 application release verification;
-  Phase 05 capability auditing is complete. Retain mock defaults and the
+- D04/D05 deployment hardening and Phase 06 application release verification
+  are complete on their respective gates. Retain mock defaults and the
   documented YuE2 limitations.

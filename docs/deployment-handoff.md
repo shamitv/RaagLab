@@ -1,9 +1,10 @@
 # Deployment handoff
 
 Date: 2026-09-15. This handoff describes the portable Part 1 release and the
-boundary to the later machine/model deployment work. The release is mock-first;
-it does not claim a host GPU, real-model semantic quality, or a verified backup
-restore on a target machine.
+boundary to machine/model deployment. The mock release is portable; the
+normal-mode CPU YuE2 gate is selected with `--real-cpu` and is required for
+Phase 06 closure. It needs at least 32 GiB available host memory and the external
+verified weights volume; implementation and evidence follow-ups also remain.
 
 ## Proven mock start
 
@@ -23,6 +24,17 @@ origin. `bash scripts/stop.sh` stops containers while retaining the database,
 broker, and artifact volumes. It does not reset user data. The release gate is
 run with `bash scripts/test.sh release`; its dated evidence is under
 `docs/implementation/evidence/06/`.
+
+`bash scripts/test.sh release --revision HEAD --real-cpu` selects the normal-mode
+CPU verifier. The target is explicit CPU, four threads, concurrency one, a 28 GiB
+worker limit, 900-second warmup, and 3,600-second inference. Memory preflight,
+durable provenance/audio checks, resource sampling, and stop/start checksum code
+are present; this is not yet a verified normal CPU operating command. Device and
+deadline alignment, browser playback/seek/download/refresh/reopen, timing/log
+retention, and cleanup safeguards still need completion. See the
+[Phase 06 follow-ups](implementation/phases/06-release-verification-and-handoff/plan.md).
+The recorded CPU preflight failed before model startup at 7.2 GiB available;
+the expected pinned weights volume was also absent.
 
 ## Service and storage contract
 
@@ -55,8 +67,11 @@ version records, but its demo audio does not sing lyrics or semantically follow
 musical controls.
 
 The optional YuE2 route is selected by its separate Compose override and worker
-image. Existing evidence proves a narrow English user-lyrics route and
-technical 48 kHz audio retrieval/playback. It does not prove lyric adherence,
+image. `YUE2_DEVICE=cpu` omits GPU reservations; `YUE2_DEVICE=cuda` is strict
+and requires the NVIDIA runtime; `auto` adds the GPU override only when the
+Docker engine advertises an NVIDIA runtime, after which startup may select CPU
+if its CUDA probe fails. Existing evidence proves a narrow English user-lyrics
+route and technical 48 kHz audio retrieval/playback. It does not prove lyric adherence,
 instrumental or vocal behavior, language fidelity, style fidelity, duration
 control, or perceptual quality. Missing weights, devices, or model readiness
 must fail explicitly; the application never silently falls back to mock audio.
@@ -69,8 +84,8 @@ must fail explicitly; the application never silently falls back to mock audio.
 | D01 host preparation | Prepare layered device/toolkit readiness and resource limits; keep credentials, weights, and generated media outside the repository and image contexts. |
 | D02 mock deployment | Re-run the documented mock command and API-served browser smoke on the target, including persistence and loopback/network checks. |
 | D03 real model | Select the provider image/override, acquire and hash-lock model files, validate device readiness, route a real queued job, and retain provider provenance. |
-| D04 system validation | Measure CPU/RAM/VRAM/disk and concurrency limits; run real browser/playback checks, interruption/restart cases, and explicit capability-gap tests. |
-| D05 operations and handoff | Define startup/update/rollback, coordinated database/artifact backup, isolated restore verification, monitoring/log retention, and the final portability record. |
+| D04 system validation | Completed on Ubuntu1 with measured CUDA resources, one durable real job, cancellation, playback/range checks, and explicit capability gaps; repeat CPU and native-Linux checks as target resources permit. |
+| D05 operations and handoff | Completed on Ubuntu1 with startup/update/rollback, coordinated database/artifact backup, isolated restore playback, bounded drain, and portability records. |
 
 Part 2 must preserve the API/database/broker/artifact/routing contracts above.
 Host-specific paths, devices, model caches, and resource limits belong in its
