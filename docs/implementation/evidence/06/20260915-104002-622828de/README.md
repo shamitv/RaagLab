@@ -20,6 +20,11 @@ disposable clean worktree created from committed revision
   their test volumes; all cleanup outcomes returned 0.
 - Migration head: `0004_worker_runtime`.
 
+The published same-day [visual recovery record](../20260915-090415-d55061e8/recovery-gate/)
+retains the Chromium viewport screenshots, keyboard observations, reduced-motion
+check, and native 200% zoom capture referenced by this gate. WebKit was
+unavailable and remains unclaimed.
+
 The run used unique projects
 `museforge-phase6-test-75bf5dc1ab` and
 `museforge-phase6-runtime-750ea43f86`, an ephemeral loopback API port
