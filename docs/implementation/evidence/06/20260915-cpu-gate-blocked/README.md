@@ -15,9 +15,13 @@ declared resource and model prerequisites.
 | Available memory | About 7.3 GiB | At least 32 GiB before model startup |
 | Verified weights volume | `musicgen-yue2-test_weights` absent | Pinned read-only model and VAE volume |
 
-The host is therefore unsuitable for normal-mode 3B CPU inference. No model
-container was started, no weights were copied, and no deployment volumes were
-deleted. The mock release evidence remains valid and independent.
+The host is therefore unsuitable for normal-mode 3B CPU inference. The runner
+was invoked from the disposable release checkout and stopped at its bounded
+preflight with `host has 7.2 GiB available; 32 GiB required` (exit code 1).
+It retained `failure.json`, `services.log`, `resource-samples.json`, and
+`cleanup-down.log`; no model container was started, no weights were copied, and
+no deployment volumes were deleted. The mock release evidence remains valid
+and independent.
 
 ## Required follow-up
 

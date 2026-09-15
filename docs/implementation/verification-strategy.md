@@ -1,7 +1,7 @@
 # Verification strategy and acceptance catalogue
 
 - Date: 2026-09-14
-- Current evidence: [planning verification](evidence/planning-verification.md), [Phase 01 implementation](evidence/01/2026-09-13-foundation/README.md), [Phase 04 projects and recovery](evidence/04/2026-09-14-projects-recovery/README.md), [Phase 05 provider readiness](evidence/05/2026-09-14-provider-readiness/README.md), [Phase 06 mock release](evidence/06/20260915-090415-d55061e8/README.md), [blocked CPU gate](evidence/06/20260915-cpu-gate-blocked/README.md)
+- Current evidence: [planning verification](evidence/planning-verification.md), [Phase 01 implementation](evidence/01/2026-09-13-foundation/README.md), [Phase 04 projects and recovery](evidence/04/2026-09-14-projects-recovery/README.md), [Phase 05 provider readiness](evidence/05/2026-09-14-provider-readiness/README.md), [Phase 06 mock release](evidence/06/20260915-104002-622828de/README.md), [blocked CPU gate](evidence/06/20260915-cpu-gate-blocked/README.md)
 - Status: Phases 01–05 and Part 2 D03–D05 are implemented and verified on their recorded gates; Phase 06 mock release is verified and normal-mode CPU verification is blocked by host prerequisites.
 
 ## Execution environments and evidence discipline

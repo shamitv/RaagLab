@@ -7,6 +7,15 @@
   "required_available_memory_gib": 32,
   "weights_volume": "musicgen-yue2-test_weights",
   "weights_volume_present": false,
-  "gate_started": false,
+  "gate_started": true,
+  "preflight_exit_code": 1,
+  "preflight_error": "host has 7.2 GiB available; 32 GiB required",
+  "failure_evidence": [
+    "failure.json",
+    "services.log",
+    "resource-samples.json",
+    "cleanup-down.log"
+  ],
+  "model_container_started": false,
   "reason": "host memory and verified weights prerequisites are unavailable"
 }

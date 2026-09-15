@@ -1,7 +1,7 @@
 # Requirement traceability matrix
 
 - Baseline: [Part 1](../prompts/01-portable-application.md) and [design](../../design.md)
-- State: Phases 01–05 and Part 2 D03–D05 passed on their recorded gates; Phase 06 mock release passed, while the required normal-mode CPU gate is blocked by host memory and missing weights. See [Phase 06 mock evidence](evidence/06/20260915-090415-d55061e8/README.md) and [blocked CPU evidence](evidence/06/20260915-cpu-gate-blocked/README.md), plus the prior phase records below.
+- State: Phases 01–05 and Part 2 D03–D05 passed on their recorded gates; Phase 06 mock release passed, while the required normal-mode CPU gate is blocked by host memory and missing weights. See [Phase 06 mock evidence](evidence/06/20260915-104002-622828de/README.md) and [blocked CPU evidence](evidence/06/20260915-cpu-gate-blocked/README.md), plus the prior phase records below.
 - Evidence catalogue: [verification strategy](verification-strategy.md); A01–A12 match the prompt's numbered acceptance checks
 - Phase links and dependencies: [master plan](master-plan.md)
 

@@ -1,0 +1,24 @@
+{
+  "runtime": {
+    "postgres": "sha256:1c59e2c3c818eaa0f0628f695b36e7c9e362d6b219b36a54a32df645cbd7e1af",
+    "rabbitmq": "sha256:078107e036374f4d9bbeab8766799abe474bf252aedb4617ddd2edfa8e2c2c05",
+    "migrate": "sha256:cda59a5f976d52d0f0d4307c1e3fbc59bac7d7de891386a94b84639ddddf81fb",
+    "api": "sha256:87f7dfd9109b04f3cb98ef582639d90acae0169dc761b062fec99f2fde71fdb0",
+    "dispatcher": "sha256:5142207b5ae837510f055df536511685bef85c6104271bdca51d9f55ca01364c",
+    "worker-mock": "sha256:9e19aac5a291e82cda43c13884462a40d93e3a31a8b40b871e8b45cef3470a8b"
+  },
+  "phase": {
+    "postgres": "sha256:1c59e2c3c818eaa0f0628f695b36e7c9e362d6b219b36a54a32df645cbd7e1af",
+    "rabbitmq": "sha256:078107e036374f4d9bbeab8766799abe474bf252aedb4617ddd2edfa8e2c2c05",
+    "api": "sha256:e2d94f0d62c8d39d8c773045d90aa39710e6a813870f53aea5889d72e2e01190",
+    "dispatcher": "sha256:12a36de6e709f59b6e4f8f35c48b45632633d8164a1bfdbda38cdd4e7909af97",
+    "worker-mock": "sha256:a92b93bac02c0f6818edb37921f0b5608b5b018a3da202cdaf184e6211156956",
+    "migrate": "sha256:c6202be32d1ef50ecd8556e9950db7d2a7effdb0fab46cfea9882ccb69be79df",
+    "browser-tests": "sha256:e5e7a3509f173f7f22816b5ee5369e574f7781fc6a4dd7872383e1897c12cb7b",
+    "tests": "sha256:324e0cbb9a67869a164231ab82adf1321ea92946a53d09585e1306780b32365f"
+  },
+  "available_repository_digests": {
+    "postgres": "postgres@sha256:1c59e2c3c818eaa0f0628f695b36e7c9e362d6b219b36a54a32df645cbd7e1af",
+    "rabbitmq": "rabbitmq@sha256:078107e036374f4d9bbeab8766799abe474bf252aedb4617ddd2edfa8e2c2c05"
+  }
+}

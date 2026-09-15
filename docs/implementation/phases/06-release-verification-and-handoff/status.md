@@ -11,7 +11,7 @@
 The mock release gate, lifecycle checks, evidence record, and deployment handoff
 are complete. CPU deployment support and the full normal-mode verifier are
 implemented, but the required CPU gate is blocked. See the [implementation
-status](implementation-status.md), [mock evidence](../../evidence/06/20260915-090415-d55061e8/README.md),
+status](implementation-status.md), [mock evidence](../../evidence/06/20260915-104002-622828de/README.md),
 and [blocked CPU record](../../evidence/06/20260915-cpu-gate-blocked/README.md).
 
 ## Remaining work
@@ -34,7 +34,7 @@ service integration tests, 34 Chromium browser checks with 22 intentional
 responsive/stateful skips, 3 frontend tests, recovery/restart/update
 persistence, the documented lifecycle, static audits, and native zoom/keyboard
 inspection. The normal CPU YuE2 run is unrun due to the recorded host
-prerequisites. See the [mock evidence](../../evidence/06/20260915-090415-d55061e8/README.md)
+prerequisites. See the [mock evidence](../../evidence/06/20260915-104002-622828de/README.md)
 and [blocked CPU record](../../evidence/06/20260915-cpu-gate-blocked/README.md).
 
 ## Next action

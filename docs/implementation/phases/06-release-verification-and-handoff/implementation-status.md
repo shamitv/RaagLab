@@ -2,9 +2,9 @@
 
 - State: in_progress
 - Completed: not yet
-- Candidate implementation revision: `d5b7340`
+- Candidate implementation revision: `c7b2a87`
 - Tested migration head: `0004_worker_runtime`
-- Evidence: [2026-09-15 release record](../../evidence/06/20260915-090415-d55061e8/README.md)
+- Evidence: [2026-09-15 exact-SHA release record](../../evidence/06/20260915-104002-622828de/README.md); [blocked CPU preflight](../../evidence/06/20260915-cpu-gate-blocked/README.md)
 
 ## Delivered
 

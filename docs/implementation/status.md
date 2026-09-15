@@ -57,7 +57,7 @@ checks with 22 intentional skips, 3 frontend tests, recovery/restart/update
 persistence, the documented lifecycle, native zoom/keyboard evidence, and
 static audits. The required normal-mode CPU YuE2 gate is implemented but blocked
 on the target's 10 GiB RAM and absent verified weights. See the [Phase 06 report](phases/06-release-verification-and-handoff/implementation-status.md),
-[release evidence](evidence/06/20260915-090415-d55061e8/README.md), and
+[release evidence](evidence/06/20260915-104002-622828de/README.md), and
 [CPU gate record](evidence/06/20260915-cpu-gate-blocked/README.md).
 
 The repository/design/reference audit, [architecture decision](decisions/0001-application-architecture.md), [contracts](contracts.md), [job reliability](job-reliability.md), [UI decisions](ui-behavior.md), [dependency baseline](dependency-baseline.md), [master plan](master-plan.md), seven phase plans and [requirement matrix](requirements-matrix.md) are written. Primary metadata checks and temporary dependency resolution completed. See [planning verification](evidence/planning-verification.md) for limits and final audit status.
@@ -82,11 +82,10 @@ weights prerequisites.
 Phase 06 mock release verification passed: 172 container unit tests (6 expected
 skips), 49 PostgreSQL/RabbitMQ integration tests, 34 Chromium browser checks
 with 22 intentional skips, 3 frontend tests. Ten focused release-runner/deployment
-safety tests are implemented; current execution of the rebuilt candidate is
-pending the eligible host. Recovery, lifecycle, persistence, and static audits passed;
+safety tests are implemented and passed on the rebuilt candidate. Recovery, lifecycle, persistence, and static audits passed;
 WebKit was unavailable and remains unclaimed. The normal CPU gate was not run:
 the selected host reports 10 GiB total memory and no `musicgen-yue2-test_weights`
-volume. See [mock evidence](evidence/06/20260915-090415-d55061e8/README.md) and
+volume. See [mock evidence](evidence/06/20260915-104002-622828de/README.md) and
 the [blocked CPU record](evidence/06/20260915-cpu-gate-blocked/README.md).
 
 Phase 05 local tests passed: 173 Python unit tests (5 optional NumPy skips), 3
