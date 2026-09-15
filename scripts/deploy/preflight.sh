@@ -14,7 +14,7 @@ if command -v ss >/dev/null && ss -H -ltn "sport = :$port" | grep -q .; then
   fi
 fi
 if [[ "$mode" == real ]]; then
-  docker volume inspect musicgen-yue2-test_weights >/dev/null 2>&1 || fail 'real mode requires musicgen-yue2-test_weights'
+  docker volume inspect "$YUE2_WEIGHTS_VOLUME" >/dev/null 2>&1 || fail "real mode requires weights volume $YUE2_WEIGHTS_VOLUME"
   compose_with_mode real config --quiet
 fi
 printf 'preflight_passed mode=%s project=%s port=%s evidence=%s\n' "$mode" "$PROJECT_NAME" "$port" "$EVIDENCE_ROOT"

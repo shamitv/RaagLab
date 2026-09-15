@@ -7,7 +7,7 @@ stamp="$(date -u +%Y%m%dT%H%M%SZ)"
 evidence="$EVIDENCE_ROOT/$stamp-$mode"
 mkdir -p "$evidence"; chmod 700 "$evidence"
 if [[ "$mode" == mock ]]; then
-  MUSEFORGE_TEST_PROJECT_PREFIX="museforge-ubuntu1-d02-" PHASE4_BROWSER=1 python3 "$ROOT/scripts/verify-phase4.py" | tee "$evidence/phase4.log"
+  MUSEFORGE_TEST_PROJECT_PREFIX="museforge-managed-d02-" PHASE4_BROWSER=1 python3 "$ROOT/scripts/verify-phase4.py" | tee "$evidence/phase4.log"
 else
   requested_device="$(configured_yue2_device)"
   expected_args=()

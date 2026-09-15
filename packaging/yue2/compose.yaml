@@ -1,13 +1,13 @@
-name: musicgen-yue2-test
+name: museforge-yue2-validation
 services:
   acquire:
-    image: musicgen-yue2:0.1.6
+    image: museforge-yue2:0.1.6
     build: .
     volumes:
       - weights:/weights
     command: ["python", "acquire.py"]
   test:
-    image: musicgen-yue2:0.1.6
+    image: museforge-yue2:0.1.6
     init: true
     network_mode: none
     read_only: true
@@ -38,4 +38,6 @@ services:
     command: ["python", "run.py"]
 volumes:
   weights:
+    name: ${MUSEFORGE_YUE2_WEIGHTS_VOLUME:-museforge-yue2-weights}
   outputs:
+    name: ${MUSEFORGE_YUE2_OUTPUTS_VOLUME:-museforge-yue2-validation-outputs}

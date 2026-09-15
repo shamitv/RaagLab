@@ -88,4 +88,4 @@ services:
 volumes:
   yue2_weights:
     external: true
-    name: musicgen-yue2-test_weights
+    name: ${MUSEFORGE_YUE2_WEIGHTS_VOLUME:-museforge-yue2-weights}

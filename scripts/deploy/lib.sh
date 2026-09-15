@@ -2,14 +2,18 @@
 set -euo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
-DEPLOY_ROOT="${MUSEFORGE_DEPLOY_ROOT:-$HOME/.local/share/museforge-ubuntu1}"
-PROJECT_NAME="${MUSEFORGE_PROJECT_NAME:-museforge-ubuntu1}"
+DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+DEFAULT_PROJECT_NAME=museforge-managed
+DEPLOY_ROOT="${MUSEFORGE_DEPLOY_ROOT:-$DATA_HOME/museforge-managed}"
+PROJECT_NAME="${MUSEFORGE_PROJECT_NAME:-$DEFAULT_PROJECT_NAME}"
+YUE2_WEIGHTS_VOLUME="${MUSEFORGE_YUE2_WEIGHTS_VOLUME:-museforge-yue2-weights}"
 DEPLOY_ENV_FILE="$DEPLOY_ROOT/.env"
 EVIDENCE_ROOT="${MUSEFORGE_EVIDENCE_ROOT:-$DEPLOY_ROOT/evidence}"
 BACKUP_ROOT="${MUSEFORGE_BACKUP_ROOT:-$DEPLOY_ROOT/backups}"
 export DEPLOY_ENV_FILE
+export MUSEFORGE_YUE2_WEIGHTS_VOLUME="$YUE2_WEIGHTS_VOLUME"
 COMPOSE_BASE=(docker compose --project-name "$PROJECT_NAME" --env-file "$DEPLOY_ENV_FILE" --profile mock --profile yue2
-  -f "$ROOT/compose.yaml" -f "$ROOT/deploy/compose/compose.ubuntu1.yaml")
+  -f "$ROOT/compose.yaml" -f "$ROOT/deploy/compose/compose.managed.yaml")
 
 fail() { echo "deploy_error: $*" >&2; exit 1; }
 require_env() { [[ -r "$DEPLOY_ENV_FILE" ]] || fail "missing $DEPLOY_ENV_FILE; run scripts/deploy/setup.sh"; }
@@ -48,7 +52,7 @@ mode_compose() {
       local device
       device="$(configured_yue2_device)"
       [[ "$device" == auto || "$device" == cpu || "$device" == cuda ]] || fail "YUE2_DEVICE must be auto, cpu, or cuda"
-      local files=("$ROOT/compose.yue2.yaml" "$ROOT/deploy/compose/compose.ubuntu1.yue2.yaml")
+      local files=("$ROOT/compose.yue2.yaml" "$ROOT/deploy/compose/compose.managed.yue2.yaml")
       if [[ "$device" == cuda ]] || { [[ "$device" == auto ]] && host_gpu_runtime_available; }; then
         files+=("$ROOT/compose.yue2.gpu.yaml")
       fi

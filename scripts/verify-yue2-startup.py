@@ -1,6 +1,7 @@
 """Disposable offline checks: strict CUDA, explicit CPU, and startup failures."""
 import argparse
 import json
+import os
 from pathlib import Path
 import subprocess
 
@@ -9,6 +10,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--image', default='museforge-yue2:0.1.6')
     args = parser.parse_args()
+    weights_volume = os.environ.get('MUSEFORGE_YUE2_WEIGHTS_VOLUME', 'museforge-yue2-weights')
     root = Path(__file__).resolve().parents[1]
     evidence = root / 'test-results/yue2-devices/startup'
     evidence.mkdir(parents=True, exist_ok=True)
@@ -39,7 +41,7 @@ print(json.dumps(settings.runtime_metadata))
         ('warmup-timeout-auto', {'YUE2_WARMUP_TIMEOUT_SECONDS': '1'}, 78),
     ]:
         command = ['docker', 'run', '--rm', '--init', '--network', 'none', '--memory', '28g',
-                   '-v', 'musicgen-yue2-test_weights:/weights:ro']
+                   '-v', f'{weights_volume}:/weights:ro']
         for key, value in (environment | updates).items():
             command += ['-e', key + '=' + value]
         command += [args.image, 'python', '-c', code]

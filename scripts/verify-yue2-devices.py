@@ -22,6 +22,7 @@ from uuid import uuid4
 
 
 ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_WEIGHTS_VOLUME = "museforge-yue2-weights"
 
 
 def owned_project(project: str) -> bool:
@@ -73,6 +74,8 @@ def main() -> int:
         YUE2_MEMORY_LIMIT_GIB=str(args.memory_limit_gib),
         YUE2_EVIDENCE_DIR=str(evidence),
     )
+    weights_volume = env.get("MUSEFORGE_YUE2_WEIGHTS_VOLUME", DEFAULT_WEIGHTS_VOLUME)
+    env["MUSEFORGE_YUE2_WEIGHTS_VOLUME"] = weights_volume
     compose = [
         "docker", "compose", "--project-name", project, "--profile", "yue2",
         "-f", "compose.yaml", "-f", "compose.yue2.yaml",
@@ -159,10 +162,10 @@ def main() -> int:
                 "worker_memory_limit_gib": args.memory_limit_gib,
                 "cpu_threads": int(env.get("YUE2_CPU_THREADS", "4")),
             }, indent=2) + "\n")
-            volume = subprocess.run(["docker", "volume", "inspect", "musicgen-yue2-test_weights", "--format", "{{json .}}"],
+            volume = subprocess.run(["docker", "volume", "inspect", weights_volume, "--format", "{{json .}}"],
                                     capture_output=True, text=True, timeout=30, check=False)
             if volume.returncode or not volume.stdout.strip():
-                raise RuntimeError("pinned musicgen-yue2-test_weights volume is required")
+                raise RuntimeError(f"pinned weights volume {weights_volume} is required")
             (evidence / "weights-volume.json").write_text(volume.stdout.strip() + "\n", encoding="utf-8")
 
         # Inspect the resolved Compose model, rather than trusting source-file

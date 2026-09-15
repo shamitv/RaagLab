@@ -57,8 +57,8 @@ fi
 export DEPLOY_ENV_FILE
 write_mode_env mock
 compose_with_mode mock config --quiet
-if docker volume inspect musicgen-yue2-test_weights >/dev/null 2>&1; then
-  echo 'verified shared YuE2 weights volume: musicgen-yue2-test_weights'
+if docker volume inspect "$YUE2_WEIGHTS_VOLUME" >/dev/null 2>&1; then
+  echo "verified shared YuE2 weights volume: $YUE2_WEIGHTS_VOLUME"
 else
   echo 'warning: YuE2 weights volume is absent; real mode will fail preflight' >&2
 fi

@@ -15,8 +15,68 @@ def test_deployment_scripts_are_valid_bash_and_scoped():
             result = subprocess.run(['bash', '-n', str(path)], capture_output=True, text=True)
             assert result.returncode == 0, result.stderr
     text = (DEPLOY / 'lib.sh').read_text()
-    assert 'museforge-ubuntu1' in text
+    assert 'museforge-managed' in text
+    assert 'XDG_DATA_HOME' in text
+    assert 'compose.managed.yaml' in text
+    assert 'MUSEFORGE_YUE2_WEIGHTS_VOLUME' in text
     assert 'docker stop --time 30 $containers' in text
+
+
+@pytest.mark.skipif(not shutil.which('bash'), reason='bash is required for deployment behavior checks')
+def test_managed_deployment_defaults_are_machine_neutral(tmp_path):
+    data_home = tmp_path / 'data'
+    env = dict(os.environ, XDG_DATA_HOME=str(data_home))
+    for name in (
+        'MUSEFORGE_DEPLOY_ROOT',
+        'MUSEFORGE_PROJECT_NAME',
+        'MUSEFORGE_EVIDENCE_ROOT',
+        'MUSEFORGE_BACKUP_ROOT',
+    ):
+        env.pop(name, None)
+    command = (
+        'source scripts/deploy/lib.sh; '
+        'printf "%s\\n" "$DEPLOY_ROOT" "$PROJECT_NAME" "$EVIDENCE_ROOT" "$BACKUP_ROOT"'
+    )
+    result = subprocess.run(
+        ['bash', '-c', command], cwd=ROOT, env=env,
+        capture_output=True, text=True, check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.splitlines() == [
+        str(data_home / 'museforge-managed'),
+        'museforge-managed',
+        str(data_home / 'museforge-managed' / 'evidence'),
+        str(data_home / 'museforge-managed' / 'backups'),
+    ]
+
+
+@pytest.mark.skipif(not shutil.which('bash'), reason='bash is required for deployment behavior checks')
+def test_managed_deployment_accepts_explicit_existing_host_overrides(tmp_path):
+    deploy_root = tmp_path / 'existing-deployment'
+    evidence_root = tmp_path / 'existing-evidence'
+    backup_root = tmp_path / 'existing-backups'
+    env = dict(
+        os.environ,
+        MUSEFORGE_DEPLOY_ROOT=str(deploy_root),
+        MUSEFORGE_PROJECT_NAME='existing-managed-project',
+        MUSEFORGE_EVIDENCE_ROOT=str(evidence_root),
+        MUSEFORGE_BACKUP_ROOT=str(backup_root),
+    )
+    command = (
+        'source scripts/deploy/lib.sh; '
+        'printf "%s\\n" "$DEPLOY_ROOT" "$PROJECT_NAME" "$EVIDENCE_ROOT" "$BACKUP_ROOT"'
+    )
+    result = subprocess.run(
+        ['bash', '-c', command], cwd=ROOT, env=env,
+        capture_output=True, text=True, check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.splitlines() == [
+        str(deploy_root),
+        'existing-managed-project',
+        str(evidence_root),
+        str(backup_root),
+    ]
 
 
 def test_start_scripts_support_stopped_creation_and_port_preflight():
@@ -33,7 +93,7 @@ def test_backup_and_restore_refuse_unsafe_or_incomplete_inputs():
     rollback = (DEPLOY / 'rollback.sh').read_text()
     restore = (DEPLOY / 'restore.sh').read_text()
     assert 'requires a verified backup directory' in rollback
-    assert 'PROJECT_NAME" != museforge-ubuntu1' in restore
+    assert 'PROJECT_NAME" != "$DEFAULT_PROJECT_NAME"' in restore
     assert 'sha256sum -c SHA256SUMS' in restore
 
 
