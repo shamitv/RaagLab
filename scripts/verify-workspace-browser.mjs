@@ -46,9 +46,11 @@ try {
  for(const width of [1440,390,360,320,768,1199,1200,1399,1600]) {
   await page.setViewportSize({width,height:1000});
   await expect(page.locator('audio')).toHaveCount(1);
+  const expectedOrder=width>=1200?['Generated Lyrics','Music Preview']:['Music Preview','Generated Lyrics'];
+  await expect.poll(()=>page.evaluate(()=>[...document.querySelectorAll('.result-pair>section')].map(x=>x.getAttribute('aria-label')))).toEqual(expectedOrder);
   const state=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,audioCount:document.querySelectorAll('audio').length,order:[...document.querySelectorAll('.result-pair>section')].map(x=>x.getAttribute('aria-label'))}));
   expect(state.scrollWidth).toBeLessThanOrEqual(width);
-  expect(state.order).toEqual(width>=1200?['Generated Lyrics','Music Preview']:['Music Preview','Generated Lyrics']);
+  expect(state.order).toEqual(expectedOrder);
   observations.viewports.push(state);
   if([1440,390,360,320].includes(width))await page.screenshot({path:path.join(out,`workspace-${width}.png`),fullPage:true});
  }
