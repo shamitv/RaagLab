@@ -204,6 +204,7 @@ def main() -> int:
         run(*command, timeout=1800 if smoke else 3600)
         elapsed = time.monotonic() - start
         if not smoke:
+            accepted = json.loads((evidence / "accepted.json").read_text(encoding="utf-8"))
             version = json.loads((evidence / "version.json").read_text())
             version_id = version["id"]
             audio_url = version["audio"]["url"]
@@ -220,6 +221,20 @@ def main() -> int:
                 "version_id": version_id,
                 "before_sha256": before_hash,
                 "after_sha256": after_hash,
+            }, indent=2) + "\n")
+            # Keep the CPU API and accepted project alive while Chromium checks
+            # playback, seeking, download bytes, and refresh/reopen behavior.
+            browser_compose = [*compose, "-f", "compose.test.yaml"]
+            run("run", "--rm", "--no-deps",
+                "-e", f"D03_PROJECT_ID={accepted['project_id']}",
+                "-e", "PLAYWRIGHT_OUTPUT_DIR=/evidence/browser",
+                "-v", f"{evidence}:/evidence",
+                "browser-tests", "npm", "run", "test:browser", "--",
+                "d03-real.spec.ts", "--project=desktop", compose_cmd=browser_compose, timeout=1200)
+            (evidence / "browser.json").write_text(json.dumps({
+                "project_id": accepted["project_id"],
+                "result": "passed",
+                "checks": ["playback", "seek", "download-checksum", "refresh", "reopen"],
             }, indent=2) + "\n")
         (evidence / "verifier-timing.json").write_text(json.dumps({
             "requested_device": requested_device,

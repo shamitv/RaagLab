@@ -485,17 +485,8 @@ def inner_main(args: argparse.Namespace) -> int:
             run_step("real-cpu-gate", ["python3", "scripts/verify-yue2-devices.py", "--cpu", "--normal",
                                         "--min-host-memory-gib", "32", "--memory-limit-gib", "28",
                                         "--evidence-dir", str(cpu_evidence)], env=cpu_env, timeout=7800)
-            accepted = json.loads((cpu_evidence / "accepted.json").read_text(encoding="utf-8"))
-            browser_compose = [*compose(runtime_project), "-f", "compose.test.yaml"]
-            browser_env = dict(cpu_env, D03_PROJECT_ID=accepted["project_id"],
-                               PLAYWRIGHT_OUTPUT_DIR="/evidence/browser")
-            run_step("real-cpu-browser", [*browser_compose, "run", "--rm", "--no-deps",
-                                           "-e", f"D03_PROJECT_ID={accepted['project_id']}",
-                                           "-e", "PLAYWRIGHT_OUTPUT_DIR=/evidence/browser",
-                                           "-v", f"{cpu_evidence}:/evidence",
-                                           "browser-tests", "npm", "run", "test:browser", "--",
-                                           "d03-real.spec.ts", "--project=desktop"],
-                     env=browser_env, timeout=1200)
+            if not (cpu_evidence / "browser.json").is_file():
+                raise ReleaseFailure("normal CPU gate did not retain browser acceptance evidence")
             release["acceptance"]["normal-mode-yue2-cpu"] = "passed"
             release["acceptance"]["normal-mode-yue2-browser"] = "passed"
             release["cpu_timing"] = json.loads((cpu_evidence / "timing.json").read_text(encoding="utf-8")) if (cpu_evidence / "timing.json").exists() else {}
