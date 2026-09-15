@@ -1,6 +1,6 @@
 # Deploy MuseForge on a new machine
 
-This guide installs the self-contained mock deployment. It needs no GPU, model weights, host Python, or host Node.js. The optional YuE2 section adds the real model after its separately licensed weights are provisioned.
+This guide prepares MuseForge for either the YuE2 song provider or the mock provider. YuE2 requires separately licensed weights and suitable CPU or NVIDIA GPU resources. The mock provider is an explicit evaluation option that needs no GPU, weights, host Python, or host Node.js.
 
 ## 1. Prepare the host
 
@@ -42,15 +42,15 @@ CONTAINER_RESTART_POLICY=unless-stopped
 
 The default application binding is `127.0.0.1`, so it is accessible only from the host. Keep that default unless a separate, trusted proxy provides access.
 
-## 3. Start MuseForge
+## 3. Set up with the mock provider
 
-For a normal first deployment:
+To evaluate the application with generated demo audio instead of YuE2, explicitly select the mock provider:
 
 ```bash
 bash scripts/start.sh mock
 ```
 
-Open the URL printed by the command, normally `http://127.0.0.1:8000`. The startup builds images, starts PostgreSQL and RabbitMQ, applies migrations, starts the API, dispatcher and mock worker, and waits for health checks.
+Open the URL printed by the command, normally `http://127.0.0.1:8000`. The startup builds images, starts PostgreSQL and RabbitMQ, applies migrations, starts the API, dispatcher and mock worker, and waits for health checks. Mock audio is intended for product setup and workflow testing; it does not represent model-generated songs.
 
 To build and create stopped containers for a later maintenance window:
 
@@ -85,7 +85,7 @@ The `database`, `broker`, and `artifacts` named volumes survive normal `down` an
 
 ## 5. Managed Ubuntu/WSL deployment
 
-The managed scripts create a private environment under `$HOME/.local/share/museforge-ubuntu1`, generate database and broker passwords, and use the Compose project name `museforge-ubuntu1`:
+The managed scripts create a private environment under `$HOME/.local/share/museforge-ubuntu1`, generate database and broker passwords, and use the Compose project name `museforge-ubuntu1`. This example explicitly starts the mock provider:
 
 ```bash
 bash scripts/deploy/setup.sh
@@ -109,7 +109,7 @@ bash scripts/deploy/start.sh mock --create-only
 
 See the [operations runbook](deployment/machines/ubuntu1/runbook.md) for backup, restore, update, rollback, drain, and recovery procedures.
 
-## 6. Optional YuE2 deployment
+## 6. YuE2 song-provider deployment
 
 YuE2 requires the exact external `musicgen-yue2-test_weights` Docker volume described by the [deployment manifest](deployment/machines/ubuntu1/deployment-manifest.md). The weights are not stored in Git or application images, and their license and hashes must be reviewed before provisioning them on a new host.
 

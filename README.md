@@ -13,14 +13,16 @@ Turn a musical idea into a playable song. Describe the sound, choose instruments
 
 ![MuseForge mobile song screen](docs/implementation/evidence/07/20260915-song-first/song-mobile.png)
 
-## Quick start
+## Set up with the mock provider
+
+Use the mock provider when you want to evaluate the product without installing YuE2 weights or configuring a GPU:
 
 ```bash
 bash scripts/setup.sh
 bash scripts/start.sh mock
 ```
 
-Open the printed address, normally `http://127.0.0.1:8000`. Set `APP_PORT` in `.env` when that port is occupied. The mock provider creates clearly labelled demo audio. YuE2 is optional and has narrower documented capabilities; generated audio may not follow requested lyrics, vocals, musical controls, or exact duration.
+Open the printed address, normally `http://127.0.0.1:8000`. Set `APP_PORT` in `.env` when that port is occupied. This command explicitly selects the mock provider, which creates clearly labelled demo audio. For generated songs, follow the real YuE2 deployment section in the [new-machine deployment guide](docs/new-machine-deployment.md). YuE2 has narrower documented capabilities; generated audio may not follow requested lyrics, vocals, musical controls, or exact duration.
 
 ```bash
 bash scripts/start.sh mock --create-only
