@@ -3,13 +3,13 @@
 - State: in_progress
 - Planning state: completed
 - Application state: in_progress
-- Scope of current run: Phase 06 release verification and Part 2 D04/D05 handoff
+- Scope of current run: Phase 06 full CPU model verification and release closure
 - Planning started: 2026-09-13T12:25:42+05:30
 - Planning completed: 2026-09-13T07:27:05Z
 - Application started: 2026-09-13T08:12:41Z
 - Last updated: 2026-09-15
 - Application completed: not completed
-- Current focus: Part 2 D04/D05 deployment hardening and operations handoff remain
+- Current focus: normal-mode CPU YuE2 release gate is blocked by target host memory and missing verified weights
 
 ## Phase summary
 
@@ -21,7 +21,7 @@
 | [03 Complete responsive workspace](phases/03-complete-responsive-workspace/status.md) | completed | Responsive workspace, immutable iterations and browser acceptance verified | [Completion report](phases/03-complete-responsive-workspace/implementation-status.md) |
 | [04 Projects, versions, and recovery](phases/04-projects-versions-and-recovery/status.md) | completed | Project/library lifecycle, workspace settings/templates, draft recovery, retries, and artifact/worker recovery verified | [Completion report](phases/04-projects-versions-and-recovery/implementation-status.md) |
 | [05 Provider readiness](phases/05-provider-readiness/status.md) | completed | Evidence-backed provider capability contract, capability-driven composer, and integrated mock regression verified | [Completion report](phases/05-provider-readiness/implementation-status.md) |
-| [06 Release verification and handoff](phases/06-release-verification-and-handoff/status.md) | completed | Mock release gate, lifecycle persistence, browser evidence, documentation, and Part 2 handoff published | Part 2 D04/D05 |
+| [06 Release verification and handoff](phases/06-release-verification-and-handoff/status.md) | in_progress | Mock release gate and handoff complete; normal-mode CPU YuE2 gate is blocked | Restore a host with >=32 GiB RAM and pinned weights |
 
 ## Completed work
 
@@ -51,36 +51,43 @@ audio retrieval, playback, and seeking. See [application evidence](../deployment
 The [Phase 05 completion report](phases/05-provider-readiness/implementation-status.md)
 records which provider behaviors are supported, unsupported and unknown.
 
-Phase 06 is complete: the isolated release gate passed 172 container unit tests,
-49 real-service integration tests, 34 Chromium browser checks with 22 intentional
-skips, 3 frontend tests, recovery/restart/update persistence, the documented
-lifecycle, artifact inspection, native zoom/keyboard evidence, and static
-audits. See the [Phase 06 completion report](phases/06-release-verification-and-handoff/implementation-status.md),
+Phase 06 mock verification is complete: the isolated release gate passed 172
+container unit tests, 49 real-service integration tests, 34 Chromium browser
+checks with 22 intentional skips, 3 frontend tests, recovery/restart/update
+persistence, the documented lifecycle, native zoom/keyboard evidence, and
+static audits. The required normal-mode CPU YuE2 gate is implemented but blocked
+on the target's 10 GiB RAM and absent verified weights. See the [Phase 06 report](phases/06-release-verification-and-handoff/implementation-status.md),
 [release evidence](evidence/06/20260915-090415-d55061e8/README.md), and
-[deployment handoff](../deployment-handoff.md).
+[CPU gate record](evidence/06/20260915-cpu-gate-blocked/README.md).
 
 The repository/design/reference audit, [architecture decision](decisions/0001-application-architecture.md), [contracts](contracts.md), [job reliability](job-reliability.md), [UI decisions](ui-behavior.md), [dependency baseline](dependency-baseline.md), [master plan](master-plan.md), seven phase plans and [requirement matrix](requirements-matrix.md) are written. Primary metadata checks and temporary dependency resolution completed. See [planning verification](evidence/planning-verification.md) for limits and final audit status.
 
 ## Remaining work
 
-Phase 06 release acceptance is complete for the mock Part 1 release. Part 2 D03 is complete for the narrow
+Phase 06 release acceptance is complete for the mock Part 1 release. The CPU
+release gate remains blocked by host prerequisites. Part 2 D03 is complete for the narrow
 English user-lyrics route. Broader capability semantics, language support, lyric
 adherence, and true instrumental output are not established by that technical
-acceptance gate; Part 2 D04/D05 deployment validation and handoff are also open.
+acceptance gate; Part 2 D04/D05 deployment validation and handoff are complete
+on Ubuntu1 with their documented limitations.
 
 ## Blockers and decisions needed
 
-No Phase 05 or Phase 06 implementation decisions remain. Part 2 D04/D05
-deployment validation and operations handoff remain open; neither is represented
-as complete by the mock release.
+No Phase 05 or Part 2 D04/D05 implementation decisions remain. Phase 06 cannot
+close until the normal-mode CPU gate runs on a host meeting its memory and
+weights prerequisites.
 
 ## Latest verification
 
-Phase 06 release verification passed: 172 container unit tests (6 expected
+Phase 06 mock release verification passed: 172 container unit tests (6 expected
 skips), 49 PostgreSQL/RabbitMQ integration tests, 34 Chromium browser checks
-with 22 intentional skips, 3 frontend tests, and 3 release-runner safety tests. Recovery, lifecycle,
-persistence, and static audits passed; WebKit was unavailable and remains
-unclaimed. See [Phase 06 evidence](evidence/06/20260915-090415-d55061e8/README.md).
+with 22 intentional skips, 3 frontend tests. Ten focused release-runner/deployment
+safety tests are implemented; current execution of the rebuilt candidate is
+pending the eligible host. Recovery, lifecycle, persistence, and static audits passed;
+WebKit was unavailable and remains unclaimed. The normal CPU gate was not run:
+the selected host reports 10 GiB total memory and no `musicgen-yue2-test_weights`
+volume. See [mock evidence](evidence/06/20260915-090415-d55061e8/README.md) and
+the [blocked CPU record](evidence/06/20260915-cpu-gate-blocked/README.md).
 
 Phase 05 local tests passed: 173 Python unit tests (5 optional NumPy skips), 3
 frontend tests, and the TypeScript/Vite production build. On the configured
@@ -111,5 +118,6 @@ and fresh-container reproducibility passed. See [the dated deployment record](..
 
 ## Next action
 
-Continue Part 2 D04/D05 deployment hardening, resource validation, backup/restore,
-rollback, and operations handoff using [deployment-handoff.md](../deployment-handoff.md).
+Restore a CPU-capable verification host with at least 32 GiB RAM and the pinned
+weights volume, then run `bash scripts/test.sh release --real-cpu` and publish
+the resulting evidence before marking Phase 06 complete.

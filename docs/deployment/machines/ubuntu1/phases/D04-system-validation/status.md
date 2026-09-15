@@ -8,4 +8,5 @@
   job succeeded with CUDA runtime and 77.2387-second measured output.
 - Limitations: no listening tool was available; lyric adherence, language breadth,
   exact duration, style controls, and native-Linux execution remain unverified.
-- Next: D05 backup/restore and operational handoff.
+- D05 backup/restore and operational handoff are complete on Ubuntu1; see the
+  D05 completion report and dated deployment evidence.

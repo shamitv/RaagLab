@@ -18,6 +18,8 @@ Tests use a unique isolated Compose stack and actual HTTP, PostgreSQL 18, Rabbit
 
 The current packaged mock release is verified with `bash scripts/test.sh release`
 using isolated PostgreSQL, RabbitMQ, dispatcher, worker, artifact volumes, and
-API-served Chromium. The tested migration head is `0004_worker_runtime`; the
-release record and deployment boundary are in the [Phase 06 evidence](implementation/evidence/06/20260915-090415-d55061e8/README.md)
+API-served Chromium. `bash scripts/test.sh release --real-cpu` adds the normal
+YuE2 CPU gate when a host has at least 32 GiB available memory and the verified
+weights volume. The tested migration head is `0004_worker_runtime`; the release
+record and deployment boundary are in the [Phase 06 evidence](implementation/evidence/06/20260915-090415-d55061e8/README.md)
 and [deployment handoff](deployment-handoff.md).

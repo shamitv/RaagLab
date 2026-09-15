@@ -11,7 +11,16 @@ Run from a clean configured checkout on a Linux Docker engine:
 bash scripts/test.sh release
 ```
 
+Add `--real-cpu` when the host has at least 32 GiB available memory and the
+external verified `musicgen-yue2-test_weights` volume:
+
+```bash
+bash scripts/test.sh release --real-cpu
+```
+
 The release record must identify the source revision, lock/image/runtime
 versions, migration head, sanitized configuration, A01–A12 result, persistence
 checks, browser coverage, and any skipped or blocked checks. Mock release
-evidence does not claim real-model semantic quality or Part 2 deployment.
+evidence does not claim real-model semantic quality. Part 2 D04/D05 deployment
+evidence is published under `docs/deployment/evidence/`; the current CPU gate
+prerequisite block is recorded in [20260915-cpu-gate-blocked](20260915-cpu-gate-blocked/README.md).

@@ -1,0 +1,12 @@
+{
+  "host": "yolo1@10.42.0.42",
+  "docker_engine": "29.8.0",
+  "cpus": 4,
+  "total_memory_gib": 10,
+  "available_memory_gib": 7.3,
+  "required_available_memory_gib": 32,
+  "weights_volume": "musicgen-yue2-test_weights",
+  "weights_volume_present": false,
+  "gate_started": false,
+  "reason": "host memory and verified weights prerequisites are unavailable"
+}

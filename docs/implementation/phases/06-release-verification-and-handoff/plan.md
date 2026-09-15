@@ -2,15 +2,15 @@
 
 ## Objective
 
-A clean configured checkout can reproduce the complete API-served mock application using tested commands, and the user receives accurate operating/development documentation plus a concrete handoff for machine and real-model deployment.
+A clean configured checkout can reproduce the complete API-served mock application using tested commands, and an eligible host can run the pinned YuE2 model in normal CPU mode. The user receives accurate operating/development documentation plus a concrete deployment handoff.
 
 ## Dependencies and entry criteria
 
-Phases 01–05 are completed with evidence-based reports; unresolved required gates keep their owner phase open. A Linux-engine environment and the required browser runner are available for clean release verification. The release must not introduce weights/GPU/paid-service requirements.
+Phases 01–05 and Part 2 D03–D05 have evidence-based reports. A Linux-engine environment and the required browser runner are available for clean release verification. Mock verification needs no weights/GPU/paid service; the opt-in normal CPU gate requires the pinned weights volume and at least 32 GiB available host memory.
 
 ## Scope
 
-Release verification of all Part 1 requirements, reproducible mock packaging, finalized developer/API/architecture/model/operational docs, current phase history and explicit Part 2 handoff. This phase does not install host drivers, activate a real model or claim deployment to WSL/native Linux.
+Release verification of all Part 1 requirements, reproducible mock packaging, optional normal-mode CPU model verification, finalized developer/API/architecture/model/operational docs, current phase history and explicit deployment handoff. This phase does not install host drivers or claim native-Linux execution.
 
 ## Work breakdown
 
@@ -32,8 +32,8 @@ No new product contracts are expected; fixes update the owning phase and their s
 
 ## Acceptance criteria
 
-- **06-AC1:** A clean checkout with documented prerequisites builds/starts the mock stack and serves the working UI through the API using the exact recorded command.
-- **06-AC2:** All twelve Part 1 acceptance checks and the full required local product actions have current real-service/browser evidence, with no SQLite/eager/frontend-only substitute.
+- **06-AC1:** A detached clean checkout with documented prerequisites builds/starts the mock stack and serves the working UI through the API using the exact recorded command.
+- **06-AC2:** All twelve Part 1 acceptance checks and the full required local product actions have current real-service/browser evidence, with no SQLite/eager/frontend-only substitute; the normal CPU model gate records explicit CPU provenance and resource evidence when its prerequisites are available.
 - **06-AC3:** Ordinary refresh/API/stack restart retains projects, versions, active selection and playable audio; safe stop/update instructions preserve volumes.
 - **06-AC4:** Documentation accurately describes the implemented code, tested scripts, configuration/errors, fixture provenance and real-provider limitations; no broken internal links or future-only commands are presented as tested.
 - **06-AC5:** Every completed phase has an accurate implementation-status.md and synchronized tracking; any required unrun gate remains open instead of being hidden by the release report.
@@ -42,10 +42,10 @@ No new product contracts are expected; fixes update the owning phase and their s
 
 ## Verification
 
-Planned: bash scripts/test.sh release followed by review of A01–A12 evidence and the full requirements-matrix.md; reproduce README startup/stop/migrate/smoke from a clean checkout. Run git diff --check and tracked-file/secret/build-context inspections. Validate every documentation link and compare advertised scripts/routes/options to actual implementation. Preserve concise evidence under docs/implementation/evidence/06/<run-id>/ and reference prior phase fault traces where the current revision remains covered; rerun impacted gates when changes invalidate them.
+Planned: bash scripts/test.sh release and, when CPU prerequisites are present, bash scripts/test.sh release --real-cpu. Review A01–A12 evidence and the full requirements-matrix.md; reproduce README startup/stop/migrate/smoke from a detached clean checkout. Run git diff --check and tracked-file/secret/build-context inspections. Validate every documentation link and compare advertised scripts/routes/options to actual implementation. Preserve concise evidence under docs/implementation/evidence/06/<run-id>/ and reference prior phase fault traces where the current revision remains covered; rerun impacted gates when changes invalidate them.
 
 ## Risks, assumptions, and deferred work
 
-A clean container list or API docs page is not a release proof. Browser/engine absence keeps required gates open with exact limitations. Dependency support can change between planning and release; review rather than silently using floating latest versions. Subjective audio quality, real music generation, GPU operation, target machine exposure and verified host backup/restore remain Part 2 work.
+A clean container list or API docs page is not a release proof. Browser/engine absence or CPU host memory/weights absence keeps the affected gate open with exact limitations. Dependency support can change between planning and release; review rather than silently using floating latest versions. Subjective audio quality, lyric adherence, broader provider behavior, and native-Linux execution remain unverified even when technical CPU inference passes.
 
 See the [master plan](../../master-plan.md), [requirement matrix](../../requirements-matrix.md), [status](status.md) and [to-do list](todo.md).

@@ -31,5 +31,6 @@ duration, subjective listening quality, and native-Linux execution remain unveri
 ## Latest verification
 
 See [D04/D05 evidence](evidence/2026-09-15-d04-d05/README.md), the integrated D03 evidence,
-and the Ubuntu1 runbook and manifest. The D05 gate remains open until backup/restore and
-rollback checks have current evidence.
+and the Ubuntu1 runbook and manifest. The D05 backup/restore and rollback checks
+have current evidence; the remaining native-Linux and semantic-audio limitations
+are explicitly recorded.

@@ -19,7 +19,7 @@ bash scripts/logs.sh         # recent application process logs
 bash scripts/stop.sh         # preserves database, broker, and artifact volumes
 ```
 
-The `mock` profile selects the CPU worker. An explicit `yue2` Compose override selects the integrated YuE2 worker for English, user-supplied lyrics; it has passed one durable queued-generation check. That narrow check proves routing and technical audio handling, not lyric adherence, instrumental-only output, style fidelity, or duration control. Missing model files or GPU access fail startup rather than returning demo audio. Run `bash scripts/seed-demo.sh` to create three source-labelled demo projects, or `bash scripts/smoke.sh mock` for a measured audio smoke check. Both use `API_BASE_URL` (default http://127.0.0.1:8000). The mock release gate is `bash scripts/test.sh release`; its current record is linked below.
+The `mock` profile selects the CPU worker. An explicit `yue2` Compose override selects the integrated YuE2 worker for English, user-supplied lyrics; it has passed durable queued-generation checks on CUDA and short CPU smoke mode. Those narrow checks prove routing and technical audio handling, not lyric adherence, instrumental-only output, style fidelity, or duration control. Missing model files or GPU access fail startup rather than returning demo audio. Run `bash scripts/seed-demo.sh` to create three source-labelled demo projects, or `bash scripts/smoke.sh mock` for a measured audio smoke check. Both use `API_BASE_URL` (default http://127.0.0.1:8000). The mock release gate is `bash scripts/test.sh release`; add `--real-cpu` for the normal-mode CPU model gate when the pinned weights volume and memory prerequisites are available.
 
 ## Verify
 
@@ -41,8 +41,10 @@ boundary](docs/model-integration.md), [queued application evidence](docs/deploym
 and [YuE2 evidence](docs/deployment/evidence/2026-09-14-yue2/README.md).
 
 Run `bash scripts/test.sh release` on a reachable Linux Docker engine for the
-isolated Phase 06 release gate. It records the exact source, runtime, lock,
-image, migration, persistence, browser, and acceptance results under
+isolated Phase 06 mock gate. Add `--real-cpu` to include normal-mode pinned
+YuE2 CPU inference; that option requires at least 32 GiB available memory and
+the external verified weights volume. The runner records the exact source,
+runtime, lock, image, migration, persistence, browser, and acceptance results under
 `test-results/phase6-<run-id>/`; copy the compact report to
 `docs/implementation/evidence/06/` when publishing a release. See the
 [development instructions](docs/development.md), [deployment handoff](docs/deployment-handoff.md),

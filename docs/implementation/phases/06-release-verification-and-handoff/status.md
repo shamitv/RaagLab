@@ -1,40 +1,44 @@
 # Phase 06 status
 
-- State: completed
+- State: in_progress
 - Started: 2026-09-15
 - Last updated: 2026-09-15
-- Completed: 2026-09-15
-- Current focus: Part 1 handoff delivered; Part 2 D04/D05 remain open
+- Completed: not yet
+- Current focus: normal-mode CPU YuE2 verification on a host meeting memory and weights prerequisites
 
 ## Completed work
 
-The release gate, lifecycle checks, evidence record, and deployment handoff are
-complete. See the [implementation status](implementation-status.md) and dated
-[release evidence](../../evidence/06/20260915-090415-d55061e8/README.md).
+The mock release gate, lifecycle checks, evidence record, and deployment handoff
+are complete. CPU deployment support and the full normal-mode verifier are
+implemented, but the required CPU gate is blocked. See the [implementation
+status](implementation-status.md), [mock evidence](../../evidence/06/20260915-090415-d55061e8/README.md),
+and [blocked CPU record](../../evidence/06/20260915-cpu-gate-blocked/README.md).
 
 ## Remaining work
 
-All 11 tasks in [todo.md](todo.md) are complete. The seven Phase 06 acceptance
-criteria are covered by the dated release record; the remaining real-model and
-host operations work belongs to Part 2.
+Tasks 06-01 through 06-08 and 06-10 are complete. 06-04, 06-05, 06-06,
+06-09, and 06-11 remain open for the normal-mode CPU run and its evidence; the
+merged Part 2 D04/D05 reports are current.
 
 ## Blockers and decisions needed
 
-No Part 1 blocker remains. The release gate ran on the authorized Linux VM. WebKit
-was unavailable and remains unclaimed; internal-host clipboard access reported
-the documented manual-copy fallback. No real-model decision is required for the
-mock release.
+The selected Linux VM is reachable with its ignored key, but it reports 10 GiB
+total RAM (about 7.3 GiB available) and does not contain the verified
+`musicgen-yue2-test_weights` volume. The CPU gate therefore remains blocked;
+WebKit is unavailable and remains unclaimed.
 
 ## Latest verification
 
-The release run passed 172 container unit tests (6 expected skips), 49 real
+The mock release run passed 172 container unit tests (6 expected skips), 49 real
 service integration tests, 34 Chromium browser checks with 22 intentional
-responsive/stateful skips, 3 frontend tests, 3 release-runner safety tests,
-recovery/restart/update persistence,
-the documented lifecycle, static audits, and the native zoom/keyboard workspace
-inspection. See the [release evidence](../../evidence/06/20260915-090415-d55061e8/README.md).
+responsive/stateful skips, 3 frontend tests, recovery/restart/update
+persistence, the documented lifecycle, static audits, and native zoom/keyboard
+inspection. The normal CPU YuE2 run is unrun due to the recorded host
+prerequisites. See the [mock evidence](../../evidence/06/20260915-090415-d55061e8/README.md)
+and [blocked CPU record](../../evidence/06/20260915-cpu-gate-blocked/README.md).
 
 ## Next action
 
-Part 1 release verification and handoff are complete. Continue with Part 2 D04/D05
-deployment hardening, resource validation, backup/restore, and operations handoff.
+Restore a host with at least 32 GiB available memory and the pinned verified
+weights volume, run `bash scripts/test.sh release --real-cpu`, publish its
+evidence, and then close the remaining Phase 06 tasks.

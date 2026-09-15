@@ -1,7 +1,7 @@
 # Requirement traceability matrix
 
 - Baseline: [Part 1](../prompts/01-portable-application.md) and [design](../../design.md)
-- State: Phases 01–06 passed for Part 1; Part 2 D04/D05 remain. See [Phase 06 evidence](evidence/06/20260915-090415-d55061e8/README.md), [Phase 05 evidence](evidence/05/2026-09-14-provider-readiness/README.md), [Phase 04 evidence](evidence/04/2026-09-14-projects-recovery/README.md) for project/library/settings, save recovery, retry/dispatch/worker recovery, artifact safety and restart acceptance; [Phase 03 evidence](evidence/03/2026-09-13-workspace/README.md) records responsive workspace checks, and [Phase 02 evidence](evidence/02/2026-09-13-mock-end-to-end/README.md) records baseline generation, lyric and playback acceptance.
+- State: Phases 01–05 and Part 2 D03–D05 passed on their recorded gates; Phase 06 mock release passed, while the required normal-mode CPU gate is blocked by host memory and missing weights. See [Phase 06 mock evidence](evidence/06/20260915-090415-d55061e8/README.md) and [blocked CPU evidence](evidence/06/20260915-cpu-gate-blocked/README.md), plus the prior phase records below.
 - Evidence catalogue: [verification strategy](verification-strategy.md); A01–A12 match the prompt's numbered acceptance checks
 - Phase links and dependencies: [master plan](master-plan.md)
 
@@ -57,7 +57,7 @@
 | 9 / A09 | 04 | Failure/retry/cancellation/timeout race outcomes |
 | 10 / A10 | 02–04 | Range playback, safe artifact lookup and download |
 | 11 / A11 | 03–04, repeated 06 | Responsive/keyboard/zoom/no-overflow core workflow |
-| 12 / A12 | 05, repeated 06 | Actual metadata, honest capabilities, no real-to-mock fallback |
+| 12 / A12 | 05, repeated 06 mock; CPU gate pending | Actual metadata, honest capabilities, no real-to-mock fallback |
 
 ## Design coverage and scope decisions
 
