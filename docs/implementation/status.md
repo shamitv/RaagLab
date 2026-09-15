@@ -3,13 +3,13 @@
 - State: in_progress
 - Planning state: completed
 - Application state: in_progress
-- Scope of current run: Phase 05 provider-readiness closure
+- Scope of current run: Phase 06 release verification and Part 2 D04/D05 handoff
 - Planning started: 2026-09-13T12:25:42+05:30
 - Planning completed: 2026-09-13T07:27:05Z
 - Application started: 2026-09-13T08:12:41Z
-- Last updated: 2026-09-14
+- Last updated: 2026-09-15
 - Application completed: not completed
-- Current focus: Phase 06 release verification and Part 2 D04/D05 remain
+- Current focus: Part 2 D04/D05 deployment hardening and operations handoff remain
 
 ## Phase summary
 
@@ -21,7 +21,7 @@
 | [03 Complete responsive workspace](phases/03-complete-responsive-workspace/status.md) | completed | Responsive workspace, immutable iterations and browser acceptance verified | [Completion report](phases/03-complete-responsive-workspace/implementation-status.md) |
 | [04 Projects, versions, and recovery](phases/04-projects-versions-and-recovery/status.md) | completed | Project/library lifecycle, workspace settings/templates, draft recovery, retries, and artifact/worker recovery verified | [Completion report](phases/04-projects-versions-and-recovery/implementation-status.md) |
 | [05 Provider readiness](phases/05-provider-readiness/status.md) | completed | Evidence-backed provider capability contract, capability-driven composer, and integrated mock regression verified | [Completion report](phases/05-provider-readiness/implementation-status.md) |
-| [06 Release verification and handoff](phases/06-release-verification-and-handoff/status.md) | not_started | Plan ready; no release or deployment | 06-01 requirements/report audit after 01–05 |
+| [06 Release verification and handoff](phases/06-release-verification-and-handoff/status.md) | completed | Mock release gate, lifecycle persistence, browser evidence, documentation, and Part 2 handoff published | Part 2 D04/D05 |
 
 ## Completed work
 
@@ -51,22 +51,36 @@ audio retrieval, playback, and seeking. See [application evidence](../deployment
 The [Phase 05 completion report](phases/05-provider-readiness/implementation-status.md)
 records which provider behaviors are supported, unsupported and unknown.
 
+Phase 06 is complete: the isolated release gate passed 172 container unit tests,
+49 real-service integration tests, 34 Chromium browser checks with 22 intentional
+skips, 3 frontend tests, recovery/restart/update persistence, the documented
+lifecycle, artifact inspection, native zoom/keyboard evidence, and static
+audits. See the [Phase 06 completion report](phases/06-release-verification-and-handoff/implementation-status.md),
+[release evidence](evidence/06/20260915-090415-d55061e8/README.md), and
+[deployment handoff](../deployment-handoff.md).
+
 The repository/design/reference audit, [architecture decision](decisions/0001-application-architecture.md), [contracts](contracts.md), [job reliability](job-reliability.md), [UI decisions](ui-behavior.md), [dependency baseline](dependency-baseline.md), [master plan](master-plan.md), seven phase plans and [requirement matrix](requirements-matrix.md) are written. Primary metadata checks and temporary dependency resolution completed. See [planning verification](evidence/planning-verification.md) for limits and final audit status.
 
 ## Remaining work
 
-Phase 06 release acceptance remains. Part 2 D03 is complete for the narrow
+Phase 06 release acceptance is complete for the mock Part 1 release. Part 2 D03 is complete for the narrow
 English user-lyrics route. Broader capability semantics, language support, lyric
 adherence, and true instrumental output are not established by that technical
 acceptance gate; Part 2 D04/D05 deployment validation and handoff are also open.
 
 ## Blockers and decisions needed
 
-No Phase 05 implementation decisions or blockers remain. Phase 06 release
-acceptance and Part 2 D04/D05 are the remaining work; neither is represented as
-complete by the Phase 05 mock regression.
+No Phase 05 or Phase 06 implementation decisions remain. Part 2 D04/D05
+deployment validation and operations handoff remain open; neither is represented
+as complete by the mock release.
 
 ## Latest verification
+
+Phase 06 release verification passed: 172 container unit tests (6 expected
+skips), 49 PostgreSQL/RabbitMQ integration tests, 34 Chromium browser checks
+with 22 intentional skips, 3 frontend tests, and 3 release-runner safety tests. Recovery, lifecycle,
+persistence, and static audits passed; WebKit was unavailable and remains
+unclaimed. See [Phase 06 evidence](evidence/06/20260915-090415-d55061e8/README.md).
 
 Phase 05 local tests passed: 173 Python unit tests (5 optional NumPy skips), 3
 frontend tests, and the TypeScript/Vite production build. On the configured
@@ -97,4 +111,5 @@ and fresh-container reproducibility passed. See [the dated deployment record](..
 
 ## Next action
 
-Begin Phase 06 release verification and continue Part 2 D04/D05 deployment hardening and handoff.
+Continue Part 2 D04/D05 deployment hardening, resource validation, backup/restore,
+rollback, and operations handoff using [deployment-handoff.md](../deployment-handoff.md).

@@ -1,7 +1,7 @@
 # Requirement traceability matrix
 
 - Baseline: [Part 1](../prompts/01-portable-application.md) and [design](../../design.md)
-- State: Phases 01–05 passed; Phase 06 release verification remains. See [Phase 05 evidence](evidence/05/2026-09-14-provider-readiness/README.md), [Phase 04 evidence](evidence/04/2026-09-14-projects-recovery/README.md) for project/library/settings, save recovery, retry/dispatch/worker recovery, artifact safety and restart acceptance; [Phase 03 evidence](evidence/03/2026-09-13-workspace/README.md) records responsive workspace checks, and [Phase 02 evidence](evidence/02/2026-09-13-mock-end-to-end/README.md) records baseline generation, lyric and playback acceptance.
+- State: Phases 01–06 passed for Part 1; Part 2 D04/D05 remain. See [Phase 06 evidence](evidence/06/20260915-090415-d55061e8/README.md), [Phase 05 evidence](evidence/05/2026-09-14-provider-readiness/README.md), [Phase 04 evidence](evidence/04/2026-09-14-projects-recovery/README.md) for project/library/settings, save recovery, retry/dispatch/worker recovery, artifact safety and restart acceptance; [Phase 03 evidence](evidence/03/2026-09-13-workspace/README.md) records responsive workspace checks, and [Phase 02 evidence](evidence/02/2026-09-13-mock-end-to-end/README.md) records baseline generation, lyric and playback acceptance.
 - Evidence catalogue: [verification strategy](verification-strategy.md); A01–A12 match the prompt's numbered acceptance checks
 - Phase links and dependencies: [master plan](master-plan.md)
 

@@ -1,0 +1,58 @@
+{
+  "projects": [
+    {
+      "id": "95a02cd5-ab47-46e8-bac7-fa596b92b751",
+      "active_version_id": "c42d2fd9-601a-4f7b-bce0-e172b46a7c6e",
+      "audio": {
+        "version_id": "c42d2fd9-601a-4f7b-bce0-e172b46a7c6e",
+        "sha256": "e8228bf7cdc18dd6cec22df87064d96bd61a654174babc7ff2fd93d501eb55d2",
+        "byte_size": 882044
+      }
+    },
+    {
+      "id": "158db960-763e-47f1-8120-fb729b95f1c5",
+      "active_version_id": "36d6b02d-10ae-4398-8ae9-60ef111fad40",
+      "audio": {
+        "version_id": "36d6b02d-10ae-4398-8ae9-60ef111fad40",
+        "sha256": "dd6ef6273b753deae9066de6cff8a63c6ccd341e19362d3c8ec122620fcaab2b",
+        "byte_size": 882044
+      }
+    },
+    {
+      "id": "44f681e1-33a4-435b-9072-7479b12b747e",
+      "active_version_id": "78d7d3b2-53fa-4cce-8167-ae7adf96bded",
+      "audio": {
+        "version_id": "78d7d3b2-53fa-4cce-8167-ae7adf96bded",
+        "sha256": "f60c9e9f8ec92868bdc8ff4ad7adef06777f5376d9176c8fffd8a621371848b1",
+        "byte_size": 882044
+      }
+    },
+    {
+      "id": "cd8809f1-5d8f-45d9-b5a8-d4c951939cb1",
+      "active_version_id": "3c9e0d5e-5dd1-410a-8c0e-1213bc9104c1",
+      "audio": {
+        "version_id": "3c9e0d5e-5dd1-410a-8c0e-1213bc9104c1",
+        "sha256": "0afd8864f8f7987567753fdda5e4f323dce30d164d7a8be3dfad3283d75fe280",
+        "byte_size": 882044
+      }
+    }
+  ],
+  "settings": {
+    "revision": 1,
+    "generation_defaults": {
+      "instruments": [
+        "Piano"
+      ],
+      "mood": "Calm",
+      "language": "English",
+      "genre": "Indie Pop",
+      "tempo": "Medium",
+      "vocal_type": "Instrumental",
+      "duration_seconds": 8,
+      "lyrics_mode": "mock"
+    },
+    "volume": 0.8,
+    "repeat_mode": "off",
+    "export_format": "wav"
+  }
+}

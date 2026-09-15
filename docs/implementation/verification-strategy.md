@@ -1,8 +1,8 @@
 # Verification strategy and acceptance catalogue
 
 - Date: 2026-09-14
-- Current evidence: [planning verification](evidence/planning-verification.md), [Phase 01 implementation](evidence/01/2026-09-13-foundation/README.md), [Phase 04 projects and recovery](evidence/04/2026-09-14-projects-recovery/README.md), [Phase 05 provider readiness](evidence/05/2026-09-14-provider-readiness/README.md)
-- Status: Phases 01–05 are implemented and verified; Phase 06 release verification remains planned.
+- Current evidence: [planning verification](evidence/planning-verification.md), [Phase 01 implementation](evidence/01/2026-09-13-foundation/README.md), [Phase 04 projects and recovery](evidence/04/2026-09-14-projects-recovery/README.md), [Phase 05 provider readiness](evidence/05/2026-09-14-provider-readiness/README.md), [Phase 06 release](evidence/06/20260915-090415-d55061e8/README.md)
+- Status: Phases 01–06 are implemented and verified for Part 1; Part 2 D04/D05 remain open.
 
 ## Execution environments and evidence discipline
 
@@ -20,7 +20,7 @@ Separate uniquely named Compose runs proved confirmed-publish ambiguity/reclaim,
 
 ## Command interfaces
 
-Phase 01 owns the initial script entry points; subsequent phases extend them. Phase 04 adds a real isolated end-to-end runner; full release certification still belongs to Phase 06.
+Phase 01 owns the initial script entry points; subsequent phases extend them. Phase 04 adds a real isolated end-to-end runner; Phase 06 owns the completed release certification and handoff record.
 
 | Command | Required behavior |
 | --- | --- |
