@@ -13,6 +13,7 @@ RUN npm test
 # Browser dependencies remain in this test-only image and never enter runtime stages.
 FROM node:24.21.0-bookworm-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553 AS browser-test
 WORKDIR /web
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 RUN npm install --global npm@11.19.0
 COPY apps/web/package.json apps/web/package-lock.json ./
 RUN npm ci --no-audit --no-fund
