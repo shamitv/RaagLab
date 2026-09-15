@@ -94,6 +94,7 @@ export function Composer() {
     const query = matchMedia("(min-width:1200px)");
     const resize = () => setDesktop(query.matches);
     query.addEventListener("change", resize);
+    resize();
     return () => query.removeEventListener("change", resize);
   }, []);
   function adopt(v: Version) {

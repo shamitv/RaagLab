@@ -37,6 +37,7 @@ services:
     mem_limit: ${YUE2_MEMORY_LIMIT_GIB:-28}g
   yue2-smoke-tests:
     profiles: [yue2]
+    user: "${MUSEFORGE_CONTAINER_UID:-1000}:${MUSEFORGE_CONTAINER_GID:-1000}"
     build:
       context: .
       dockerfile: packaging/Dockerfile

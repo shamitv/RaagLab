@@ -51,6 +51,7 @@ services:
       worker-mock: {condition: service_healthy}
     command: [/app/.venv/bin/pytest, tests/integration]
   browser-tests:
+    user: "${MUSEFORGE_CONTAINER_UID:-1000}:${MUSEFORGE_CONTAINER_GID:-1000}"
     build:
       context: .
       dockerfile: packaging/Dockerfile

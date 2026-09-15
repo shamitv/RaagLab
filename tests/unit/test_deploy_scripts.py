@@ -45,6 +45,8 @@ def test_cpu_gate_requires_normal_provenance_and_resource_evidence():
     assert 'DeviceRequests' in verifier
     assert "expected_fallback = 'cuda_unavailable' if settings.device == 'auto' else None" in d03
     assert 'mem_limit: ${YUE2_MEMORY_LIMIT_GIB:-28}g' in overlay
+    assert 'DEVICE: ${YUE2_DEVICE:-cpu}' in overlay
+    assert 'user: "${MUSEFORGE_CONTAINER_UID:-1000}:${MUSEFORGE_CONTAINER_GID:-1000}"' in overlay
 
 
 @pytest.mark.skipif(not shutil.which('bash'), reason='bash is required for deployment behavior checks')

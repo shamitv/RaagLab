@@ -47,7 +47,7 @@ SAFE_EXTRA_KEYS = {
     "MUSEFORGE_RECOVERY_CHECKS", "MUSEFORGE_RELEASE_EVIDENCE_DIR",
     "MUSEFORGE_RELEASE_IN_CHECKOUT", "MUSEFORGE_RELEASE_ROOT", "MUSEFORGE_RELEASE_RUN_ID",
     "MUSEFORGE_TEST_PROJECT", "MUSEFORGE_TEST_PROJECT_PREFIX", "PHASE4_BROWSER",
-    "PHASE6_VISUAL", "YUE2_CPU_THREADS",
+    "PHASE6_VISUAL", "YUE2_CPU_THREADS", "MUSEFORGE_CONTAINER_UID", "MUSEFORGE_CONTAINER_GID",
 }
 
 
@@ -367,6 +367,8 @@ def inner_main(args: argparse.Namespace) -> int:
         "MUSEFORGE_RECOVERY_CHECKS": "1",
         "PHASE4_BROWSER": "1",
         "PHASE6_VISUAL": "1",
+        "MUSEFORGE_CONTAINER_UID": str(getattr(os, "getuid", lambda: 1000)()),
+        "MUSEFORGE_CONTAINER_GID": str(getattr(os, "getgid", lambda: 1000)()),
     })
     runtime_port = free_loopback_port()
     runtime_env = command_env({
