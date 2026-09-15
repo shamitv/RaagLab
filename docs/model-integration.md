@@ -44,6 +44,8 @@ Refinement, variation, regeneration, lyrics-only editing, non-English requests,
 and duration control remain unavailable or unverified; the UI must not present
 them as active behavior. The request's `Instrumental` value is retained for
 contract compatibility and is explicitly not a guarantee about YuE2 output.
+See the [YuE2 parameter reference](yue2-parameters.md) for the complete pinned
+runtime interface, defaults, ranges, examples, and the narrower MuseForge mapping.
 
 For YuE2, the request mapping is explicit: `brief`, genre, mood, instruments and
 tempo become the style prompt, and the persisted user-lyrics checkpoint becomes

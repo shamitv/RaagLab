@@ -48,6 +48,6 @@ bash scripts/stop.sh
 bash scripts/test.sh unit
 ```
 
-Data volumes survive normal stop/start. Start with the [new-machine deployment guide](docs/new-machine-deployment.md). See the [development guide](docs/development.md), [deployment handoff](docs/deployment-handoff.md), [model boundary](docs/model-integration.md), and [Phase 07 plan](docs/implementation/phases/07-song-first-experience/plan.md) for deeper reference.
+Data volumes survive normal stop/start. Start with the [new-machine deployment guide](docs/new-machine-deployment.md). See the [development guide](docs/development.md), [deployment handoff](docs/deployment-handoff.md), [model boundary](docs/model-integration.md), [YuE2 parameter reference](docs/yue2-parameters.md), and [Phase 07 plan](docs/implementation/phases/07-song-first-experience/plan.md) for deeper reference.
 
 QR links remain useful while their configured base address, this server, and the saved song are available. Network exposure, authentication, and public hosting are operator responsibilities.
