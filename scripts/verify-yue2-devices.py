@@ -165,6 +165,32 @@ def main() -> int:
                 raise RuntimeError("pinned musicgen-yue2-test_weights volume is required")
             (evidence / "weights-volume.json").write_text(volume.stdout.strip() + "\n", encoding="utf-8")
 
+        # Inspect the resolved Compose model, rather than trusting source-file
+        # defaults. This catches an env-file or profile override that silently
+        # shortens the normal inference budget for one service.
+        resolved = json.loads(run("config", "--format", "json", timeout=120))
+        resolved_deadlines: dict[str, dict[str, object]] = {}
+        required_by_service = {
+            "api": {"YUE2_PROCESS_TIMEOUT_SECONDS": "3600", "YUE2_WARMUP_TIMEOUT_SECONDS": "900",
+                    "ATTEMPT_DEADLINE_SECONDS": "3600", "HARD_WATCHDOG_SECONDS": "3660",
+                    "QUEUE_DEADLINE_SECONDS": "1800"},
+            "dispatcher": {"ATTEMPT_DEADLINE_SECONDS": "3600", "HARD_WATCHDOG_SECONDS": "3660",
+                           "QUEUE_DEADLINE_SECONDS": "1800"},
+            "worker-yue2": {"YUE2_PROCESS_TIMEOUT_SECONDS": "3600", "YUE2_WARMUP_TIMEOUT_SECONDS": "900",
+                            "ATTEMPT_DEADLINE_SECONDS": "3600", "HARD_WATCHDOG_SECONDS": "3660",
+                            "QUEUE_DEADLINE_SECONDS": "1800"},
+        }
+        for service, expected in required_by_service.items():
+            raw_environment = resolved.get("services", {}).get(service, {}).get("environment", {})
+            environment = (raw_environment if isinstance(raw_environment, dict)
+                           else dict(item.split("=", 1) for item in raw_environment if "=" in item))
+            observed = {key: environment.get(key) for key in expected}
+            if observed != expected:
+                raise RuntimeError(f"resolved {service} deadlines mismatch: {observed}")
+            resolved_deadlines[service] = observed
+        (evidence / "resolved-deadlines.json").write_text(
+            json.dumps(resolved_deadlines, indent=2) + "\n", encoding="utf-8")
+
         run("build", "api", "migrate", "dispatcher", "worker-yue2", "yue2-smoke-tests", timeout=3600)
         run("up", "-d", "--wait", "--wait-timeout", "1000", "api", "dispatcher", "worker-yue2", timeout=1800)
         container = run("ps", "-q", "worker-yue2").strip().splitlines()[-1]
