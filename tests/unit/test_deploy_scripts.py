@@ -30,8 +30,8 @@ def test_real_mode_selects_cpu_without_gpu_override():
     assert 'YUE2_DEVICE must be auto, cpu, or cuda' in lib
     assert 'host_gpu_runtime_available' in lib
     assert 'compose.yue2.gpu.yaml' in lib
-    assert 'device == cuda' in lib
-    assert 'device == auto' in lib
+    assert '[[ "$device" == cuda ]]' in lib
+    assert '[[ "$device" == auto ]]' in lib
 
 
 def test_cpu_gate_requires_normal_provenance_and_resource_evidence():

@@ -41,6 +41,13 @@ ENV_ALLOWLIST_EXACT = {
     "LOGNAME", "NO_COLOR", "PATH", "TERM", "TMP", "TEMP", "TMPDIR", "USER",
     "XDG_CONFIG_HOME", "XDG_RUNTIME_DIR",
 }
+SAFE_EXTRA_KEYS = {
+    "API_BASE_URL", "APP_PORT", "COMPOSE_PROJECT_NAME", "MUSEFORGE_EVIDENCE_DIR",
+    "MUSEFORGE_RECOVERY_CHECKS", "MUSEFORGE_RELEASE_EVIDENCE_DIR",
+    "MUSEFORGE_RELEASE_IN_CHECKOUT", "MUSEFORGE_RELEASE_ROOT", "MUSEFORGE_RELEASE_RUN_ID",
+    "MUSEFORGE_TEST_PROJECT", "MUSEFORGE_TEST_PROJECT_PREFIX", "PHASE4_BROWSER",
+    "PHASE6_VISUAL", "YUE2_CPU_THREADS",
+}
 
 
 def allowed_environment(source: dict[str, str] | None = None) -> dict[str, str]:
@@ -70,7 +77,8 @@ def owned_project(project: str) -> bool:
 def command_env(extra: dict[str, str] | None = None) -> dict[str, str]:
     env = dict(REPO_ENV)
     if extra:
-        env.update(extra)
+        env.update({key: value for key, value in extra.items()
+                    if key in SAFE_EXTRA_KEYS or key in ENV_ALLOWLIST_EXACT or key.startswith("LC_")})
     return env
 
 
