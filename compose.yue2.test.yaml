@@ -45,12 +45,12 @@ services:
       <<: *yue2-test-env
       MUSIC_PROVIDER: yue2
       LYRICS_PROVIDER: user
-      DEVICE: auto
+      DEVICE: ${YUE2_DEVICE:-cpu}
       PRECISION: bfloat16
       MODEL_ID: m-a-p/YuE2-3B
       MODEL_REVISION: 29b3558dd46954a0cd9021dc76d5c91864a0f1c7
       DECODER_REVISION: 9a94e1d0ea9f8087e98f77fa88df4a4068104d2a
-      HARD_WATCHDOG_SECONDS: 930
+      HARD_WATCHDOG_SECONDS: 3660
       D03_API_BASE: http://api:8000
       D03_EVIDENCE_DIR: /evidence
     networks: [backend]

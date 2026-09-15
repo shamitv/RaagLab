@@ -28,7 +28,8 @@ configured_yue2_device() {
     return
   fi
   if [[ -r "$DEPLOY_ROOT/.mode.env" ]]; then
-    awk -F= '$1 == "YUE2_DEVICE" { print $2; exit }' "$DEPLOY_ROOT/.mode.env"
+    awk -F= '$1 == "YUE2_DEVICE" { value=$2 } END { if (value != "") print value }' "$DEPLOY_ROOT/.mode.env"
+    return
   fi
   printf '%s\n' auto
 }
@@ -73,18 +74,26 @@ deployment_env() {
 }
 write_mode_env() {
   local mode="${1:?mode}"
+  local saved_device=""
+  if [[ -r "$DEPLOY_ROOT/.mode.env" ]]; then
+    saved_device="$(awk -F= '$1 == "YUE2_DEVICE" { value=$2 } END { print value }' "$DEPLOY_ROOT/.mode.env")"
+  fi
   deployment_env
-  cp "$DEPLOY_ENV_FILE" "$DEPLOY_ROOT/.mode.env"
+  local requested_device="${YUE2_DEVICE:-${saved_device:-auto}}"
+  # Start from the private base environment, removing every generated mode key
+  # so repeated mode switches cannot accumulate conflicting assignments.
+  local mode_tmp="$DEPLOY_ROOT/.mode.env.tmp"
+  awk -F= '!($1 ~ /^(MUSIC_PROVIDER|LYRICS_PROVIDER|DEVICE|PRECISION|MODEL_ID|MODEL_REVISION|DECODER_REVISION|YUE2_DEVICE|YUE2_TEST_SMOKE|YUE2_CPU_THREADS|YUE2_MODEL_DIR|YUE2_VAE_DIR|YUE2_MEMORY_BUDGET_GIB|YUE2_PROCESS_TIMEOUT_SECONDS|YUE2_WARMUP_TIMEOUT_SECONDS|YUE2_OFFLOAD_AR|WORKER_CONCURRENCY|ATTEMPT_DEADLINE_SECONDS|HARD_WATCHDOG_SECONDS|QUEUE_DEADLINE_SECONDS)$/) { print }' "$DEPLOY_ENV_FILE" > "$mode_tmp"
+  mv -f "$mode_tmp" "$DEPLOY_ROOT/.mode.env"
   if [[ "$mode" == real ]]; then
-    local requested_device="${YUE2_DEVICE:-auto}"
     [[ "$requested_device" == auto || "$requested_device" == cpu || "$requested_device" == cuda ]] || fail 'YUE2_DEVICE must be auto, cpu, or cuda'
     export MUSIC_PROVIDER=yue2 LYRICS_PROVIDER=user DEVICE="$requested_device" PRECISION=bfloat16
     export MODEL_ID=m-a-p/YuE2-3B MODEL_REVISION=29b3558dd46954a0cd9021dc76d5c91864a0f1c7
     export DECODER_REVISION=9a94e1d0ea9f8087e98f77fa88df4a4068104d2a
     export YUE2_DEVICE="$requested_device" YUE2_TEST_SMOKE=false YUE2_CPU_THREADS="${YUE2_CPU_THREADS:-4}"
     export YUE2_MODEL_DIR=/weights/model YUE2_VAE_DIR=/weights/vae
-    export YUE2_MEMORY_BUDGET_GIB=16 YUE2_PROCESS_TIMEOUT_SECONDS=900 YUE2_WARMUP_TIMEOUT_SECONDS=900
-    export YUE2_OFFLOAD_AR=false WORKER_CONCURRENCY=1 ATTEMPT_DEADLINE_SECONDS=900 HARD_WATCHDOG_SECONDS=930 QUEUE_DEADLINE_SECONDS=1800
+    export YUE2_MEMORY_BUDGET_GIB=16 YUE2_PROCESS_TIMEOUT_SECONDS=3600 YUE2_WARMUP_TIMEOUT_SECONDS=900
+    export YUE2_OFFLOAD_AR=false WORKER_CONCURRENCY=1 ATTEMPT_DEADLINE_SECONDS=3600 HARD_WATCHDOG_SECONDS=3660 QUEUE_DEADLINE_SECONDS=1800
     cat >> "$DEPLOY_ROOT/.mode.env" <<EOF
 MUSIC_PROVIDER=$MUSIC_PROVIDER
 LYRICS_PROVIDER=$LYRICS_PROVIDER
@@ -113,6 +122,7 @@ MUSIC_PROVIDER=mock
 LYRICS_PROVIDER=mock
 DEVICE=cpu
 PRECISION=float32
+YUE2_DEVICE=cpu
 EOF
   fi
   chmod 600 "$DEPLOY_ROOT/.mode.env"

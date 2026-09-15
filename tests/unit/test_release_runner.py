@@ -54,6 +54,22 @@ def test_timeout_keeps_partial_output(tmp_path, monkeypatch):
     assert "partial" in (tmp_path / "expected-timeout.log").read_text()
 
 
+@pytest.mark.skipif(sys.platform != "linux", reason="process-group semantics are Linux-specific")
+def test_timeout_terminates_process_group(tmp_path, monkeypatch):
+    monkeypatch.setattr(release, "EVIDENCE", tmp_path)
+    marker = tmp_path / "child.pid"
+    code = "import subprocess,sys,time; p=subprocess.Popen([sys.executable,'-c','import time; time.sleep(30)']); open(sys.argv[1],'w').write(str(p.pid)); time.sleep(30)"
+    with pytest.raises(release.ReleaseFailure, match="timed out"):
+        release.run_step("group-timeout", [sys.executable, "-c", code, str(marker)], timeout=0.2)
+    assert marker.exists()
+    child_pid = int(marker.read_text())
+    try:
+        state = (Path(f"/proc/{child_pid}/stat").read_text().split()[2])
+    except FileNotFoundError:
+        state = "gone"
+    assert state in {"gone", "Z"}
+
+
 def test_cleanup_failure_is_recorded(tmp_path, monkeypatch):
     monkeypatch.setattr(release, "EVIDENCE", tmp_path)
     result = release.cleanup_step(

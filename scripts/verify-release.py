@@ -16,6 +16,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+import signal
 import socket
 import subprocess
 import sys
@@ -96,19 +97,38 @@ def run_step(name: str, command: list[str], *, env: dict[str, str] | None = None
     started = time.monotonic()
     timed_out = False
     returncode: int | None = None
+    process = None
     try:
-        result = subprocess.run(
+        process = subprocess.Popen(
             command,
             cwd=cwd,
             env=env or REPO_ENV,
             text=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            timeout=timeout,
-            check=False,
+            start_new_session=(os.name != "nt"),
         )
-        output = _text_output(result.stdout)
-        returncode = result.returncode
+        try:
+            stdout, _ = process.communicate(timeout=timeout)
+            output = _text_output(stdout)
+            returncode = process.returncode
+        except subprocess.TimeoutExpired as exc:
+            partial = _text_output(exc.stdout)
+            if os.name == "nt":
+                process.kill()
+            else:
+                os.killpg(process.pid, signal.SIGTERM)
+            try:
+                tail, _ = process.communicate(timeout=10)
+            except subprocess.TimeoutExpired:
+                if os.name == "nt":
+                    process.kill()
+                else:
+                    os.killpg(process.pid, signal.SIGKILL)
+                tail, _ = process.communicate(timeout=10)
+            output = partial + _text_output(tail)
+            timed_out = True
+            returncode = process.returncode
     except subprocess.TimeoutExpired as exc:
         timed_out = True
         output = _text_output(exc.stdout) + _text_output(exc.stderr)
@@ -157,6 +177,33 @@ def cleanup_step(name: str, command: list[str], env: dict[str, str], *, timeout:
     if error:
         result["error"] = error
     return result
+
+
+def verify_project_ownership(project: str, env: dict[str, str]) -> None:
+    """Refuse destructive cleanup if any matching Docker resource is foreign."""
+    if not owned_project(project):
+        raise ReleaseFailure(f"refusing cleanup for unowned Compose project: {project}")
+    result = subprocess.run(
+        ["docker", "ps", "-aq", "--filter", f"label=com.docker.compose.project={project}"],
+        cwd=ROOT, env=env, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        timeout=30, check=False,
+    )
+    if result.returncode:
+        raise ReleaseFailure(f"could not inspect owned Compose resources for {project}")
+    for container in [line.strip() for line in result.stdout.splitlines() if line.strip()]:
+        inspected = subprocess.run(
+            ["docker", "inspect", "--format", "{{json .Config.Labels}}", container],
+            cwd=ROOT, env=env, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            timeout=30, check=False,
+        )
+        if inspected.returncode:
+            raise ReleaseFailure(f"could not inspect cleanup resource {container}")
+        try:
+            labels = json.loads(inspected.stdout.strip())
+        except ValueError as exc:
+            raise ReleaseFailure(f"invalid labels on cleanup resource {container}") from exc
+        if labels.get("com.docker.compose.project") != project:
+            raise ReleaseFailure(f"refusing cleanup for resource outside owned project {project}")
 
 
 def compose(project: str, *args: str) -> list[str]:
@@ -422,8 +469,21 @@ def inner_main(args: argparse.Namespace) -> int:
             cpu_env = command_env({"YUE2_CPU_THREADS": "4"})
             run_step("real-cpu-gate", ["python3", "scripts/verify-yue2-devices.py", "--cpu", "--normal",
                                         "--min-host-memory-gib", "32", "--memory-limit-gib", "28",
-                                        "--evidence-dir", str(cpu_evidence)], env=cpu_env, timeout=7200)
+                                        "--evidence-dir", str(cpu_evidence)], env=cpu_env, timeout=7800)
+            accepted = json.loads((cpu_evidence / "accepted.json").read_text(encoding="utf-8"))
+            browser_compose = [*compose(runtime_project), "-f", "compose.test.yaml"]
+            browser_env = dict(cpu_env, D03_PROJECT_ID=accepted["project_id"],
+                               PLAYWRIGHT_OUTPUT_DIR="/evidence/browser")
+            run_step("real-cpu-browser", [*browser_compose, "run", "--rm", "--no-deps",
+                                           "-e", f"D03_PROJECT_ID={accepted['project_id']}",
+                                           "-e", "PLAYWRIGHT_OUTPUT_DIR=/evidence/browser",
+                                           "-v", f"{cpu_evidence}:/evidence",
+                                           "browser-tests", "npm", "run", "test:browser", "--",
+                                           "d03-real.spec.ts", "--project=desktop"],
+                     env=browser_env, timeout=1200)
             release["acceptance"]["normal-mode-yue2-cpu"] = "passed"
+            release["acceptance"]["normal-mode-yue2-browser"] = "passed"
+            release["cpu_timing"] = json.loads((cpu_evidence / "timing.json").read_text(encoding="utf-8")) if (cpu_evidence / "timing.json").exists() else {}
         static_audit()
     except (ReleaseFailure, AssertionError, OSError, subprocess.TimeoutExpired) as exc:
         failure = exc
@@ -432,11 +492,21 @@ def inner_main(args: argparse.Namespace) -> int:
     finally:
         cleanup: list[dict[str, object]] = []
         if runtime_setup and owned_project(runtime_project):
-            cleanup.append(cleanup_step("cleanup-runtime-stop", ["bash", "scripts/stop.sh"], runtime_env))
-            cleanup.append(cleanup_step("cleanup-runtime-down", [*compose(runtime_project), "down", "--volumes", "--remove-orphans"], runtime_env))
+            try:
+                verify_project_ownership(runtime_project, runtime_env)
+            except (OSError, ReleaseFailure, subprocess.TimeoutExpired) as exc:
+                cleanup.append({"name": "cleanup-runtime-ownership", "returncode": 1, "error": str(exc)})
+            else:
+                cleanup.append(cleanup_step("cleanup-runtime-stop", ["bash", "scripts/stop.sh"], runtime_env))
+                cleanup.append(cleanup_step("cleanup-runtime-down", [*compose(runtime_project), "down", "--volumes", "--remove-orphans"], runtime_env))
         if owned_project(phase_project):
-            cleanup.append(cleanup_step("cleanup-phase-down", [*compose(phase_project, "-f", "compose.yaml", "-f", "compose.test.yaml"),
-                                                                 "down", "--volumes", "--remove-orphans"], phase_env))
+            try:
+                verify_project_ownership(phase_project, phase_env)
+            except (OSError, ReleaseFailure, subprocess.TimeoutExpired) as exc:
+                cleanup.append({"name": "cleanup-phase-ownership", "returncode": 1, "error": str(exc)})
+            else:
+                cleanup.append(cleanup_step("cleanup-phase-down", [*compose(phase_project, "-f", "compose.yaml", "-f", "compose.test.yaml"),
+                                                                     "down", "--volumes", "--remove-orphans"], phase_env))
         release["cleanup"] = cleanup
         cleanup_failures = [item for item in cleanup if item.get("returncode") not in (0, None) or item.get("error")]
         release["outcomes"] = outcomes

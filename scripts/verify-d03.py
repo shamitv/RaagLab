@@ -145,6 +145,13 @@ def main():
         assert runtime['effective_settings']['semantic_sampling']['max_tokens'] == 32
         assert 0 < version['audio']['duration_seconds'] < 5
     else:
+        # Full acceptance must use the model's normal symbolic planner and
+        # sampling defaults.  Smoke-only token overrides must never leak into
+        # a normal job, and the pinned runner must report no truncation.
+        assert runtime['effective_settings']['cot'] == 'full'
+        assert runtime['effective_settings']['semantic_sampling'] is None
+        assert not any(runtime['validation'].get('truncated', {}).values())
+        assert runtime['validation']['decoded']['passed']
         assert version['audio']['duration_seconds'] > 5
     assert provenance['runtime']['requested_duration_seconds'] == 8
     status, headers, audio = get(version['audio']['url'])

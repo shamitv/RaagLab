@@ -16,6 +16,7 @@ import threading
 import time
 import re
 import hashlib
+import signal
 from urllib.request import urlopen
 from uuid import uuid4
 
@@ -41,7 +42,7 @@ def available_memory_gib() -> float | None:
 
 
 def api_audio_snapshot(origin: str, audio_url: str) -> str:
-    with urlopen(f"{origin}{audio_url}") as response:
+    with urlopen(f"{origin}{audio_url}", timeout=30) as response:
         return hashlib.sha256(response.read()).hexdigest()
 
 
@@ -80,24 +81,47 @@ def main() -> int:
         compose += ["-f", "compose.yue2.gpu.yaml"]
     compose += ["-f", "compose.yue2.test.yaml"]
 
-    def run(*command: str, timeout: int = 1800):
-        log = evidence / ("compose-" + "-".join(command[:2]) + ".log")
+    command_index = 0
+
+    def run(*command: str, timeout: int = 1800, compose_cmd=None):
+        nonlocal command_index
+        command_index += 1
+        prefix = "-".join(re.sub(r"[^A-Za-z0-9_.-]", "_", item) for item in command[:2])
+        log = evidence / f"compose-{command_index:02d}-{prefix}.log"
+        argv = [*(compose_cmd or compose), *command]
         try:
-            result = subprocess.run(
-                [*compose, *command], cwd=ROOT, env=env, check=False,
-                timeout=timeout, text=True,
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-            )
-            output = result.stdout or ""
+            process = subprocess.Popen(argv, cwd=ROOT, env=env, text=True,
+                                       stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                       start_new_session=(os.name != 'nt'))
+            try:
+                output, _ = process.communicate(timeout=timeout)
+            except subprocess.TimeoutExpired as exc:
+                partial = exc.stdout or ""
+                if os.name == 'nt':
+                    process.kill()
+                else:
+                    os.killpg(process.pid, signal.SIGTERM)
+                try:
+                    tail, _ = process.communicate(timeout=10)
+                except subprocess.TimeoutExpired:
+                    if os.name == 'nt':
+                        process.kill()
+                    else:
+                        os.killpg(process.pid, signal.SIGKILL)
+                    tail, _ = process.communicate(timeout=10)
+                output = (partial.decode(errors='replace') if isinstance(partial, bytes) else partial or '') + (tail or '')
+                log.write_text(output, encoding="utf-8")
+                raise
+            output = output or ""
         except subprocess.TimeoutExpired as exc:
-            output = (exc.stdout or "")
-            if isinstance(output, bytes):
-                output = output.decode(errors="replace")
-            log.write_text(output, encoding="utf-8")
+            if not log.exists():
+                partial = exc.stdout or ""
+                log.write_text(partial.decode(errors='replace') if isinstance(partial, bytes) else partial,
+                               encoding="utf-8")
             raise
         log.write_text(output, encoding="utf-8")
-        if result.returncode:
-            raise RuntimeError(f"compose {' '.join(command)} failed with {result.returncode}")
+        if process.returncode:
+            raise RuntimeError(f"compose {' '.join(command)} failed with {process.returncode}")
         return output
 
     stop_samples = threading.Event()
@@ -108,13 +132,16 @@ def main() -> int:
 
     def sample_worker(container: str) -> None:
         while not stop_samples.is_set():
-            result = subprocess.run(
-                ["docker", "stats", "--no-stream", "--format", "{{json .}}", container],
-                capture_output=True, text=True, check=False,
-            )
-            if result.returncode == 0 and result.stdout.strip():
-                samples.append({"observed_at": time.time(), "container": container,
-                                "stats": result.stdout.strip()})
+            try:
+                result = subprocess.run(
+                    ["docker", "stats", "--no-stream", "--format", "{{json .}}", container],
+                    capture_output=True, text=True, check=False, timeout=30,
+                )
+                if result.returncode == 0 and result.stdout.strip():
+                    samples.append({"observed_at": time.time(), "container": container,
+                                    "stats": result.stdout.strip()})
+            except (OSError, subprocess.TimeoutExpired):
+                pass
             stop_samples.wait(5)
 
     try:
@@ -132,13 +159,18 @@ def main() -> int:
                 "worker_memory_limit_gib": args.memory_limit_gib,
                 "cpu_threads": int(env.get("YUE2_CPU_THREADS", "4")),
             }, indent=2) + "\n")
+            volume = subprocess.run(["docker", "volume", "inspect", "musicgen-yue2-test_weights", "--format", "{{json .}}"],
+                                    capture_output=True, text=True, timeout=30, check=False)
+            if volume.returncode or not volume.stdout.strip():
+                raise RuntimeError("pinned musicgen-yue2-test_weights volume is required")
+            (evidence / "weights-volume.json").write_text(volume.stdout.strip() + "\n", encoding="utf-8")
 
         run("build", "api", "migrate", "dispatcher", "worker-yue2", "yue2-smoke-tests", timeout=3600)
         run("up", "-d", "--wait", "--wait-timeout", "1000", "api", "dispatcher", "worker-yue2", timeout=1800)
         container = run("ps", "-q", "worker-yue2").strip().splitlines()[-1]
         if not container:
             raise RuntimeError("worker-yue2 container id was not reported")
-        inspect = subprocess.run(["docker", "inspect", container], capture_output=True, text=True, check=True)
+        inspect = subprocess.run(["docker", "inspect", container], capture_output=True, text=True, check=True, timeout=30)
         inspection = json.loads(inspect.stdout)[0]
         (evidence / "worker-inspect.json").write_text(json.dumps({
             "id": container,
@@ -147,6 +179,17 @@ def main() -> int:
             "env": [entry for entry in inspection.get("Config", {}).get("Env", [])
                     if not any(secret in entry.upper() for secret in ("PASSWORD", "TOKEN", "SECRET"))],
         }, indent=2) + "\n")
+        worker_env = dict(entry.split('=', 1) for entry in inspection.get("Config", {}).get("Env", []) if '=' in entry)
+        if worker_env.get('DEVICE') != requested_device:
+            raise RuntimeError(f"worker DEVICE mismatch: expected {requested_device}, got {worker_env.get('DEVICE')}")
+        if worker_env.get('YUE2_TEST_SMOKE') != str(smoke).lower():
+            raise RuntimeError("worker smoke mode mismatch")
+        if not smoke and worker_env.get('YUE2_PROCESS_TIMEOUT_SECONDS') != '3600':
+            raise RuntimeError("normal CPU worker process timeout is not 3600 seconds")
+        if not smoke and worker_env.get('ATTEMPT_DEADLINE_SECONDS') != '3600':
+            raise RuntimeError("normal CPU worker attempt deadline is not 3600 seconds")
+        if args.cpu and inspection.get("HostConfig", {}).get("Memory", 0) < args.memory_limit_gib * 1024 ** 3 * 0.99:
+            raise RuntimeError("CPU worker memory limit is below the requested budget")
         if args.cpu and inspection.get("HostConfig", {}).get("DeviceRequests"):
             raise RuntimeError("CPU verification worker unexpectedly has GPU device requests")
         sampler = threading.Thread(target=sample_worker, args=(container,), daemon=True)
@@ -178,7 +221,7 @@ def main() -> int:
                 "before_sha256": before_hash,
                 "after_sha256": after_hash,
             }, indent=2) + "\n")
-        (evidence / "timing.json").write_text(json.dumps({
+        (evidence / "verifier-timing.json").write_text(json.dumps({
             "requested_device": requested_device,
             "expected_device": expected_device,
             "smoke": smoke,
@@ -198,12 +241,19 @@ def main() -> int:
         (evidence / "resource-samples.json").write_text(json.dumps(samples, indent=2) + "\n")
         if owned_project(project):
             try:
+                ids = subprocess.run([*compose, "ps", "-q"], cwd=ROOT, env=env,
+                                     capture_output=True, text=True, timeout=30, check=False).stdout.splitlines()
+                for resource in ids:
+                    labels = subprocess.run(["docker", "inspect", "--format", "{{ index .Config.Labels \"com.docker.compose.project\" }}", resource],
+                                             capture_output=True, text=True, timeout=30, check=True).stdout.strip()
+                    if labels != project:
+                        raise RuntimeError("refusing cleanup for resource outside owned Compose project")
                 with (evidence / "services.log").open("w") as log:
                     logs_result = subprocess.run([*compose, "logs", "--no-color"], cwd=ROOT, env=env,
                                                  stdout=log, stderr=subprocess.STDOUT, timeout=120, check=False)
                     if logs_result.returncode:
                         cleanup_error = True
-            except (OSError, subprocess.TimeoutExpired) as exc:
+            except (OSError, RuntimeError, subprocess.TimeoutExpired, subprocess.CalledProcessError) as exc:
                 cleanup_error = True
                 (evidence / "cleanup-errors.log").write_text(str(exc) + "\n", encoding="utf-8")
             try:
