@@ -360,6 +360,16 @@ def inner_main(args: argparse.Namespace) -> int:
     runtime_project = f"museforge-phase6-runtime-{uuid.uuid4().hex[:10]}"
     phase_evidence = EVIDENCE / "recovery-gate"
     phase_evidence.mkdir(parents=True, exist_ok=True)
+    # Compose bind-mounts browser artifacts from the disposable checkout. Make
+    # the mount root writable before Docker creates it so browser containers
+    # running as the host UID can retain their own traces without leaving
+    # root-owned files that block worktree cleanup.
+    test_results_root = ROOT / "test-results"
+    test_results_root.mkdir(parents=True, exist_ok=True)
+    try:
+        test_results_root.chmod(0o777)
+    except OSError:
+        pass
     phase_env = command_env({
         "MUSEFORGE_TEST_PROJECT": phase_project,
         "MUSEFORGE_TEST_PROJECT_PREFIX": "museforge-phase6-test-",
