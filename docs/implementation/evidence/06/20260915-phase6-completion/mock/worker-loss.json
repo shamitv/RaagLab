@@ -1,0 +1,84 @@
+{
+  "last_observed_before_kill": {
+    "id": "f9e5749a-26ef-4d65-9d6c-5fca61e1bf6c",
+    "project_id": "b698934c-0dc1-480e-9348-97f1b70305d2",
+    "operation": "generate",
+    "retry_of_job_id": null,
+    "state": "running",
+    "stage": "composing_music",
+    "progress": null,
+    "attempt_count": 1,
+    "cancellation_requested_at": null,
+    "result_version_id": null,
+    "created_at": "2026-09-15T07:51:37.349551Z",
+    "completed_at": null,
+    "correlation_id": "f1296472-5130-47e6-8b87-52c45f3a30ef",
+    "dispatch_sequence": 1,
+    "error": null,
+    "version_url": null,
+    "dispatch_status": "published",
+    "attempts": [
+      {
+        "attempt_number": 1,
+        "worker_id": "43270e08-caa9-41df-a390-d4262f7f9907",
+        "started_at": "2026-09-15T07:51:39.090509Z",
+        "ended_at": null,
+        "outcome": null
+      }
+    ],
+    "provider_readiness": {
+      "state": "busy",
+      "last_observed_at": "2026-09-15T07:51:39.112128Z",
+      "device": null,
+      "fallback_reason": null
+    }
+  },
+  "accepted": {
+    "job_id": "f9e5749a-26ef-4d65-9d6c-5fca61e1bf6c",
+    "project_id": "b698934c-0dc1-480e-9348-97f1b70305d2",
+    "state": "queued",
+    "status_url": "/api/v1/jobs/f9e5749a-26ef-4d65-9d6c-5fca61e1bf6c",
+    "project_url": "/projects/b698934c-0dc1-480e-9348-97f1b70305d2"
+  },
+  "completed_after_worker_recovery": {
+    "id": "f9e5749a-26ef-4d65-9d6c-5fca61e1bf6c",
+    "project_id": "b698934c-0dc1-480e-9348-97f1b70305d2",
+    "operation": "generate",
+    "retry_of_job_id": null,
+    "state": "succeeded",
+    "stage": "saving_result",
+    "progress": null,
+    "attempt_count": 2,
+    "cancellation_requested_at": null,
+    "result_version_id": "7ddcb844-f934-4049-baf4-65d807272bb6",
+    "created_at": "2026-09-15T07:51:37.349551Z",
+    "completed_at": "2026-09-15T07:52:32.608430Z",
+    "correlation_id": "f1296472-5130-47e6-8b87-52c45f3a30ef",
+    "dispatch_sequence": 2,
+    "error": null,
+    "version_url": "/api/v1/versions/7ddcb844-f934-4049-baf4-65d807272bb6",
+    "dispatch_status": "published",
+    "attempts": [
+      {
+        "attempt_number": 1,
+        "worker_id": "43270e08-caa9-41df-a390-d4262f7f9907",
+        "started_at": "2026-09-15T07:51:39.090509Z",
+        "ended_at": "2026-09-15T07:52:11.526194Z",
+        "outcome": "retrying"
+      },
+      {
+        "attempt_number": 2,
+        "worker_id": "43270e08-caa9-41df-a390-d4262f7f9907",
+        "started_at": "2026-09-15T07:52:15.580732Z",
+        "ended_at": "2026-09-15T07:52:32.608430Z",
+        "outcome": "succeeded"
+      }
+    ],
+    "provider_readiness": {
+      "state": "ready",
+      "last_observed_at": "2026-09-15T07:52:32.603691Z",
+      "device": null,
+      "fallback_reason": null
+    }
+  }
+}

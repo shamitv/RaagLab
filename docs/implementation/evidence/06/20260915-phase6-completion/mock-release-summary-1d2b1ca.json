@@ -1,0 +1,943 @@
+{
+  "phase": "06-release-verification-and-handoff",
+  "run_id": "20260915-074347-79dfab6d",
+  "source_revision": "1d2b1ca0f271557f93b64e45572858b28cbd521d",
+  "candidate_revision": "1d2b1ca0f271557f93b64e45572858b28cbd521d",
+  "phase_project": "museforge-phase6-test-0dd2b2ec41",
+  "runtime_project": "museforge-phase6-runtime-31cc5c5f9f",
+  "environment_allowlist": [
+    "CI",
+    "DOCKER_CONFIG",
+    "DOCKER_CONTEXT",
+    "DOCKER_HOST",
+    "HOME",
+    "LANG",
+    "LOGNAME",
+    "NO_COLOR",
+    "PATH",
+    "TEMP",
+    "TERM",
+    "TMP",
+    "TMPDIR",
+    "USER",
+    "XDG_CONFIG_HOME",
+    "XDG_RUNTIME_DIR"
+  ],
+  "environment": {
+    "python": "Python 3.12.3",
+    "docker": "29.8.0",
+    "compose": "5.5.1",
+    "sanitized_env": {
+      "APP_PORT": "8000",
+      "APP_BIND": "127.0.0.1",
+      "POSTGRES_USER": "museforge",
+      "POSTGRES_PASSWORD": "<redacted>",
+      "POSTGRES_DB": "museforge",
+      "RABBITMQ_DEFAULT_USER": "museforge",
+      "RABBITMQ_DEFAULT_PASS": "<redacted>",
+      "DATABASE_URL": "<redacted>",
+      "BROKER_URL": "<redacted>",
+      "WORKSPACE_ID": "00000000-0000-4000-8000-000000000001",
+      "ARTIFACT_ROOT": "/var/lib/museforge/artifacts",
+      "WEB_DIST": "/app/web",
+      "LYRICS_PROVIDER": "mock",
+      "MUSIC_PROVIDER": "mock",
+      "MOCK_QUEUE": "museforge.mock.v1",
+      "YUE2_QUEUE": "museforge.yue2.v1",
+      "QUARANTINE_QUEUE": "museforge.quarantine.v1",
+      "LOG_LEVEL": "INFO",
+      "WEIGHTS_DIR": "/var/lib/museforge/weights",
+      "CACHE_DIR": "/var/cache/museforge",
+      "DEVICE": "cpu",
+      "PRECISION": "float32",
+      "WORKER_CONCURRENCY": "1",
+      "DURATION_SECONDS": "8",
+      "DISPATCHER_POLL_SECONDS": "1",
+      "RECONCILIATION_SECONDS": "5",
+      "OUTBOX_CLAIM_SECONDS": "15",
+      "BROKER_TIMEOUT_SECONDS": "5",
+      "UNCLAIMED_SECONDS": "60",
+      "QUEUE_DEADLINE_SECONDS": "900",
+      "HEARTBEAT_SECONDS": "5",
+      "LEASE_SECONDS": "30",
+      "ATTEMPT_DEADLINE_SECONDS": "60",
+      "HARD_WATCHDOG_SECONDS": "75",
+      "CANCELLATION_GRACE_SECONDS": "10",
+      "MAX_ATTEMPTS": "3",
+      "ORPHAN_GRACE_SECONDS": "86400"
+    },
+    "locks": {
+      "uv.lock": "7395c769ee6c60f079f1f34266c0e61f4d3129fd63a5d5dedaccccdb335779f8",
+      "apps/web/package-lock.json": "46bbdf32b6e446266ff61c08240e161936ecd786629e6cfcde9a273791588fcf",
+      "packaging/yue2/requirements.museforge.lock": "e7f9fd03d219610092bae6ffb23df586ec0d122b2113ee159b42728ccf556d4f",
+      "packaging/yue2/model-lock.json": "8f375ed85814c18e727bb525b25de2449aaadf0a8f6d54f58dc4c58ebbbaf945"
+    },
+    "runtime_overrides": {
+      "COMPOSE_PROJECT_NAME": "museforge-phase6-runtime-31cc5c5f9f",
+      "APP_PORT": "45911 (ephemeral loopback port)"
+    },
+    "node": "v24.21.0",
+    "container_python": "Python 3.13.15",
+    "container_node": "v24.21.0"
+  },
+  "outcomes": [
+    {
+      "name": "candidate-revision",
+      "command": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "1d2b1ca0f271557f93b64e45572858b28cbd521d^{commit}"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.05,
+      "log": "candidate-revision.log"
+    },
+    {
+      "name": "source-revision",
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.043,
+      "log": "source-revision.log"
+    },
+    {
+      "name": "setup",
+      "command": [
+        "bash",
+        "scripts/setup.sh"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.5,
+      "log": "setup.log"
+    },
+    {
+      "name": "python-version",
+      "command": [
+        "python3",
+        "--version"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.003,
+      "log": "python-version.log"
+    },
+    {
+      "name": "docker-version",
+      "command": [
+        "docker",
+        "version",
+        "--format",
+        "{{.Server.Version}}"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.103,
+      "log": "docker-version.log"
+    },
+    {
+      "name": "compose-version",
+      "command": [
+        "docker",
+        "compose",
+        "version",
+        "--short"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.112,
+      "log": "compose-version.log"
+    },
+    {
+      "name": "container-node-version",
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "museforge-phase6-test-0dd2b2ec41",
+        "--env-file",
+        ".env",
+        "--profile",
+        "mock",
+        "-f",
+        "compose.yaml",
+        "-f",
+        "compose.test.yaml",
+        "run",
+        "--rm",
+        "--no-deps",
+        "browser-tests",
+        "node",
+        "--version"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 2.592,
+      "log": "container-node-version.log"
+    },
+    {
+      "name": "recovery-gate",
+      "command": [
+        "python3",
+        "scripts/verify-phase2.py"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 518.635,
+      "log": "recovery-gate.log"
+    },
+    {
+      "name": "frontend-unit",
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "museforge-phase6-test-0dd2b2ec41",
+        "--env-file",
+        ".env",
+        "--profile",
+        "mock",
+        "-f",
+        "compose.yaml",
+        "-f",
+        "compose.test.yaml",
+        "run",
+        "--rm",
+        "--no-deps",
+        "--user",
+        "0:0",
+        "browser-tests",
+        "npm",
+        "test"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 1.156,
+      "log": "frontend-unit.log"
+    },
+    {
+      "name": "container-python-version",
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "museforge-phase6-test-0dd2b2ec41",
+        "--env-file",
+        ".env",
+        "--profile",
+        "mock",
+        "-f",
+        "compose.yaml",
+        "-f",
+        "compose.test.yaml",
+        "run",
+        "--rm",
+        "--no-deps",
+        "tests",
+        "python",
+        "--version"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.7,
+      "log": "container-python-version.log"
+    },
+    {
+      "name": "container-node-version",
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "museforge-phase6-test-0dd2b2ec41",
+        "--env-file",
+        ".env",
+        "--profile",
+        "mock",
+        "-f",
+        "compose.yaml",
+        "-f",
+        "compose.test.yaml",
+        "run",
+        "--rm",
+        "--no-deps",
+        "browser-tests",
+        "node",
+        "--version"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.636,
+      "log": "container-node-version.log"
+    },
+    {
+      "name": "frontend-cleanup",
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "museforge-phase6-test-0dd2b2ec41",
+        "--env-file",
+        ".env",
+        "--profile",
+        "mock",
+        "-f",
+        "compose.yaml",
+        "-f",
+        "compose.test.yaml",
+        "down",
+        "--volumes",
+        "--remove-orphans"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.414,
+      "log": "frontend-cleanup.log"
+    },
+    {
+      "name": "start",
+      "command": [
+        "bash",
+        "scripts/start.sh",
+        "mock"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 18.909,
+      "log": "start.log"
+    },
+    {
+      "name": "api-port",
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "museforge-phase6-runtime-31cc5c5f9f",
+        "--env-file",
+        ".env",
+        "--profile",
+        "mock",
+        "port",
+        "api",
+        "8000"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.212,
+      "log": "api-port.log"
+    },
+    {
+      "name": "migrate",
+      "command": [
+        "bash",
+        "scripts/migrate.sh"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 4.16,
+      "log": "migrate.log"
+    },
+    {
+      "name": "seed",
+      "command": [
+        "bash",
+        "scripts/seed-demo.sh"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 6.197,
+      "log": "seed.log"
+    },
+    {
+      "name": "smoke",
+      "command": [
+        "bash",
+        "scripts/smoke.sh",
+        "mock"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 2.108,
+      "log": "smoke.log"
+    },
+    {
+      "name": "logs",
+      "command": [
+        "bash",
+        "scripts/logs.sh"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.593,
+      "log": "logs.log"
+    },
+    {
+      "name": "artifact-maintenance-dry-run",
+      "command": [
+        "bash",
+        "scripts/artifact-gc.sh"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 3.731,
+      "log": "artifact-maintenance-dry-run.log"
+    },
+    {
+      "name": "rebuild-update",
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "museforge-phase6-runtime-31cc5c5f9f",
+        "--env-file",
+        ".env",
+        "--profile",
+        "mock",
+        "up",
+        "-d",
+        "--build",
+        "--wait",
+        "--wait-timeout",
+        "180"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 4.418,
+      "log": "rebuild-update.log"
+    },
+    {
+      "name": "stop-preserving-volumes",
+      "command": [
+        "bash",
+        "scripts/stop.sh"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 5.185,
+      "log": "stop-preserving-volumes.log"
+    },
+    {
+      "name": "restart-after-stop",
+      "command": [
+        "bash",
+        "scripts/start.sh",
+        "mock"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 16.825,
+      "log": "restart-after-stop.log"
+    },
+    {
+      "name": "api-port-after-stop",
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "museforge-phase6-runtime-31cc5c5f9f",
+        "--env-file",
+        ".env",
+        "--profile",
+        "mock",
+        "port",
+        "api",
+        "8000"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.217,
+      "log": "api-port-after-stop.log"
+    },
+    {
+      "name": "migration-head",
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "museforge-phase6-runtime-31cc5c5f9f",
+        "--env-file",
+        ".env",
+        "--profile",
+        "mock",
+        "exec",
+        "-T",
+        "db",
+        "psql",
+        "-U",
+        "museforge",
+        "-d",
+        "museforge",
+        "-Atc",
+        "select version_num from alembic_version"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.258,
+      "log": "migration-head.log"
+    },
+    {
+      "name": "runtime-images",
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "museforge-phase6-runtime-31cc5c5f9f",
+        "--env-file",
+        ".env",
+        "--profile",
+        "mock",
+        "config",
+        "--images"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.256,
+      "log": "runtime-images.log"
+    },
+    {
+      "name": "runtime-image-inspect-0",
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "museforge-phase6-runtime-31cc5c5f9f-api",
+        "--format",
+        "{{json .}}"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.106,
+      "log": "runtime-image-inspect-0.log"
+    },
+    {
+      "name": "runtime-image-inspect-1",
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "museforge-phase6-runtime-31cc5c5f9f-dispatcher",
+        "--format",
+        "{{json .}}"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.108,
+      "log": "runtime-image-inspect-1.log"
+    },
+    {
+      "name": "runtime-image-inspect-2",
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "museforge-phase6-runtime-31cc5c5f9f-worker-mock",
+        "--format",
+        "{{json .}}"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.111,
+      "log": "runtime-image-inspect-2.log"
+    },
+    {
+      "name": "runtime-image-inspect-3",
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "postgres:18.6-bookworm@sha256:1c59e2c3c818eaa0f0628f695b36e7c9e362d6b219b36a54a32df645cbd7e1af",
+        "--format",
+        "{{json .}}"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.114,
+      "log": "runtime-image-inspect-3.log"
+    },
+    {
+      "name": "runtime-image-inspect-4",
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "rabbitmq:4.3.5@sha256:078107e036374f4d9bbeab8766799abe474bf252aedb4617ddd2edfa8e2c2c05",
+        "--format",
+        "{{json .}}"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.125,
+      "log": "runtime-image-inspect-4.log"
+    },
+    {
+      "name": "runtime-image-inspect-5",
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "museforge-phase6-runtime-31cc5c5f9f-migrate",
+        "--format",
+        "{{json .}}"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.101,
+      "log": "runtime-image-inspect-5.log"
+    },
+    {
+      "name": "phase-images",
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "museforge-phase6-test-0dd2b2ec41",
+        "--env-file",
+        ".env",
+        "--profile",
+        "mock",
+        "-f",
+        "compose.yaml",
+        "-f",
+        "compose.test.yaml",
+        "config",
+        "--images"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.202,
+      "log": "phase-images.log"
+    },
+    {
+      "name": "phase-image-inspect-0",
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "museforge-phase6-test-0dd2b2ec41-migrate",
+        "--format",
+        "{{json .}}"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.11,
+      "log": "phase-image-inspect-0.log"
+    },
+    {
+      "name": "phase-image-inspect-1",
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "museforge-phase6-test-0dd2b2ec41-dispatcher",
+        "--format",
+        "{{json .}}"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.104,
+      "log": "phase-image-inspect-1.log"
+    },
+    {
+      "name": "phase-image-inspect-2",
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "rabbitmq:4.3.5@sha256:078107e036374f4d9bbeab8766799abe474bf252aedb4617ddd2edfa8e2c2c05",
+        "--format",
+        "{{json .}}"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.102,
+      "log": "phase-image-inspect-2.log"
+    },
+    {
+      "name": "phase-image-inspect-3",
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "museforge-phase6-test-0dd2b2ec41-api",
+        "--format",
+        "{{json .}}"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.112,
+      "log": "phase-image-inspect-3.log"
+    },
+    {
+      "name": "phase-image-inspect-4",
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "museforge-phase6-test-0dd2b2ec41-tests",
+        "--format",
+        "{{json .}}"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.151,
+      "log": "phase-image-inspect-4.log"
+    },
+    {
+      "name": "phase-image-inspect-5",
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "museforge-phase6-test-0dd2b2ec41-worker-mock",
+        "--format",
+        "{{json .}}"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.131,
+      "log": "phase-image-inspect-5.log"
+    },
+    {
+      "name": "phase-image-inspect-6",
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "museforge-phase6-test-0dd2b2ec41-browser-tests",
+        "--format",
+        "{{json .}}"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.12,
+      "log": "phase-image-inspect-6.log"
+    },
+    {
+      "name": "phase-image-inspect-7",
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "postgres:18.6-bookworm@sha256:1c59e2c3c818eaa0f0628f695b36e7c9e362d6b219b36a54a32df645cbd7e1af",
+        "--format",
+        "{{json .}}"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.106,
+      "log": "phase-image-inspect-7.log"
+    },
+    {
+      "name": "git-diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.05,
+      "log": "git-diff-check.log"
+    },
+    {
+      "name": "tracked-files",
+      "command": [
+        "git",
+        "ls-files"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "duration_seconds": 0.025,
+      "log": "tracked-files.log"
+    }
+  ],
+  "acceptance": {
+    "A01-A12": "passed by isolated recovery/browser gate",
+    "restart-and-update-persistence": "passed",
+    "documented-lifecycle": "passed",
+    "frontend-unit": "passed",
+    "workspace-native-zoom": "passed by recovery gate workspace-inspection output"
+  },
+  "cleanup": [
+    {
+      "name": "cleanup-runtime-stop",
+      "command": [
+        "bash",
+        "scripts/stop.sh"
+      ],
+      "returncode": 0,
+      "duration_seconds": 5.662,
+      "log": "cleanup-runtime-stop.log"
+    },
+    {
+      "name": "cleanup-runtime-down",
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "museforge-phase6-runtime-31cc5c5f9f",
+        "--env-file",
+        ".env",
+        "--profile",
+        "mock",
+        "down",
+        "--volumes",
+        "--remove-orphans"
+      ],
+      "returncode": 0,
+      "duration_seconds": 0.271,
+      "log": "cleanup-runtime-down.log"
+    },
+    {
+      "name": "cleanup-phase-down",
+      "command": [
+        "docker",
+        "compose",
+        "--project-name",
+        "museforge-phase6-test-0dd2b2ec41",
+        "--env-file",
+        ".env",
+        "--profile",
+        "mock",
+        "-f",
+        "compose.yaml",
+        "-f",
+        "compose.test.yaml",
+        "down",
+        "--volumes",
+        "--remove-orphans"
+      ],
+      "returncode": 0,
+      "duration_seconds": 0.189,
+      "log": "cleanup-phase-down.log"
+    }
+  ],
+  "migration_head": {
+    "revision": "0004_worker_runtime",
+    "readiness": {
+      "status": "ready",
+      "dependencies": {
+        "database": "ready",
+        "schema": "ready",
+        "artifacts": "ready"
+      },
+      "services": {
+        "dispatcher": "ready",
+        "worker-mock": "ready",
+        "broker": "observed_connected",
+        "provider": "ready"
+      },
+      "generation": "ready"
+    }
+  },
+  "images": {
+    "runtime": [
+      {
+        "name": "museforge-phase6-runtime-31cc5c5f9f-api",
+        "id": "sha256:4bdc5d2ccf3f291f5f6f7ee9192dcbe21aa7832a4ab3763e89ad02c1c7e0d221",
+        "repo_digests": [
+          "museforge-phase6-runtime-31cc5c5f9f-api@sha256:4bdc5d2ccf3f291f5f6f7ee9192dcbe21aa7832a4ab3763e89ad02c1c7e0d221"
+        ]
+      },
+      {
+        "name": "museforge-phase6-runtime-31cc5c5f9f-dispatcher",
+        "id": "sha256:6f77fb40a1430d872f223e717404fe3cf4c97375bf1faa57ccbbcdd5057dce85",
+        "repo_digests": [
+          "museforge-phase6-runtime-31cc5c5f9f-dispatcher@sha256:6f77fb40a1430d872f223e717404fe3cf4c97375bf1faa57ccbbcdd5057dce85"
+        ]
+      },
+      {
+        "name": "museforge-phase6-runtime-31cc5c5f9f-worker-mock",
+        "id": "sha256:629edb870131bf990b06cb05647f627b8df6ddd3c66df320062621e2365f4104",
+        "repo_digests": [
+          "museforge-phase6-runtime-31cc5c5f9f-worker-mock@sha256:629edb870131bf990b06cb05647f627b8df6ddd3c66df320062621e2365f4104"
+        ]
+      },
+      {
+        "name": "postgres:18.6-bookworm@sha256:1c59e2c3c818eaa0f0628f695b36e7c9e362d6b219b36a54a32df645cbd7e1af",
+        "id": "sha256:1c59e2c3c818eaa0f0628f695b36e7c9e362d6b219b36a54a32df645cbd7e1af",
+        "repo_digests": [
+          "postgres@sha256:1c59e2c3c818eaa0f0628f695b36e7c9e362d6b219b36a54a32df645cbd7e1af"
+        ]
+      },
+      {
+        "name": "rabbitmq:4.3.5@sha256:078107e036374f4d9bbeab8766799abe474bf252aedb4617ddd2edfa8e2c2c05",
+        "id": "sha256:078107e036374f4d9bbeab8766799abe474bf252aedb4617ddd2edfa8e2c2c05",
+        "repo_digests": [
+          "rabbitmq@sha256:078107e036374f4d9bbeab8766799abe474bf252aedb4617ddd2edfa8e2c2c05"
+        ]
+      },
+      {
+        "name": "museforge-phase6-runtime-31cc5c5f9f-migrate",
+        "id": "sha256:7a9e005cf9b31e28dc98a3f3f47aec58bd196e5c3f8223ac48f1f66d8cd6cdcb",
+        "repo_digests": [
+          "museforge-phase6-runtime-31cc5c5f9f-migrate@sha256:7a9e005cf9b31e28dc98a3f3f47aec58bd196e5c3f8223ac48f1f66d8cd6cdcb"
+        ]
+      }
+    ],
+    "phase": [
+      {
+        "name": "museforge-phase6-test-0dd2b2ec41-migrate",
+        "id": "sha256:2942eea3dcdd058db4d8654d01d8dc60bd06413e9d340d282812f8b61cd6b31a",
+        "repo_digests": [
+          "museforge-phase6-test-0dd2b2ec41-migrate@sha256:2942eea3dcdd058db4d8654d01d8dc60bd06413e9d340d282812f8b61cd6b31a"
+        ]
+      },
+      {
+        "name": "museforge-phase6-test-0dd2b2ec41-dispatcher",
+        "id": "sha256:6e14e129ef7159bfb3eca4045ca4de6ee9d09c1c563a647930bd48aeee6953f5",
+        "repo_digests": [
+          "museforge-phase6-test-0dd2b2ec41-dispatcher@sha256:6e14e129ef7159bfb3eca4045ca4de6ee9d09c1c563a647930bd48aeee6953f5"
+        ]
+      },
+      {
+        "name": "rabbitmq:4.3.5@sha256:078107e036374f4d9bbeab8766799abe474bf252aedb4617ddd2edfa8e2c2c05",
+        "id": "sha256:078107e036374f4d9bbeab8766799abe474bf252aedb4617ddd2edfa8e2c2c05",
+        "repo_digests": [
+          "rabbitmq@sha256:078107e036374f4d9bbeab8766799abe474bf252aedb4617ddd2edfa8e2c2c05"
+        ]
+      },
+      {
+        "name": "museforge-phase6-test-0dd2b2ec41-api",
+        "id": "sha256:78188e936df5aa48081b74104b7f0649b6a72d3bfed83dcf6066c0be304de863",
+        "repo_digests": [
+          "museforge-phase6-test-0dd2b2ec41-api@sha256:78188e936df5aa48081b74104b7f0649b6a72d3bfed83dcf6066c0be304de863"
+        ]
+      },
+      {
+        "name": "museforge-phase6-test-0dd2b2ec41-tests",
+        "id": "sha256:91d5b5ef9f7f5603f8f82601c31fd45d51d7833c238274f83b6a3854c976e0f3",
+        "repo_digests": [
+          "museforge-phase6-test-0dd2b2ec41-tests@sha256:91d5b5ef9f7f5603f8f82601c31fd45d51d7833c238274f83b6a3854c976e0f3"
+        ]
+      },
+      {
+        "name": "museforge-phase6-test-0dd2b2ec41-worker-mock",
+        "id": "sha256:8f6f8a5fff1fdff39efae8a0d301689b45f46737b178eca6c2663dac708f5514",
+        "repo_digests": [
+          "museforge-phase6-test-0dd2b2ec41-worker-mock@sha256:8f6f8a5fff1fdff39efae8a0d301689b45f46737b178eca6c2663dac708f5514"
+        ]
+      },
+      {
+        "name": "museforge-phase6-test-0dd2b2ec41-browser-tests",
+        "id": "sha256:ef9f913d0c8d1cd9f85e8e7db38f265739ff5d6ea313f9b5999a71539812f3b1",
+        "repo_digests": [
+          "museforge-phase6-test-0dd2b2ec41-browser-tests@sha256:ef9f913d0c8d1cd9f85e8e7db38f265739ff5d6ea313f9b5999a71539812f3b1"
+        ]
+      },
+      {
+        "name": "postgres:18.6-bookworm@sha256:1c59e2c3c818eaa0f0628f695b36e7c9e362d6b219b36a54a32df645cbd7e1af",
+        "id": "sha256:1c59e2c3c818eaa0f0628f695b36e7c9e362d6b219b36a54a32df645cbd7e1af",
+        "repo_digests": [
+          "postgres@sha256:1c59e2c3c818eaa0f0628f695b36e7c9e362d6b219b36a54a32df645cbd7e1af"
+        ]
+      }
+    ]
+  },
+  "status": "passed"
+}

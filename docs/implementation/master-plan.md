@@ -2,9 +2,9 @@
 
 - Plan date: 2026-09-13
 - Scope: Part 1 portable application plus Part 2 model integration and deployment handoff.
-- Implementation branch: `phase-6-rest`; integration target: `main`
+- Implementation branch: `codex/phase-6-completion`; integration target: `main`
 - Baseline commit: `ac46f5a535e4461250322351e31b3433bbf96988`
-- Execution state: see [overall status](status.md); Phases 00–05 and Part 2 D03–D05 are complete on their recorded gates. Phase 06 mock release passed at `c7b2a87`; CPU/release corrections, dependency/evidence work, and final certification remain open alongside the host prerequisite blocker. See the [Phase 06 plan](phases/06-release-verification-and-handoff/plan.md).
+- Execution state: see [overall status](status.md); Phases 00–05 and Part 2 D03–D05 are complete on their recorded gates. Phase 06 is complete on `codex/phase-6-completion` at `4b2d42599168925a4771dfc61901c4ad5456abd2`, with CPU evidence at `735c960` and the final browser correction retested separately. See the [Phase 06 plan](phases/06-release-verification-and-handoff/plan.md).
 
 ## Outcome and source of truth
 
@@ -57,7 +57,9 @@ Deferred product validation: broader real-provider capability and recovery
 checks, semantic audio quality, and native-Linux execution remain explicitly
 unverified. Part 2 D04/D05 deployment validation, backup/restore, rollback, and
 operations handoff are recorded as complete in the merged deployment reports.
-The normal-mode CPU release gate is still a Phase 06 host acceptance prerequisite.
+The normal-mode CPU release gate passed on Ubuntu1 with the pinned weights and
+is recorded in the Phase 06 completion evidence. The final browser-profile
+correction was retested separately at the final implementation revision.
 
 Deferred product scope: collaboration/comments, billing/credits/upgrades, notifications, multi-user permissions/authentication, public exposure, DAW stems, and multitrack notation. Omit those controls in Part 1. Keep every required local Create, Library, Projects, Settings, Templates, Advanced Options, and version action accessible. Optional decorative waterfront art is not a release gate. No fixture, example duration, or version count is presented as a measured live result.
 
@@ -132,7 +134,8 @@ Part 2 has its separate `docs/deployment/` record and D00–D05 phases. It conta
 the Ubuntu1 inventory, YuE2 model/image manifest, standalone verification, the
 narrow successful user-facing queued inference, and completed D04/D05 evidence
 for the persistent deployment. The Phase 06 CPU gate repeats technical model
-verification on a host with sufficient RAM and pinned weights.
+verification on a host with sufficient RAM and pinned weights; its retained
+result and final browser correction are linked from the Phase 06 report.
 WSL/native-Linux portability is reported separately as verified, configuration
 checked, documented only, or blocked. The standalone image is not an application
 deployment completion claim.

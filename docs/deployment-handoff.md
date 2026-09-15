@@ -1,10 +1,11 @@
 # Deployment handoff
 
 Date: 2026-09-15. This handoff describes the portable Part 1 release and the
-boundary to machine/model deployment. The mock release is portable; the
-normal-mode CPU YuE2 gate is selected with `--real-cpu` and is required for
-Phase 06 closure. It needs at least 32 GiB available host memory and the external
-verified weights volume; implementation and evidence follow-ups also remain.
+boundary to machine/model deployment. Phase 06 is complete on
+`codex/phase-6-completion` at
+`4b2d42599168925a4771dfc61901c4ad5456abd2`; its dated evidence package records
+the mock release, normal CPU verification, browser correction, and dependency
+review.
 
 ## Proven mock start
 
@@ -27,14 +28,13 @@ run with `bash scripts/test.sh release`; its dated evidence is under
 
 `bash scripts/test.sh release --revision HEAD --real-cpu` selects the normal-mode
 CPU verifier. The target is explicit CPU, four threads, concurrency one, a 28 GiB
-worker limit, 900-second warmup, and 3,600-second inference. Memory preflight,
-durable provenance/audio checks, resource sampling, and stop/start checksum code
-are present; this is not yet a verified normal CPU operating command. Device and
-deadline alignment, browser playback/seek/download/refresh/reopen, timing/log
-retention, and cleanup safeguards still need completion. See the
-[Phase 06 follow-ups](implementation/phases/06-release-verification-and-handoff/plan.md).
-The recorded CPU preflight failed before model startup at 7.2 GiB available;
-the expected pinned weights volume was also absent.
+worker limit, 900-second warmup, and 3,600-second inference. The release runner
+records durable provenance/audio checks, resource samples, separate timing,
+bounded logs, ownership-checked cleanup, and stop/start checksums. The normal
+CPU result and final browser correction are in the [Phase 06 completion
+evidence](implementation/evidence/06/20260915-phase6-completion/README.md).
+The expensive CPU command need not be repeated for routine operation; rerun it
+when changing the model, decoder, lockfiles, or host prerequisites.
 
 ## Service and storage contract
 

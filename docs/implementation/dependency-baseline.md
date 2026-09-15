@@ -1,7 +1,7 @@
 # Dependency and image baseline
 
-- Checked: 2026-09-13
-- State: Phase 01 manifests/locks generated; frozen Linux amd64 image builds and runtime checks passed. See [implementation evidence](evidence/01/2026-09-13-foundation/README.md).
+- Checked: 2026-09-15
+- State: Phase 01 manifests/locks generated; frozen Linux amd64 image builds and runtime checks passed. Phase 06 repeated the support/security review without changing pins. See the [dated review](dependency-review-2026-09-15.md) and [implementation evidence](evidence/01/2026-09-13-foundation/README.md).
 
 ## Selected direct dependencies
 

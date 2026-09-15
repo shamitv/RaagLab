@@ -81,7 +81,7 @@ Browser generation and navigation checks use the actual API origin (start the mo
 (cd apps/web && API_BASE_URL=http://127.0.0.1:8000 npm run test:browser)
 ```
 
-These checks cover all lyrics modes, actual playback/seek/download, refresh, navigation, no overflow at 1440/390/320 px, browser errors, and automated axe checks. They do not claim the full Phase 03 accessibility or Phase 06 browser acceptance.
+These checks cover all lyrics modes, actual playback/seek/download, refresh, navigation, no overflow at 1440/390/320 px, browser errors, and automated axe checks. The Phase 06 completion package adds the accepted real-provider CPU browser playback/seek/download/refresh/reopen result.
 
 The release gate combines the pinned frontend unit/build image, real-service
 integration and recovery matrix, API-served Chromium projects, and the native
@@ -179,7 +179,9 @@ The default `bash scripts/test.sh release` remains mock-only. The release runner
 creates a detached checkout at the candidate revision and gives each Compose
 project a fresh configuration, unique name, loopback port, and disposable
 storage. YuE2 CPU verification requires the external pinned weights volume;
-weights and credentials stay outside the checkout.
+weights and credentials stay outside the checkout. The final tested revisions,
+browser correction, and retained evidence are listed in
+`docs/implementation/evidence/06/20260915-phase6-completion/README.md`.
 
 `YUE2_TEST_SMOKE=false` is the deployment default. The isolated test overlay
 explicitly enables it across services. Smoke jobs freeze the flag in their

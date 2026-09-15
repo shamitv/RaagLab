@@ -1,0 +1,10 @@
+ Container museforge-yue2-test-db98603851ab-yue2-smoke-tests-run-3b1cc1dbbfed Creating 
+ Container museforge-yue2-test-db98603851ab-yue2-smoke-tests-run-3b1cc1dbbfed Created 
+{
+  "result": "passed",
+  "project_id": "bd0c6969-4b85-419e-a8f9-f0be936a636a",
+  "job_id": "f54ec296-c9fd-4880-b0f1-7d7c03e6c5a0",
+  "version_id": "d2abacce-98d5-4b24-be4e-216030887816",
+  "sample_rate": 48000,
+  "duration_seconds": 68.39866666666667
+}

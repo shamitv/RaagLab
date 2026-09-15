@@ -1,0 +1,473 @@
+{
+  "favorite": false,
+  "id": "d2abacce-98d5-4b24-be4e-216030887816",
+  "workspace_id": "00000000-0000-4000-8000-000000000001",
+  "created_at": "2026-09-15T09:23:25.437949Z",
+  "project_id": "bd0c6969-4b85-419e-a8f9-f0be936a636a",
+  "parent_version_id": null,
+  "origin_version_id": null,
+  "generation_job_id": "f54ec296-c9fd-4880-b0f1-7d7c03e6c5a0",
+  "number": 1,
+  "label": "Version 1",
+  "revision": 1,
+  "inputs": {
+    "mood": "Calm",
+    "seed": 42,
+    "brief": "A short warm acoustic folk song with a natural ending",
+    "genre": "Folk",
+    "tempo": "Medium",
+    "limits": {
+      "max_attempts": 3,
+      "lease_seconds": 30,
+      "heartbeat_seconds": 5.0,
+      "hard_watchdog_seconds": 3660,
+      "queue_deadline_seconds": 1800,
+      "attempt_deadline_seconds": 3600,
+      "cancellation_grace_seconds": 10
+    },
+    "lyrics": {
+      "mode": "user",
+      "text": "[Verse]\nMorning light across the river\nEvery little moment shines\n\n[Chorus]\nCarry on together\nLet the music rise\n"
+    },
+    "language": "English",
+    "operation": "generate",
+    "providers": {
+      "music": "yue2",
+      "route": "museforge.yue2.v1",
+      "lyrics": "user",
+      "model_id": "m-a-p/YuE2-3B",
+      "model_revision": "29b3558dd46954a0cd9021dc76d5c91864a0f1c7",
+      "decoder_revision": "9a94e1d0ea9f8087e98f77fa88df4a4068104d2a",
+      "provider_revision": "yue2-infer-0.1.6"
+    },
+    "fixture_id": null,
+    "project_id": "bd0c6969-4b85-419e-a8f9-f0be936a636a",
+    "vocal_type": "Instrumental",
+    "instruments": [
+      "Guitar"
+    ],
+    "capabilities": {
+      "moods": [
+        "Happy",
+        "Melancholic",
+        "Romantic",
+        "Energetic",
+        "Calm",
+        "Epic"
+      ],
+      "genres": [
+        "Indie Pop",
+        "Pop",
+        "Folk",
+        "Ambient",
+        "Rock",
+        "Electronic"
+      ],
+      "vocals": null,
+      "is_demo": false,
+      "channels": [
+        2
+      ],
+      "duration": {
+        "max": 30,
+        "min": 5,
+        "default": 8
+      },
+      "model_id": "m-a-p/YuE2-3B",
+      "warnings": [
+        "YuE2 real output is validated technical audio; it may contain vocals even when the accepted request field is Instrumental. Lyric adherence, language coverage, and requested duration are not guaranteed.",
+        "YuE2 duration is model-determined and may exceed the requested duration.",
+        "Only English user lyrics have been exercised through the application route.",
+        "Refinement, variation, regeneration, audio editing, and continuation are unsupported."
+      ],
+      "languages": [
+        "English"
+      ],
+      "operations": [
+        "generate"
+      ],
+      "instruments": [
+        "Guitar",
+        "Piano",
+        "Tabla",
+        "Drums",
+        "Bass",
+        "Strings",
+        "Synth"
+      ],
+      "lyrics_text": true,
+      "provider_id": "yue2",
+      "vocal_types": [
+        "Instrumental"
+      ],
+      "lyrics_modes": [
+        "user"
+      ],
+      "sample_rates": [
+        48000
+      ],
+      "progress_mode": "stage",
+      "seed_behavior": "seed is passed to YuE2; cross-runtime determinism is unverified",
+      "model_revision": "29b3558dd46954a0cd9021dc76d5c91864a0f1c7",
+      "provider_route": "museforge.yue2.v1",
+      "decoder_revision": "9a94e1d0ea9f8087e98f77fa88df4a4068104d2a",
+      "capability_matrix": {
+        "continuation": {
+          "state": "unsupported",
+          "limits": [],
+          "evidence": "No provider route continues from an existing audio artifact."
+        },
+        "mood_control": {
+          "state": "unknown",
+          "limits": [],
+          "evidence": "Mood selection is included in the style prompt; output fidelity has not been measured."
+        },
+        "audio_editing": {
+          "state": "unsupported",
+          "limits": [],
+          "evidence": "No provider route edits an existing audio artifact."
+        },
+        "genre_control": {
+          "state": "unknown",
+          "limits": [],
+          "evidence": "Genre selection is included in the style prompt; output fidelity has not been measured."
+        },
+        "tempo_control": {
+          "state": "unknown",
+          "limits": [],
+          "evidence": "Tempo selection is included in the style prompt; output fidelity has not been measured."
+        },
+        "duration_control": {
+          "state": "unsupported",
+          "limits": [
+            "Actual output duration is model-determined and may exceed the requested value."
+          ],
+          "evidence": "The request duration is retained as intent but does not constrain YuE2 output duration."
+        },
+        "vocal_generation": {
+          "state": "unknown",
+          "limits": [],
+          "evidence": "The model may include vocals; vocal presence and behavior have not been audited."
+        },
+        "language_fidelity": {
+          "state": "unknown",
+          "limits": [],
+          "evidence": "Only English user lyrics have been exercised through the application route; audio language fidelity is unverified."
+        },
+        "lyrics_text_input": {
+          "state": "supported",
+          "limits": [],
+          "evidence": "The API accepts and preserves non-empty user-supplied lyrics."
+        },
+        "audio_conditioning": {
+          "state": "unsupported",
+          "limits": [],
+          "evidence": "No provider route accepts a reference-audio input."
+        },
+        "instrument_control": {
+          "state": "unknown",
+          "limits": [],
+          "evidence": "Instrument selections are included in the style prompt; output fidelity has not been measured."
+        },
+        "exact_lyrics_singing": {
+          "state": "unknown",
+          "limits": [],
+          "evidence": "User lyrics are passed to the model, but lyric adherence has not been measured."
+        },
+        "seed_reproducibility": {
+          "state": "unknown",
+          "limits": [],
+          "evidence": "The seed is passed to YuE2; cross-runtime reproducibility is unverified."
+        },
+        "lyrics_text_generation": {
+          "state": "unsupported",
+          "limits": [],
+          "evidence": "YuE2 consumes supplied lyrics; it does not generate a separate lyrics result."
+        },
+        "technical_audio_output": {
+          "state": "supported",
+          "limits": [
+            "Valid audio metadata does not establish musical quality or semantic control fidelity."
+          ],
+          "evidence": "Generated files are decoded, checked, and validated before atomic publication."
+        },
+        "instrumental_music_generation": {
+          "state": "unknown",
+          "limits": [
+            "The model may include vocals."
+          ],
+          "evidence": "The application accepts an Instrumental request, but the generated result has not been audited for instrumental-only output."
+        }
+      },
+      "provider_revision": "yue2-infer-0.1.6",
+      "cooperative_cancel": true,
+      "exact_lyrics_vocals": null,
+      "text_to_instrumental": null
+    },
+    "tempo_bounds": [
+      100,
+      120
+    ],
+    "workspace_id": "00000000-0000-4000-8000-000000000001",
+    "schema_version": 1,
+    "yue2_test_smoke": false,
+    "duration_seconds": 8,
+    "fixture_revision": null,
+    "source_version_id": null,
+    "iteration_instruction": null,
+    "effective_duration_seconds": 8,
+    "requested_duration_seconds": 8
+  },
+  "lyrics": "[Verse]\nMorning light across the river\nEvery little moment shines\n\n[Chorus]\nCarry on together\nLet the music rise\n",
+  "structure": null,
+  "provenance": {
+    "provider_id": "yue2",
+    "provider_revision": "yue2-infer-0.1.6",
+    "provider_route": "museforge.yue2.v1",
+    "model_id": "m-a-p/YuE2-3B",
+    "model_revision": "29b3558dd46954a0cd9021dc76d5c91864a0f1c7",
+    "decoder_revision": "9a94e1d0ea9f8087e98f77fa88df4a4068104d2a",
+    "is_demo": false,
+    "capability_matrix": {
+      "continuation": {
+        "state": "unsupported",
+        "evidence": "No provider route continues from an existing audio artifact.",
+        "limits": []
+      },
+      "mood_control": {
+        "state": "unknown",
+        "evidence": "Mood selection is included in the style prompt; output fidelity has not been measured.",
+        "limits": []
+      },
+      "audio_editing": {
+        "state": "unsupported",
+        "evidence": "No provider route edits an existing audio artifact.",
+        "limits": []
+      },
+      "genre_control": {
+        "state": "unknown",
+        "evidence": "Genre selection is included in the style prompt; output fidelity has not been measured.",
+        "limits": []
+      },
+      "tempo_control": {
+        "state": "unknown",
+        "evidence": "Tempo selection is included in the style prompt; output fidelity has not been measured.",
+        "limits": []
+      },
+      "duration_control": {
+        "state": "unsupported",
+        "evidence": "The request duration is retained as intent but does not constrain YuE2 output duration.",
+        "limits": [
+          "Actual output duration is model-determined and may exceed the requested value."
+        ]
+      },
+      "vocal_generation": {
+        "state": "unknown",
+        "evidence": "The model may include vocals; vocal presence and behavior have not been audited.",
+        "limits": []
+      },
+      "language_fidelity": {
+        "state": "unknown",
+        "evidence": "Only English user lyrics have been exercised through the application route; audio language fidelity is unverified.",
+        "limits": []
+      },
+      "lyrics_text_input": {
+        "state": "supported",
+        "evidence": "The API accepts and preserves non-empty user-supplied lyrics.",
+        "limits": []
+      },
+      "audio_conditioning": {
+        "state": "unsupported",
+        "evidence": "No provider route accepts a reference-audio input.",
+        "limits": []
+      },
+      "instrument_control": {
+        "state": "unknown",
+        "evidence": "Instrument selections are included in the style prompt; output fidelity has not been measured.",
+        "limits": []
+      },
+      "exact_lyrics_singing": {
+        "state": "unknown",
+        "evidence": "User lyrics are passed to the model, but lyric adherence has not been measured.",
+        "limits": []
+      },
+      "seed_reproducibility": {
+        "state": "unknown",
+        "evidence": "The seed is passed to YuE2; cross-runtime reproducibility is unverified.",
+        "limits": []
+      },
+      "lyrics_text_generation": {
+        "state": "unsupported",
+        "evidence": "YuE2 consumes supplied lyrics; it does not generate a separate lyrics result.",
+        "limits": []
+      },
+      "technical_audio_output": {
+        "state": "supported",
+        "evidence": "Generated files are decoded, checked, and validated before atomic publication.",
+        "limits": [
+          "Valid audio metadata does not establish musical quality or semantic control fidelity."
+        ]
+      },
+      "instrumental_music_generation": {
+        "state": "unknown",
+        "evidence": "The application accepts an Instrumental request, but the generated result has not been audited for instrumental-only output.",
+        "limits": [
+          "The model may include vocals."
+        ]
+      }
+    },
+    "lyrics_modes": [
+      "user"
+    ],
+    "lyrics_text": true,
+    "text_to_instrumental": null,
+    "vocals": null,
+    "exact_lyrics_vocals": null,
+    "instruments": [
+      "Guitar",
+      "Piano",
+      "Tabla",
+      "Drums",
+      "Bass",
+      "Strings",
+      "Synth"
+    ],
+    "moods": [
+      "Happy",
+      "Melancholic",
+      "Romantic",
+      "Energetic",
+      "Calm",
+      "Epic"
+    ],
+    "languages": [
+      "English"
+    ],
+    "genres": [
+      "Indie Pop",
+      "Pop",
+      "Folk",
+      "Ambient",
+      "Rock",
+      "Electronic"
+    ],
+    "vocal_types": [
+      "Instrumental"
+    ],
+    "operations": [
+      "generate"
+    ],
+    "duration": {
+      "max": 30,
+      "min": 5,
+      "default": 8
+    },
+    "sample_rates": [
+      48000
+    ],
+    "channels": [
+      2
+    ],
+    "seed_behavior": "seed is passed to YuE2; cross-runtime determinism is unverified",
+    "cooperative_cancel": true,
+    "progress_mode": "stage",
+    "warnings": [
+      "YuE2 real output is validated technical audio; it may contain vocals even when the accepted request field is Instrumental. Lyric adherence, language coverage, and requested duration are not guaranteed.",
+      "YuE2 duration is model-determined and may exceed the requested duration.",
+      "Only English user lyrics have been exercised through the application route.",
+      "Refinement, variation, regeneration, audio editing, and continuation are unsupported."
+    ],
+    "lyrics": {
+      "text": "[Verse]\nMorning light across the river\nEvery little moment shines\n\n[Chorus]\nCarry on together\nLet the music rise\n",
+      "source": "user",
+      "provider_revision": "1",
+      "fixture_id": null,
+      "fixture_revision": null
+    },
+    "runtime": {
+      "seed": 42,
+      "device": "cpu",
+      "backend": "torch-eager",
+      "channels": 2,
+      "test_smoke": false,
+      "validation": {
+        "raw": {
+          "rms": 0.17012319924307961,
+          "peak": 0.8561680912971497,
+          "finite": true,
+          "frames": 3283136,
+          "passed": true,
+          "channels": 2,
+          "sample_rate": 48000,
+          "duration_seconds": 68.39866666666667,
+          "silence_fraction": 0.007536696621766506,
+          "near_clip_fraction": 0.0
+        },
+        "device": "cpu",
+        "passed": true,
+        "backend": "torch-eager",
+        "decoded": {
+          "rms": 0.17012319926170977,
+          "peak": 0.8561680316925049,
+          "finite": true,
+          "format": "FLAC",
+          "frames": 3283136,
+          "passed": true,
+          "channels": 2,
+          "byte_size": 12316600,
+          "pcm_sha256": "cef2afb80d162d6d345331384fa4d1eb723e03d568e6eb149a0b697404cbf884",
+          "file_sha256": "e1a7201d7905ea9add8eff0dbf713f720563b170146034c263990eee6635290c",
+          "sample_rate": 48000,
+          "duration_seconds": 68.39866666666667,
+          "silence_fraction": 0.0075354782744303005,
+          "near_clip_fraction": 0.0
+        },
+        "listening": "pending",
+        "truncated": {
+          "abc": false,
+          "semantic": false
+        },
+        "offload_ar": false,
+        "test_smoke": false,
+        "elapsed_seconds": 1546.4935142239997,
+        "lyric_adherence": "pending"
+      },
+      "sample_rate": 48000,
+      "gpu_resource": {},
+      "elapsed_seconds": 1548.972033238,
+      "fallback_reason": null,
+      "decoder_revision": "9a94e1d0ea9f8087e98f77fa88df4a4068104d2a",
+      "published_format": "WAV/PCM_16",
+      "runtime_revision": "0edaf2f4053ef4731334b8329834b107977f9637",
+      "provider_revision": "yue2-infer-0.1.6",
+      "effective_settings": {
+        "cot": "full",
+        "style": "English folk instrumental music, calm mood, medium tempo, featuring Guitar. A short warm acoustic folk song with a natural ending. A complete short song with a natural ending.",
+        "model_id": "m-a-p/YuE2-3B",
+        "offload_ar": false,
+        "model_revision": "29b3558dd46954a0cd9021dc76d5c91864a0f1c7",
+        "memory_budget_gib": 16,
+        "semantic_sampling": null
+      },
+      "provider_output_format": "FLAC",
+      "actual_duration_seconds": 68.39866666666667,
+      "requested_duration_seconds": 8
+    }
+  },
+  "snapshot_schema_version": 1,
+  "audio_recomposed": true,
+  "audio": {
+    "id": "1dea8d5c-20a2-43e1-ba48-8e7137c83496",
+    "created_at": "2026-09-15T09:23:25.437949Z",
+    "sha256": "93eca0cadef211ed7fb54db736db7f18fb70fbb4c77686cb572931d1988b55f2",
+    "byte_size": 13132588,
+    "media_type": "audio/wav",
+    "sample_rate": 48000,
+    "channels": 2,
+    "duration_seconds": 68.39866666666667,
+    "published_at": "2026-09-15T09:23:25.439210Z",
+    "available_at": "2026-09-15T09:23:25.439210Z",
+    "retired_at": null,
+    "url": "/api/v1/artifacts/1dea8d5c-20a2-43e1-ba48-8e7137c83496"
+  }
+}

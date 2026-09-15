@@ -153,4 +153,4 @@ semantics and quality remain outside this narrow verification.
 Part 1 release verification covers the mock provider and, when requested, the
 normal CPU YuE2 gate. The release gate does not widen any YuE2 semantic quality
 claim. See the [deployment handoff](deployment-handoff.md) and [Phase 06
-evidence](implementation/evidence/06/20260915-090415-d55061e8/README.md).
+evidence](implementation/evidence/06/20260915-phase6-completion/README.md).

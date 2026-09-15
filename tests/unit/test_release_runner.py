@@ -26,6 +26,24 @@ def test_compose_and_cleanup_names_are_explicitly_owned():
     assert not release.owned_project("museforge-phase6-test-user-owned")
 
 
+def test_cleanup_rejects_foreign_docker_labels(monkeypatch):
+    class Result:
+        returncode = 0
+        stdout = "foreign-container\n"
+
+    def fake_run(command, **kwargs):
+        assert command[:3] in (["docker", "ps", "-aq"], ["docker", "inspect", "--format"])
+        if command[1] == "ps":
+            return Result()
+        result = Result()
+        result.stdout = '{"com.docker.compose.project":"someone-else"}'
+        return result
+
+    monkeypatch.setattr(release.subprocess, "run", fake_run)
+    with pytest.raises(release.ReleaseFailure, match="outside owned project"):
+        release.verify_project_ownership("museforge-phase6-test-0123456789", release.command_env())
+
+
 def test_child_environment_is_allowlisted():
     child = release.command_env({"PATH": "/safe", "MUSEFORGE_SECRET": "do-not-pass"})
     assert child["PATH"] == "/safe"
@@ -49,7 +67,7 @@ def test_timeout_keeps_partial_output(tmp_path, monkeypatch):
         release.run_step(
             "expected-timeout",
             [sys.executable, "-c", "import sys,time; print('partial', flush=True); time.sleep(2)"],
-            timeout=0.05,
+            timeout=0.5,
         )
     assert "partial" in (tmp_path / "expected-timeout.log").read_text()
 

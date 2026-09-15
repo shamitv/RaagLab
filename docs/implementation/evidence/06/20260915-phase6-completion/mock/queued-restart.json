@@ -1,0 +1,96 @@
+{
+  "acceptance_seconds": 0.020912811014568433,
+  "accepted": {
+    "job_id": "63dbfec8-6771-47bf-bb0d-5f835efdb626",
+    "project_id": "4adeed69-9dca-4c74-81a3-8a74c8cb121b",
+    "state": "queued",
+    "status_url": "/api/v1/jobs/63dbfec8-6771-47bf-bb0d-5f835efdb626",
+    "project_url": "/projects/4adeed69-9dca-4c74-81a3-8a74c8cb121b"
+  },
+  "before_restart": {
+    "id": "63dbfec8-6771-47bf-bb0d-5f835efdb626",
+    "project_id": "4adeed69-9dca-4c74-81a3-8a74c8cb121b",
+    "operation": "generate",
+    "retry_of_job_id": null,
+    "state": "queued",
+    "stage": "awaiting_worker",
+    "progress": null,
+    "attempt_count": 0,
+    "cancellation_requested_at": null,
+    "result_version_id": null,
+    "created_at": "2026-09-15T07:50:43.214567Z",
+    "completed_at": null,
+    "correlation_id": "d81c7945-fb53-49da-8516-7a83b3915018",
+    "dispatch_sequence": 1,
+    "error": null,
+    "version_url": null,
+    "dispatch_status": "pending",
+    "attempts": [],
+    "provider_readiness": {
+      "state": "ready",
+      "last_observed_at": "2026-09-15T07:50:41.724282Z",
+      "device": null,
+      "fallback_reason": null
+    }
+  },
+  "after_restart": {
+    "id": "63dbfec8-6771-47bf-bb0d-5f835efdb626",
+    "project_id": "4adeed69-9dca-4c74-81a3-8a74c8cb121b",
+    "operation": "generate",
+    "retry_of_job_id": null,
+    "state": "queued",
+    "stage": "awaiting_worker",
+    "progress": null,
+    "attempt_count": 0,
+    "cancellation_requested_at": null,
+    "result_version_id": null,
+    "created_at": "2026-09-15T07:50:43.214567Z",
+    "completed_at": null,
+    "correlation_id": "d81c7945-fb53-49da-8516-7a83b3915018",
+    "dispatch_sequence": 1,
+    "error": null,
+    "version_url": null,
+    "dispatch_status": "published",
+    "attempts": [],
+    "provider_readiness": {
+      "state": "ready",
+      "last_observed_at": "2026-09-15T07:50:41.724282Z",
+      "device": null,
+      "fallback_reason": null
+    }
+  },
+  "completed": {
+    "id": "63dbfec8-6771-47bf-bb0d-5f835efdb626",
+    "project_id": "4adeed69-9dca-4c74-81a3-8a74c8cb121b",
+    "operation": "generate",
+    "retry_of_job_id": null,
+    "state": "succeeded",
+    "stage": "saving_result",
+    "progress": null,
+    "attempt_count": 1,
+    "cancellation_requested_at": null,
+    "result_version_id": "95bfa955-a8a6-4d80-b1bc-6d1cea9a2b91",
+    "created_at": "2026-09-15T07:50:43.214567Z",
+    "completed_at": "2026-09-15T07:50:52.569125Z",
+    "correlation_id": "d81c7945-fb53-49da-8516-7a83b3915018",
+    "dispatch_sequence": 1,
+    "error": null,
+    "version_url": "/api/v1/versions/95bfa955-a8a6-4d80-b1bc-6d1cea9a2b91",
+    "dispatch_status": "published",
+    "attempts": [
+      {
+        "attempt_number": 1,
+        "worker_id": "d7809c7d-b4d6-493e-ac24-baf246ddb5cc",
+        "started_at": "2026-09-15T07:50:51.390367Z",
+        "ended_at": "2026-09-15T07:50:52.569125Z",
+        "outcome": "succeeded"
+      }
+    ],
+    "provider_readiness": {
+      "state": "ready",
+      "last_observed_at": "2026-09-15T07:50:52.565790Z",
+      "device": null,
+      "fallback_reason": null
+    }
+  }
+}

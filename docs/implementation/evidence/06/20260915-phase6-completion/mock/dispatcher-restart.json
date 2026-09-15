@@ -1,0 +1,43 @@
+{
+  "accepted": {
+    "job_id": "ce6ed4fe-6185-4d6b-8553-dffd878e11c6",
+    "project_id": "f0b84577-5764-4e9d-bc91-7ba37f6c2115",
+    "state": "queued",
+    "status_url": "/api/v1/jobs/ce6ed4fe-6185-4d6b-8553-dffd878e11c6",
+    "project_url": "/projects/f0b84577-5764-4e9d-bc91-7ba37f6c2115"
+  },
+  "completed": {
+    "id": "ce6ed4fe-6185-4d6b-8553-dffd878e11c6",
+    "project_id": "f0b84577-5764-4e9d-bc91-7ba37f6c2115",
+    "operation": "generate",
+    "retry_of_job_id": null,
+    "state": "succeeded",
+    "stage": "saving_result",
+    "progress": null,
+    "attempt_count": 1,
+    "cancellation_requested_at": null,
+    "result_version_id": "8132d959-0cb9-4718-aa06-4ae0e719d0ed",
+    "created_at": "2026-09-15T07:51:26.238643Z",
+    "completed_at": "2026-09-15T07:51:29.361419Z",
+    "correlation_id": "6d4919c2-84cb-4b30-b954-0d724d92ac64",
+    "dispatch_sequence": 1,
+    "error": null,
+    "version_url": "/api/v1/versions/8132d959-0cb9-4718-aa06-4ae0e719d0ed",
+    "dispatch_status": "published",
+    "attempts": [
+      {
+        "attempt_number": 1,
+        "worker_id": "d7809c7d-b4d6-493e-ac24-baf246ddb5cc",
+        "started_at": "2026-09-15T07:51:28.172725Z",
+        "ended_at": "2026-09-15T07:51:29.361419Z",
+        "outcome": "succeeded"
+      }
+    ],
+    "provider_readiness": {
+      "state": "ready",
+      "last_observed_at": "2026-09-15T07:51:29.357769Z",
+      "device": null,
+      "fallback_reason": null
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "first_confirmed_publish": {
+    "confirmed_message_id": "e2ab8821-c9c3-4db7-ab27-bb0cade70259",
+    "job_id": "dea6b0a9-7e27-4580-952b-8a26bb9a2671"
+  },
+  "expired_claim_recovery": {
+    "state": "published",
+    "publication_count": 2,
+    "job_id": "dea6b0a9-7e27-4580-952b-8a26bb9a2671"
+  },
+  "completed": {
+    "id": "dea6b0a9-7e27-4580-952b-8a26bb9a2671",
+    "project_id": "cd495f90-1bc7-4f31-9ef0-d782eb31457f",
+    "operation": "generate",
+    "retry_of_job_id": null,
+    "state": "succeeded",
+    "stage": "saving_result",
+    "progress": null,
+    "attempt_count": 1,
+    "cancellation_requested_at": null,
+    "result_version_id": "9be24a6b-60cb-40be-871c-3dd8870ecacc",
+    "created_at": "2026-09-15T07:50:59.575036Z",
+    "completed_at": "2026-09-15T07:51:17.450269Z",
+    "correlation_id": "e4dc0575-debe-45c7-a54a-eb29c5283ca7",
+    "dispatch_sequence": 1,
+    "error": null,
+    "version_url": "/api/v1/versions/9be24a6b-60cb-40be-871c-3dd8870ecacc",
+    "dispatch_status": "published",
+    "attempts": [
+      {
+        "attempt_number": 1,
+        "worker_id": "43270e08-caa9-41df-a390-d4262f7f9907",
+        "started_at": "2026-09-15T07:51:16.279812Z",
+        "ended_at": "2026-09-15T07:51:17.450269Z",
+        "outcome": "succeeded"
+      }
+    ],
+    "provider_readiness": {
+      "state": "ready",
+      "last_observed_at": "2026-09-15T07:51:17.445606Z",
+      "device": null,
+      "fallback_reason": null
+    }
+  },
+  "single_result_check": {
+    "state": "succeeded",
+    "attempt_count": 1,
+    "version_count": 1,
+    "job_id": "dea6b0a9-7e27-4580-952b-8a26bb9a2671"
+  }
+}

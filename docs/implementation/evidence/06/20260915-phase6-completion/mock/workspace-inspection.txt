@@ -1,0 +1,1 @@
+Keyboard, clipboard, viewport and native 200% zoom evidence: /test-results/museforge-phase6-test-0dd2b2ec41/workspace-inspection

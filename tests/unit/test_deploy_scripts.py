@@ -40,6 +40,7 @@ def test_cpu_gate_requires_normal_provenance_and_resource_evidence():
     verifier = (ROOT / 'scripts' / 'verify-yue2-devices.py').read_text()
     d03 = (ROOT / 'scripts' / 'verify-d03.py').read_text()
     overlay = (ROOT / 'compose.yue2.test.yaml').read_text()
+    base_yue2 = (ROOT / 'compose.yue2.yaml').read_text()
     assert '--normal' in verifier
     assert 'YUE2_MEMORY_LIMIT_GIB' in verifier
     assert 'DeviceRequests' in verifier
@@ -47,6 +48,13 @@ def test_cpu_gate_requires_normal_provenance_and_resource_evidence():
     assert 'mem_limit: ${YUE2_MEMORY_LIMIT_GIB:-28}g' in overlay
     assert 'DEVICE: ${YUE2_DEVICE:-cpu}' in overlay
     assert 'user: "${MUSEFORGE_CONTAINER_UID:-1000}:${MUSEFORGE_CONTAINER_GID:-1000}"' in overlay
+    assert 'YUE2_WARMUP_TIMEOUT_SECONDS: 900' in base_yue2
+    assert 'YUE2_PROCESS_TIMEOUT_SECONDS: 3600' in base_yue2
+    assert 'ATTEMPT_DEADLINE_SECONDS: 3600' in base_yue2
+    assert 'HARD_WATCHDOG_SECONDS: 3660' in overlay
+    assert '"--profile", "mock"' in verifier or '--profile", "mock"' in verifier
+    assert 'config", "--format", "json"' in verifier
+    assert 'resolved-deadlines.json' in verifier
 
 
 @pytest.mark.skipif(not shutil.which('bash'), reason='bash is required for deployment behavior checks')

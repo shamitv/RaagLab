@@ -1,0 +1,6 @@
+{
+  "available_memory_gib": 37.059234619140625,
+  "required_memory_gib": 32,
+  "worker_memory_limit_gib": 28,
+  "cpu_threads": 4
+}

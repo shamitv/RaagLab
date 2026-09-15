@@ -1,0 +1,66 @@
+
+> museforge-web@0.1.0 test:browser
+> playwright test
+
+
+Running 56 tests using 1 worker
+
+  ✓   1 [desktop] › browser/capabilities.spec.ts:3:1 › composer uses the configured provider capability limits (221ms)
+  -   2 [desktop] › browser/d03-real.spec.ts:5:1 › D03 persisted YuE2 result plays and seeks
+  ✓   3 [desktop] › browser/generation.spec.ts:4:1 › real generation plays, seeks, downloads and survives refresh (6.0s)
+  ✓   4 [desktop] › browser/generation.spec.ts:50:39 › real static lyrics (4.6s)
+  ✓   5 [desktop] › browser/generation.spec.ts:50:39 › real mock lyrics (3.6s)
+  ✓   6 [desktop] › browser/phase4.spec.ts:15:1 › projects, library, duplicate, archive, settings, and templates work (5.2s)
+  ✓   7 [desktop] › browser/phase4.spec.ts:96:1 › offline and two-tab draft conflicts keep explicit recovery choices (1.7s)
+  ✓   8 [desktop] › browser/phase4.spec.ts:155:1 › IndexedDB failure keeps edits in memory and reports unsaved local recovery (229ms)
+  ✓   9 [desktop] › browser/phase4.spec.ts:175:1 › failed jobs can be retried explicitly as linked jobs (3.7s)
+  ✓  10 [desktop] › browser/routing.spec.ts:4:1 › API-served workspace supports navigation, refresh, and accessible pages (1.2s)
+  ✓  11 [desktop] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection (11.7s)
+  ✓  12 [desktop] › browser/workspace.spec.ts:87:1 › breakpoint and zoom layout keeps controls and semantic order (328ms)
+  ✓  13 [desktop] › browser/workspace.spec.ts:120:1 › focused actions, clipboard failure, offline draft and conditional save (15.7s)
+  ✓  14 [desktop] › browser/workspace.spec.ts:227:1 › cancellation and stale save keep the editable draft (3.9s)
+  ✓  15 [mobile] › browser/capabilities.spec.ts:3:1 › composer uses the configured provider capability limits (248ms)
+  -  16 [mobile] › browser/d03-real.spec.ts:5:1 › D03 persisted YuE2 result plays and seeks
+  ✓  17 [mobile] › browser/generation.spec.ts:4:1 › real generation plays, seeks, downloads and survives refresh (5.0s)
+  ✓  18 [mobile] › browser/generation.spec.ts:50:39 › real static lyrics (3.6s)
+  ✓  19 [mobile] › browser/generation.spec.ts:50:39 › real mock lyrics (3.6s)
+  -  20 [mobile] › browser/phase4.spec.ts:15:1 › projects, library, duplicate, archive, settings, and templates work
+  -  21 [mobile] › browser/phase4.spec.ts:96:1 › offline and two-tab draft conflicts keep explicit recovery choices
+  -  22 [mobile] › browser/phase4.spec.ts:155:1 › IndexedDB failure keeps edits in memory and reports unsaved local recovery
+  -  23 [mobile] › browser/phase4.spec.ts:175:1 › failed jobs can be retried explicitly as linked jobs
+  ✓  24 [mobile] › browser/routing.spec.ts:4:1 › API-served workspace supports navigation, refresh, and accessible pages (1.1s)
+  ✓  25 [mobile] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection (12.9s)
+  ✓  26 [mobile] › browser/workspace.spec.ts:87:1 › breakpoint and zoom layout keeps controls and semantic order (372ms)
+  -  27 [mobile] › browser/workspace.spec.ts:120:1 › focused actions, clipboard failure, offline draft and conditional save
+  -  28 [mobile] › browser/workspace.spec.ts:227:1 › cancellation and stale save keep the editable draft
+  ✓  29 [small] › browser/capabilities.spec.ts:3:1 › composer uses the configured provider capability limits (215ms)
+  -  30 [small] › browser/d03-real.spec.ts:5:1 › D03 persisted YuE2 result plays and seeks
+  ✓  31 [small] › browser/generation.spec.ts:4:1 › real generation plays, seeks, downloads and survives refresh (5.1s)
+  ✓  32 [small] › browser/generation.spec.ts:50:39 › real static lyrics (3.6s)
+  ✓  33 [small] › browser/generation.spec.ts:50:39 › real mock lyrics (3.6s)
+  -  34 [small] › browser/phase4.spec.ts:15:1 › projects, library, duplicate, archive, settings, and templates work
+  -  35 [small] › browser/phase4.spec.ts:96:1 › offline and two-tab draft conflicts keep explicit recovery choices
+  -  36 [small] › browser/phase4.spec.ts:155:1 › IndexedDB failure keeps edits in memory and reports unsaved local recovery
+  -  37 [small] › browser/phase4.spec.ts:175:1 › failed jobs can be retried explicitly as linked jobs
+  ✓  38 [small] › browser/routing.spec.ts:4:1 › API-served workspace supports navigation, refresh, and accessible pages (1.1s)
+  ✓  39 [small] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection (11.8s)
+  ✓  40 [small] › browser/workspace.spec.ts:87:1 › breakpoint and zoom layout keeps controls and semantic order (315ms)
+  -  41 [small] › browser/workspace.spec.ts:120:1 › focused actions, clipboard failure, offline draft and conditional save
+  -  42 [small] › browser/workspace.spec.ts:227:1 › cancellation and stale save keep the editable draft
+  ✓  43 [narrow] › browser/capabilities.spec.ts:3:1 › composer uses the configured provider capability limits (213ms)
+  -  44 [narrow] › browser/d03-real.spec.ts:5:1 › D03 persisted YuE2 result plays and seeks
+  ✓  45 [narrow] › browser/generation.spec.ts:4:1 › real generation plays, seeks, downloads and survives refresh (5.0s)
+  ✓  46 [narrow] › browser/generation.spec.ts:50:39 › real static lyrics (3.6s)
+  ✓  47 [narrow] › browser/generation.spec.ts:50:39 › real mock lyrics (4.6s)
+  -  48 [narrow] › browser/phase4.spec.ts:15:1 › projects, library, duplicate, archive, settings, and templates work
+  -  49 [narrow] › browser/phase4.spec.ts:96:1 › offline and two-tab draft conflicts keep explicit recovery choices
+  -  50 [narrow] › browser/phase4.spec.ts:155:1 › IndexedDB failure keeps edits in memory and reports unsaved local recovery
+  -  51 [narrow] › browser/phase4.spec.ts:175:1 › failed jobs can be retried explicitly as linked jobs
+  ✓  52 [narrow] › browser/routing.spec.ts:4:1 › API-served workspace supports navigation, refresh, and accessible pages (1.2s)
+  ✓  53 [narrow] › browser/workspace.spec.ts:4:1 › iterations, exact lyrics, metadata and saved selection (13.7s)
+  ✓  54 [narrow] › browser/workspace.spec.ts:87:1 › breakpoint and zoom layout keeps controls and semantic order (302ms)
+  -  55 [narrow] › browser/workspace.spec.ts:120:1 › focused actions, clipboard failure, offline draft and conditional save
+  -  56 [narrow] › browser/workspace.spec.ts:227:1 › cancellation and stale save keep the editable draft
+
+  22 skipped
+  34 passed (2.4m)

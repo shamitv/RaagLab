@@ -1,0 +1,34 @@
+{
+  "id": "f54ec296-c9fd-4880-b0f1-7d7c03e6c5a0",
+  "project_id": "bd0c6969-4b85-419e-a8f9-f0be936a636a",
+  "operation": "generate",
+  "retry_of_job_id": null,
+  "state": "succeeded",
+  "stage": "saving_result",
+  "progress": null,
+  "attempt_count": 1,
+  "cancellation_requested_at": null,
+  "result_version_id": "d2abacce-98d5-4b24-be4e-216030887816",
+  "created_at": "2026-09-15T08:56:11.892037Z",
+  "completed_at": "2026-09-15T09:23:25.439210Z",
+  "correlation_id": "9e3fd9a7-120b-4e8a-9679-23be7d771b8c",
+  "dispatch_sequence": 1,
+  "error": null,
+  "version_url": "/api/v1/versions/d2abacce-98d5-4b24-be4e-216030887816",
+  "dispatch_status": "published",
+  "attempts": [
+    {
+      "attempt_number": 1,
+      "worker_id": "3a53029b-abbb-410c-8e8d-c35795f7194f",
+      "started_at": "2026-09-15T08:56:13.177143Z",
+      "ended_at": "2026-09-15T09:23:25.439210Z",
+      "outcome": "succeeded"
+    }
+  ],
+  "provider_readiness": {
+    "state": "ready",
+    "last_observed_at": "2026-09-15T09:23:25.434974Z",
+    "device": "cpu",
+    "fallback_reason": null
+  }
+}

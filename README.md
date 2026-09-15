@@ -47,7 +47,12 @@ the external verified weights volume. The runner records the exact source,
 runtime, lock, image, migration, persistence, browser, and acceptance results under
 `test-results/phase6-<run-id>/`; copy the compact report to
 `docs/implementation/evidence/06/` when publishing a release. See the
-[development instructions](docs/development.md), [deployment handoff](docs/deployment-handoff.md),
+[Phase 06 completion evidence](docs/implementation/evidence/06/20260915-phase6-completion/README.md)
+for the tested CPU and final browser revisions, individual A01–A12/06-AC
+mapping, retained logs, and screenshots. The final CPU rerun was intentionally
+stopped before model startup after the affected browser-profile correction;
+the report records that scope precisely. Also see the [development
+instructions](docs/development.md), [deployment handoff](docs/deployment-handoff.md),
 [Phase 04 status](docs/implementation/phases/04-projects-versions-and-recovery/status.md),
 [Phase 05 status](docs/implementation/phases/05-provider-readiness/status.md), and
 [Phase 04 evidence](docs/implementation/evidence/04/2026-09-14-projects-recovery/README.md).
