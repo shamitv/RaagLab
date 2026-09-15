@@ -398,9 +398,9 @@ def inner_main(args: argparse.Namespace) -> int:
             raise ReleaseFailure("clean checkout revision did not match requested candidate")
         run_step("setup", ["bash", "scripts/setup.sh"], env=runtime_env, timeout=180)
         runtime_setup = True
+        phase_compose = compose(phase_project, "-f", "compose.yaml", "-f", "compose.test.yaml")
         release["environment"] = {
             "python": run_step("python-version", ["python3", "--version"]).strip(),
-            "node": run_step("node-version", ["node", "--version"]).strip(),
             "docker": run_step("docker-version", ["docker", "version", "--format", "{{.Server.Version}}"]).strip(),
             "compose": run_step("compose-version", ["docker", "compose", "version", "--short"]).strip(),
             "sanitized_env": sanitized_env(),
@@ -417,7 +417,10 @@ def inner_main(args: argparse.Namespace) -> int:
                 "APP_PORT": f"{runtime_port} (ephemeral loopback port)",
             },
         }
-        phase_compose = compose(phase_project, "-f", "compose.yaml", "-f", "compose.test.yaml")
+        release["environment"]["node"] = last_output_line(run_step(
+            "container-node-version", [*phase_compose, "run", "--rm", "--no-deps", "browser-tests", "node", "--version"],
+            env=phase_env,
+        ))
         run_step("recovery-gate", ["python3", "scripts/verify-phase2.py"], env=phase_env, timeout=3600)
         run_step("frontend-unit", [*phase_compose, "run", "--rm", "--no-deps", "browser-tests", "npm", "test"],
                  env=phase_env, timeout=1200)
