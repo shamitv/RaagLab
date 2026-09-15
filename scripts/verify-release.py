@@ -434,7 +434,7 @@ def inner_main(args: argparse.Namespace) -> int:
             env=phase_env,
         ))
         run_step("recovery-gate", ["python3", "scripts/verify-phase2.py"], env=phase_env, timeout=3600)
-        run_step("frontend-unit", [*phase_compose, "run", "--rm", "--no-deps", "browser-tests", "npm", "test"],
+        run_step("frontend-unit", [*phase_compose, "run", "--rm", "--no-deps", "--user", "0:0", "browser-tests", "npm", "test"],
                  env=phase_env, timeout=1200)
         release["environment"]["container_python"] = last_output_line(run_step(
             "container-python-version", [*phase_compose, "run", "--rm", "--no-deps", "tests", "python", "--version"],
