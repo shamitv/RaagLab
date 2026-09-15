@@ -401,6 +401,9 @@ class CapabilitiesResponse(CapabilitiesView):
     default_lyrics_mode: Literal['user', 'static', 'mock']
     readiness: ReadinessInfo
 
+class FrontendConfig(StrictModel):
+    song_link_base_url: str | None
+
 class Provenance(CapabilitiesView):
     # Existing immutable versions predate the evidence matrix.
     capability_matrix: dict[str, CapabilityAssessment] = Field(default_factory=dict)

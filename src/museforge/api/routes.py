@@ -12,7 +12,7 @@ from starlette.background import BackgroundTask
 from museforge.db import schema as db
 from museforge.domain import Accepted, Generation, ProjectCreate, ProjectPatch, VersionPatch, Iteration, ProviderError, provider_capabilities
 from museforge.domain import ErrorResponse, CapabilitiesResponse, ProjectView, ProjectDetail, ProjectPage, JobView, VersionPage, VersionDetail
-from museforge.domain import LibraryPage, SettingsPatch, SettingsView, TemplatePage, TemplateView
+from museforge.domain import FrontendConfig, LibraryPage, SettingsPatch, SettingsView, TemplatePage, TemplateView
 from museforge.jobs import accepted, cancel, retry as retry_job, row, scoped, submit
 from museforge.projects import duplicate, set_archived
 from museforge.workspace import DEFAULT_GENERATION_DEFAULTS, TEMPLATES, ensure_settings, settings_view, updated_at
@@ -158,6 +158,12 @@ def get_capabilities(request: Request):
     with engine.connect() as c:
         return dict(provider_capabilities(settings) | {'duration': {'min': 5, 'max': 30, 'default': settings.duration_seconds}}, default_lyrics_mode=settings.lyrics_provider,
                     readiness=readiness(c, settings))
+
+
+@router.get('/frontend-config', response_model=FrontendConfig)
+def frontend_config(request: Request):
+    value = request.app.state.settings.song_link_base_url
+    return {'song_link_base_url': str(value).rstrip('/') if value else None}
 
 
 @router.get('/settings', response_model=SettingsView)

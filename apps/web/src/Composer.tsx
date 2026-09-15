@@ -322,6 +322,10 @@ export function Composer() {
         setOnline(true);
         if (terminal.has(next.state)) {
           await reconcile(next.result_version_id ?? undefined);
+          if (!stopped && next.state === "succeeded" && next.result_version_id) {
+            navigate(`/songs/${next.result_version_id}`);
+            return;
+          }
           if (!stopped)
             setNotice(
               next.state === "succeeded"
@@ -996,26 +1000,10 @@ export function Composer() {
             >
               {busy ? "Submitting…" : "Generate"}
             </button>
-            <label>
-              Project title
-              <input
-                maxLength={120}
-                value={title}
-                onChange={(e) => {
-                  setTitle(e.target.value);
-                  setDirty(true);
-                }}
-              />
-            </label>
-            <button
-              type="button"
-              disabled={
-                blocked || !validDraft(draft) || (!!project && !title.trim())
-              }
-              onClick={() => void save()}
-            >
-              Save Project
-            </button>
+            {id && <><label>
+              Song title
+              <input maxLength={120} value={title} onChange={(e) => { setTitle(e.target.value); setDirty(true); }} />
+            </label><button type="button" disabled={blocked || !validDraft(draft) || !title.trim()} onClick={() => void save()}>Save changes</button></>}
             <small role="status">{saveState}</small>
           </fieldset>
         </form>

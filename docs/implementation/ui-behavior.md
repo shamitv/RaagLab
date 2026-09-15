@@ -28,6 +28,8 @@ Use the specified blue/navy/neutral tokens, font stack, 4–40 px spacing scale,
 
 ## Routes and navigation
 
+Phase 07 makes `/songs` the primary saved-song navigation and `/songs/{version-id}` the stable song route. Historical `/library` and `/projects` routes remain compatible; projects continue as an internal persistence boundary.
+
 Create is `/create` (also entry `/`); a persisted workspace is `/projects/{id}`. Library `/library`, Projects `/projects`, Settings `/settings`, and Templates `/templates` are real routes when delivered. Desktop shows the rail/top bar; mobile shows Create/Library/Projects/Settings bottom navigation, with Templates and Advanced Options in accessible menus. Search is a Library function; desktop utility search routes to it once Phase 04 implements it. No fake account, notifications, upgrade or collaboration controls are displayed.
 
 At Phase 03, show only destinations/actions whose endpoints are implemented; Phase 04 adds all remaining required local navigation and organization flows. Omitted future controls are tracked work, not completion of those features. Results/Versions use actual counts and explicit current selection. Mobile structure/history are accessible collapsible sections below Iterate; focused actions wrap or scroll within their own container.

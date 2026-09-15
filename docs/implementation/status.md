@@ -17,6 +17,7 @@
 | [04 Projects, versions, and recovery](phases/04-projects-versions-and-recovery/status.md) | completed | Project/library lifecycle and recovery verified |
 | [05 Provider readiness](phases/05-provider-readiness/status.md) | completed | Capability matrix, routing and integrated mock regression verified |
 | [06 Release verification and handoff](phases/06-release-verification-and-handoff/status.md) | completed | Runner safety, normal CPU evidence, browser correction and handoff published |
+| [07 Song-first experience](phases/07-song-first-experience/status.md) | completed | My Songs, stable QR links, and flexible container startup verified |
 
 ## Phase 06 result
 

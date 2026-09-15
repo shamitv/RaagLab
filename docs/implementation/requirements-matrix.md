@@ -1,5 +1,7 @@
 # Requirement traceability matrix
 
+Phase 07 adds song-first navigation, stable configured QR links, and explicit container create/restart controls without changing the historical Part 1 requirements below.
+
 - Baseline: [Part 1](../prompts/01-portable-application.md) and [design](../../design.md)
 - State: Phases 01–05 and Part 2 D03–D05 passed on their recorded gates. Phase 06 mock release passed at `c7b2a87`; its summary groups A01–A12, so individual current acceptance mapping and final-run attachments remain open. CPU/release implementation follow-ups and the host memory/weights blocker are recorded in the [Phase 06 plan](phases/06-release-verification-and-handoff/plan.md). See [mock evidence](evidence/06/20260915-104002-622828de/README.md), [blocked CPU evidence](evidence/06/20260915-cpu-gate-blocked/README.md), and prior records below.
 - Evidence catalogue: [verification strategy](verification-strategy.md); A01–A12 match the prompt's numbered acceptance checks

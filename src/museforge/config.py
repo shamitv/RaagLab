@@ -2,13 +2,13 @@ from pathlib import Path
 from typing import Literal
 from uuid import UUID
 
-from pydantic import Field, PrivateAttr, SecretStr, field_validator, model_validator
+from pydantic import AnyHttpUrl, Field, PrivateAttr, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import make_url
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore", hide_input_in_errors=True)
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", hide_input_in_errors=True, env_ignore_empty=True)
 
     database_url: SecretStr = SecretStr("postgresql+psycopg://museforge:local-development-only@db:5432/museforge")
     broker_url: SecretStr = SecretStr("amqp://museforge:local-development-only@broker:5672//")
@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     web_dist: Path = Path("/app/web")
     app_port: int = Field(8000, ge=1024, le=65535)
     app_bind: Literal["127.0.0.1"] = "127.0.0.1"
+    song_link_base_url: AnyHttpUrl | None = None
     lyrics_provider: Literal["user", "static", "mock"] = "mock"
     music_provider: Literal["mock", "yue2"] = "mock"
     mock_queue: Literal["museforge.mock.v1"] = "museforge.mock.v1"
@@ -72,6 +73,13 @@ class Settings(BaseSettings):
                 raise ValueError
         except Exception:
             raise ValueError("expected a configured PostgreSQL psycopg or AMQP service URL") from None
+        return value
+
+    @field_validator("song_link_base_url")
+    @classmethod
+    def validate_song_link_base_url(cls, value: AnyHttpUrl | None):
+        if value and (value.username or value.password or value.query or value.fragment):
+            raise ValueError("song link base URL must not contain credentials, query, or fragment")
         return value
 
     @field_validator("artifact_root", "web_dist", "weights_dir", "cache_dir", "health_file",

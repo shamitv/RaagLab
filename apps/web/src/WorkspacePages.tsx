@@ -357,7 +357,7 @@ export function Library() {
             <div className="record-main">
               <Link
                 className="record-title"
-                to={`/projects/${item.project_id}?version=${item.version_id}`}
+                to={`/songs/${item.version_id}`}
               >
                 {item.project_title}
               </Link>
@@ -381,9 +381,9 @@ export function Library() {
               </button>
               <Link
                 className="button-link"
-                to={`/projects/${item.project_id}?version=${item.version_id}`}
+                to={`/songs/${item.version_id}`}
               >
-                Open version
+                Open song
               </Link>
             </div>
           </li>

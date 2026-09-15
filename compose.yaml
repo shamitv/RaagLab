@@ -1,7 +1,9 @@
 x-app: &app
   env_file: .env
+  environment:
+    SONG_LINK_BASE_URL: ${SONG_LINK_BASE_URL:-}
   init: true
-  restart: unless-stopped
+  restart: ${CONTAINER_RESTART_POLICY:-unless-stopped}
   networks: [backend]
   stop_grace_period: 90s
 

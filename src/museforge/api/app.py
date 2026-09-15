@@ -65,11 +65,16 @@ def storage_readiness(settings, engine):
 
 
 def is_client_route(path: str):
-    if path in {"", "create", "projects", "library", "settings", "templates"}:
+    if path in {"", "create", "projects", "library", "songs", "settings", "templates"}:
         return True
     if path.startswith("projects/"):
         try:
             return str(UUID(path[9:])) == path[9:].lower()
+        except ValueError:
+            return False
+    if path.startswith("songs/"):
+        try:
+            return str(UUID(path[6:])) == path[6:].lower()
         except ValueError:
             return False
     return False

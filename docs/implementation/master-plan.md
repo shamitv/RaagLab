@@ -4,7 +4,7 @@
 - Scope: Part 1 portable application plus Part 2 model integration and deployment handoff.
 - Implementation branch: `codex/phase-6-completion`; integration target: `main`
 - Baseline commit: `ac46f5a535e4461250322351e31b3433bbf96988`
-- Execution state: see [overall status](status.md); Phases 00–05 and Part 2 D03–D05 are complete on their recorded gates. Phase 06 is complete on `codex/phase-6-completion` at `4b2d42599168925a4771dfc61901c4ad5456abd2`, with CPU evidence at `735c960` and the final browser correction retested separately. See the [Phase 06 plan](phases/06-release-verification-and-handoff/plan.md).
+- Execution state: Phases 00–07 are complete on their recorded gates. [Phase 07](phases/07-song-first-experience/plan.md) delivered the song-first experience and flexible startup without repeating CPU inference.
 
 ## Outcome and source of truth
 

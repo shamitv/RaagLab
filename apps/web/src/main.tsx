@@ -12,6 +12,7 @@ import { destinations, pageFor } from "./routes";
 import "./style.css";
 import { Composer } from "./Composer";
 import { Library, Projects, Settings, Templates } from "./WorkspacePages";
+import { SongPage } from "./SongPage";
 
 type Readiness = components["schemas"]["Readiness"];
 
@@ -95,9 +96,7 @@ function App() {
                     d={
                       item.path === "/create"
                         ? "M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5Z"
-                        : item.path === "/projects"
-                          ? "M3 6h7l2 3h9v11H3Z"
-                          : item.path === "/library"
+                        : item.path === "/songs"
                             ? "M4 5h16v14H4zM8 9h8M8 13h5"
                             : item.path === "/templates"
                               ? "M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"
@@ -128,6 +127,8 @@ function App() {
             <Route path="/projects/:id" element={<Composer />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/library" element={<Library />} />
+            <Route path="/songs" element={<Library />} />
+            <Route path="/songs/:id" element={<SongPage />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/templates" element={<Templates />} />
             <Route

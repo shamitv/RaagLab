@@ -28,6 +28,14 @@ def test_documented_environment_defaults_load():
     assert settings.app_port == 8000
 
 
+def test_song_link_base_url_is_reachable_origin_only():
+    assert str(Settings(_env_file=None, song_link_base_url='https://music.example.test').song_link_base_url).rstrip('/') == 'https://music.example.test'
+    for value in ('ftp://music.example.test', 'https://user:pass@music.example.test',
+                  'https://music.example.test/?token=x', 'https://music.example.test/#part'):
+        with pytest.raises(ValidationError):
+            Settings(_env_file=None, song_link_base_url=value)
+
+
 def test_yue2_configuration_selects_real_route():
     settings = Settings(_env_file=None, music_provider='yue2', lyrics_provider='user', device='cuda',
                         precision='bfloat16', model_id='m-a-p/YuE2-3B', model_revision='model',

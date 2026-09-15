@@ -22,7 +22,7 @@ def client(tmp_path):
         yield client
 
 
-@pytest.mark.parametrize('path', ['/', '/create', '/projects', '/library', '/settings', '/templates', f'/projects/{uuid4()}'])
+@pytest.mark.parametrize('path', ['/', '/create', '/projects', '/library', '/songs', '/settings', '/templates', f'/projects/{uuid4()}', f'/songs/{uuid4()}'])
 def test_client_refresh_serves_revalidated_html(client, path):
     response = client.get(path)
     assert response.status_code == 200

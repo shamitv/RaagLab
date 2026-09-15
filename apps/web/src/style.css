@@ -762,3 +762,6 @@ h3 {
   min-height: 44px;
   align-items: center;
 }
+.song-page { display: grid; gap: 1rem; }
+.song-qr { width: 280px; max-width: 100%; height: auto; image-rendering: pixelated; }
+.lyrics-readonly { white-space: pre-wrap; font: inherit; }

@@ -19,6 +19,16 @@ def test_deployment_scripts_are_valid_bash_and_scoped():
     assert 'docker stop --time 30 $containers' in text
 
 
+def test_start_scripts_support_stopped_creation_and_port_preflight():
+    portable = (ROOT / 'scripts' / 'start.sh').read_text()
+    common = (ROOT / 'scripts' / 'common.sh').read_text()
+    deployed = (DEPLOY / 'start.sh').read_text()
+    assert 'create --build' in portable and 'create --build' in deployed
+    assert 'require_free_app_port' in portable
+    assert 'already owned by container' in common and 'already owned by container' in deployed
+    assert 'CONTAINER_RESTART_POLICY must be unless-stopped or no' in common
+
+
 def test_backup_and_restore_refuse_unsafe_or_incomplete_inputs():
     rollback = (DEPLOY / 'rollback.sh').read_text()
     restore = (DEPLOY / 'restore.sh').read_text()

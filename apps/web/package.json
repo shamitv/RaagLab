@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "engines": { "node": "24.x", "npm": "11.x" },
+  "engines": {
+    "node": "24.x",
+    "npm": "11.x"
+  },
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "typecheck": "tsc --noEmit",
@@ -12,11 +15,22 @@
     "test:browser": "playwright test",
     "types:api": "openapi-typescript ../../test-results/openapi.json -o src/api.generated.ts"
   },
-  "dependencies": { "react": "19.3.0", "react-dom": "19.3.0", "react-router-dom": "7.18.3" },
+  "dependencies": {
+    "qrcode": "1.5.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-router-dom": "7.18.3"
+  },
   "devDependencies": {
-    "typescript": "5.9.3", "vite": "8.3.0", "@vitejs/plugin-react": "6.1.1",
-    "@types/react": "19.3.0", "@types/react-dom": "19.3.0",
-    "openapi-typescript": "7.13.0", "@playwright/test": "1.63.0",
-    "@axe-core/playwright": "4.13.0", "vitest": "5.0.0"
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0",
+    "@types/qrcode": "1.5.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.1",
+    "openapi-typescript": "7.13.0",
+    "typescript": "5.9.3",
+    "vite": "8.3.0",
+    "vitest": "5.0.0"
   }
 }
