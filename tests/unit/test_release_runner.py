@@ -16,12 +16,20 @@ SPEC.loader.exec_module(release)
 
 
 def test_compose_and_cleanup_names_are_explicitly_owned():
-    command = release.compose("museforge-phase6-test-abc", "config", "--images")
-    assert command[command.index("--project-name") + 1] == "museforge-phase6-test-abc"
-    assert release.owned_project("museforge-phase6-test-abc")
-    assert release.owned_project("museforge-phase6-runtime-abc")
+    project = "museforge-phase6-test-0123456789"
+    command = release.compose(project, "config", "--images")
+    assert command[command.index("--project-name") + 1] == project
+    assert release.owned_project(project)
+    assert release.owned_project("museforge-phase6-runtime-abcdef1234")
     assert not release.owned_project("default")
     assert not release.owned_project("survey_app")
+    assert not release.owned_project("museforge-phase6-test-user-owned")
+
+
+def test_child_environment_is_allowlisted():
+    child = release.command_env({"PATH": "/safe", "MUSEFORGE_SECRET": "do-not-pass"})
+    assert child["PATH"] == "/safe"
+    assert "MUSEFORGE_SECRET" not in child
 
 
 def test_failed_step_keeps_output_and_raises(tmp_path, monkeypatch):
@@ -33,6 +41,29 @@ def test_failed_step_keeps_output_and_raises(tmp_path, monkeypatch):
             timeout=10,
         )
     assert (tmp_path / "expected-failure.log").read_text().strip() == "release failure fixture"
+
+
+def test_timeout_keeps_partial_output(tmp_path, monkeypatch):
+    monkeypatch.setattr(release, "EVIDENCE", tmp_path)
+    with pytest.raises(release.ReleaseFailure, match="timed out"):
+        release.run_step(
+            "expected-timeout",
+            [sys.executable, "-c", "import sys,time; print('partial', flush=True); time.sleep(2)"],
+            timeout=0.05,
+        )
+    assert "partial" in (tmp_path / "expected-timeout.log").read_text()
+
+
+def test_cleanup_failure_is_recorded(tmp_path, monkeypatch):
+    monkeypatch.setattr(release, "EVIDENCE", tmp_path)
+    result = release.cleanup_step(
+        "cleanup-failure",
+        [sys.executable, "-c", "raise SystemExit(9)"],
+        release.command_env(),
+        timeout=10,
+    )
+    assert result["returncode"] == 9
+    assert (tmp_path / "cleanup-failure.log").exists()
 
 
 def test_persistence_comparison_rejects_mutation():

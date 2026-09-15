@@ -22,11 +22,39 @@ require_engine() {
   docker info --format '{{.OSType}}' 2>/dev/null | grep -qx linux || fail 'The selected Docker engine must run Linux containers.'
 }
 compose() { "${COMPOSE_BASE[@]}" "$@"; }
+configured_yue2_device() {
+  if [[ -n "${YUE2_DEVICE:-}" ]]; then
+    printf '%s\n' "$YUE2_DEVICE"
+    return
+  fi
+  if [[ -r "$DEPLOY_ROOT/.mode.env" ]]; then
+    awk -F= '$1 == "YUE2_DEVICE" { print $2; exit }' "$DEPLOY_ROOT/.mode.env"
+  fi
+  printf '%s\n' auto
+}
+host_gpu_runtime_available() {
+  local runtimes
+  runtimes="$(docker info --format '{{json .Runtimes}}' 2>/dev/null || true)"
+  [[ "$runtimes" == *nvidia* ]]
+}
 mode_compose() {
   local mode="${1:?mode mock or real}"; shift
   case "$mode" in
     mock) compose --profile mock "$@" ;;
-    real) compose --profile yue2 -f "$ROOT/compose.yue2.yaml" -f "$ROOT/compose.yue2.gpu.yaml" -f "$ROOT/deploy/compose/compose.ubuntu1.yue2.yaml" "$@" ;;
+    real)
+      local device
+      device="$(configured_yue2_device)"
+      [[ "$device" == auto || "$device" == cpu || "$device" == cuda ]] || fail "YUE2_DEVICE must be auto, cpu, or cuda"
+      local files=("$ROOT/compose.yue2.yaml" "$ROOT/deploy/compose/compose.ubuntu1.yue2.yaml")
+      if [[ "$device" == cuda ]] || { [[ "$device" == auto ]] && host_gpu_runtime_available; }; then
+        files+=("$ROOT/compose.yue2.gpu.yaml")
+      fi
+      if ((${#files[@]} == 3)); then
+        compose --profile yue2 -f "${files[0]}" -f "${files[1]}" -f "${files[2]}" "$@"
+      else
+        compose --profile yue2 -f "${files[0]}" -f "${files[1]}" "$@"
+      fi
+      ;;
     *) fail "unknown mode: $mode" ;;
   esac
 }
@@ -48,10 +76,12 @@ write_mode_env() {
   deployment_env
   cp "$DEPLOY_ENV_FILE" "$DEPLOY_ROOT/.mode.env"
   if [[ "$mode" == real ]]; then
-    export MUSIC_PROVIDER=yue2 LYRICS_PROVIDER=user DEVICE=auto PRECISION=bfloat16
+    local requested_device="${YUE2_DEVICE:-auto}"
+    [[ "$requested_device" == auto || "$requested_device" == cpu || "$requested_device" == cuda ]] || fail 'YUE2_DEVICE must be auto, cpu, or cuda'
+    export MUSIC_PROVIDER=yue2 LYRICS_PROVIDER=user DEVICE="$requested_device" PRECISION=bfloat16
     export MODEL_ID=m-a-p/YuE2-3B MODEL_REVISION=29b3558dd46954a0cd9021dc76d5c91864a0f1c7
     export DECODER_REVISION=9a94e1d0ea9f8087e98f77fa88df4a4068104d2a
-    export YUE2_DEVICE="${YUE2_DEVICE:-auto}" YUE2_TEST_SMOKE=false YUE2_CPU_THREADS="${YUE2_CPU_THREADS:-4}"
+    export YUE2_DEVICE="$requested_device" YUE2_TEST_SMOKE=false YUE2_CPU_THREADS="${YUE2_CPU_THREADS:-4}"
     export YUE2_MODEL_DIR=/weights/model YUE2_VAE_DIR=/weights/vae
     export YUE2_MEMORY_BUDGET_GIB=16 YUE2_PROCESS_TIMEOUT_SECONDS=900 YUE2_WARMUP_TIMEOUT_SECONDS=900
     export YUE2_OFFLOAD_AR=false WORKER_CONCURRENCY=1 ATTEMPT_DEADLINE_SECONDS=900 HARD_WATCHDOG_SECONDS=930 QUEUE_DEADLINE_SECONDS=1800

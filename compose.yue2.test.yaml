@@ -3,7 +3,8 @@ x-yue2-test-env: &yue2-test-env
   DATABASE_URL: postgresql+psycopg://museforge:yue2-integration-test-only@db:5432/museforge
   BROKER_URL: amqp://museforge:yue2-integration-test-only@broker:5672//
   WORKSPACE_ID: 00000000-0000-4000-8000-000000000001
-  YUE2_TEST_SMOKE: "true"
+  YUE2_TEST_SMOKE: ${YUE2_TEST_SMOKE:-true}
+  DEVICE: ${YUE2_DEVICE:-cpu}
 
 services:
   db:
@@ -33,7 +34,7 @@ services:
     environment: *yue2-test-env
     restart: "no"
     shm_size: 1gb
-    mem_limit: 28g
+    mem_limit: ${YUE2_MEMORY_LIMIT_GIB:-28}g
   yue2-smoke-tests:
     profiles: [yue2]
     build:
