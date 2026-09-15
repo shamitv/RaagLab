@@ -1,0 +1,14 @@
+services:
+  api: &mock-environment
+    environment:
+      MUSIC_PROVIDER: mock
+      LYRICS_PROVIDER: mock
+      DEVICE: cpu
+      PRECISION: float32
+      MODEL_ID: ""
+      MODEL_REVISION: ""
+      DECODER_REVISION: ""
+  dispatcher:
+    <<: *mock-environment
+  worker-mock:
+    <<: *mock-environment

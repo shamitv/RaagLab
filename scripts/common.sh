@@ -13,7 +13,27 @@ require_engine() {
   [[ "$(docker info --format '{{.OSType}}')" == linux ]] || fail 'The engine must run Linux containers.'
 }
 require_env() { [[ -f .env ]] || fail 'Run bash scripts/setup.sh first to initialize .env.'; }
-compose() { docker compose --env-file .env --profile mock "$@"; }
+env_value() { awk -F= -v key="$1" '$1 == key { value=$2 } END { print value }' .env; }
+host_gpu_runtime_available() {
+  docker info --format '{{json .Runtimes}}' 2>/dev/null | grep -q nvidia
+}
+compose_with_mode() {
+  local mode="${1:?mode}"; shift
+  case "$mode" in
+    mock) docker compose --env-file .env --profile mock -f compose.yaml -f compose.mock.yaml "$@" ;;
+    real)
+      local device files=(compose.yaml compose.yue2.yaml)
+      device="${YUE2_DEVICE:-$(env_value YUE2_DEVICE)}"; device="${device:-auto}"
+      [[ "$device" == auto || "$device" == cpu || "$device" == cuda ]] || fail 'YUE2_DEVICE must be auto, cpu, or cuda.'
+      if [[ "$device" == cuda ]] || { [[ "$device" == auto ]] && host_gpu_runtime_available; }; then files+=(compose.yue2.gpu.yaml); fi
+      local args=(); for file in "${files[@]}"; do args+=(-f "$file"); done
+      docker compose --env-file .env --profile yue2 "${args[@]}" "$@"
+      ;;
+    *) fail 'mode must be real or mock' ;;
+  esac
+}
+configured_mode() { [[ "$(env_value MUSIC_PROVIDER)" == yue2 ]] && echo real || echo mock; }
+compose() { compose_with_mode "$(configured_mode)" "$@"; }
 require_restart_policy() {
   local saved policy
   saved="$(awk -F= '$1 == "CONTAINER_RESTART_POLICY" { print $2 }' .env | tail -n 1)"

@@ -16,7 +16,7 @@ Consumer diagnostics for unknown messages/tasks, invalid tasks, and decode error
 
 ## Configuration and storage
 
-Copy defaults through `bash scripts/setup.sh`; it preserves an existing `.env`, including when prerequisite checks fail. Credentials in `.env.example` are local development placeholders. Keep PostgreSQL/RabbitMQ credentials consistent with their application URLs. Configuration rejects unsupported real providers, non-CPU devices/model IDs in foundation, relative storage paths, non-loopback host binding, and inconsistent execution timing limits.
+Run `bash scripts/setup.sh` to create a real-provider environment, or `bash scripts/setup.sh mock` for the explicit mock provider. The script preserves an existing `.env`, including when prerequisite checks fail. Credentials in `.env.example` are local development placeholders. Keep PostgreSQL/RabbitMQ credentials consistent with their application URLs.
 
 The application container paths in `.env.example` match Compose mounts. The API mounts artifacts read-only; the worker mounts the same volume writable. PostgreSQL 18 uses the named volume at `/var/lib/postgresql`, with its data under `18/docker` ([official image documentation](https://hub.docker.com/_/postgres)). RabbitMQ uses a stable hostname and its own persistent volume. DB/broker publish no host ports. Normal `stop.sh` never removes volumes.
 

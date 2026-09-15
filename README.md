@@ -13,12 +13,23 @@ Turn a musical idea into a playable song. Describe the sound, choose instruments
 
 ![MuseForge mobile song screen](docs/implementation/evidence/07/20260915-song-first/song-mobile.png)
 
-## Set up with the mock provider
+## Set up MuseForge
+
+The standard setup creates a real YuE2 environment and the standard start command selects the real provider:
+
+```bash
+bash scripts/setup.sh
+bash scripts/start.sh
+```
+
+This requires the verified weights volume and suitable CPU or NVIDIA GPU resources. `DEVICE=auto` uses CUDA when the Docker engine exposes the NVIDIA runtime.
+
+### Mock provider
 
 Use the mock provider when you want to evaluate the product without installing YuE2 weights or configuring a GPU:
 
 ```bash
-bash scripts/setup.sh
+bash scripts/setup.sh mock
 bash scripts/start.sh mock
 ```
 

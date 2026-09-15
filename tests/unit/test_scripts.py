@@ -19,12 +19,25 @@ def test_setup_preserves_existing_env_even_without_engine(tmp_path):
     first = subprocess.run(['bash', 'scripts/setup.sh'], cwd=tmp_path, env=env, capture_output=True)
     assert first.returncode != 0
     target = tmp_path / '.env'
-    assert target.read_text() == (tmp_path / '.env.example').read_text()
+    created = target.read_text()
+    assert 'MUSIC_PROVIDER=yue2' in created
+    assert 'LYRICS_PROVIDER=user' in created
+    assert 'PRECISION=bfloat16' in created
+    assert 'YUE2_DEVICE=auto' in created
     assert target.stat().st_mode & 0o777 == 0o600
     target.write_text('# existing local values\nAPP_PORT=8123\n')
     second = subprocess.run(['bash', 'scripts/setup.sh'], cwd=tmp_path, env=env, capture_output=True)
     assert second.returncode != 0
     assert target.read_text() == '# existing local values\nAPP_PORT=8123\n'
+
+
+def test_portable_scripts_default_real_and_keep_mock_explicit():
+    setup = (ROOT / 'scripts/setup.sh').read_text()
+    start = (ROOT / 'scripts/start.sh').read_text()
+    common = (ROOT / 'scripts/common.sh').read_text()
+    assert 'mode="${1:-real}"' in setup and 'mode="${1:-real}"' in start
+    assert 'compose.yue2.yaml' in common and 'compose.mock.yaml' in common
+    assert 'real|mock' in setup and 'real|mock' in start
 
 
 def test_demo_commands_fail_when_api_is_unavailable():

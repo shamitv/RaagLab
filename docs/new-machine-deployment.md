@@ -28,7 +28,7 @@ cd museforge
 bash scripts/setup.sh
 ```
 
-`setup.sh` creates a private `.env` from `.env.example` only when one does not already exist. Review these common settings:
+`setup.sh` creates a private real-provider `.env` only when one does not already exist. Use `bash scripts/setup.sh mock` to create a mock-provider environment instead. Review these common settings:
 
 ```dotenv
 APP_PORT=8000
@@ -42,11 +42,22 @@ CONTAINER_RESTART_POLICY=unless-stopped
 
 The default application binding is `127.0.0.1`, so it is accessible only from the host. Keep that default unless a separate, trusted proxy provides access.
 
-## 3. Set up with the mock provider
+## 3. Start the real provider
+
+After provisioning the weights described in section 7, start the default real provider:
+
+```bash
+bash scripts/start.sh
+```
+
+The command selects the YuE2 profile and includes GPU access when the Docker engine advertises the NVIDIA runtime. Set `YUE2_DEVICE=cpu` or `YUE2_DEVICE=cuda` in `.env` for an explicit device choice.
+
+## 4. Set up with the mock provider
 
 To evaluate the application with generated demo audio instead of YuE2, explicitly select the mock provider:
 
 ```bash
+bash scripts/setup.sh mock
 bash scripts/start.sh mock
 ```
 
@@ -65,12 +76,12 @@ After a manual `docker compose start`, confirm readiness before using the produc
 curl --fail http://127.0.0.1:8000/health/ready
 ```
 
-## 4. Verify and operate
+## 5. Verify and operate
 
 ```bash
 bash scripts/smoke.sh mock
 bash scripts/logs.sh
-docker compose --env-file .env --profile mock ps
+docker compose --env-file .env ps
 ```
 
 Generate a song in the browser, open **My Songs**, and confirm playback and download. If `SONG_LINK_BASE_URL` is configured, scan the downloaded QR code from another device and confirm that the song page opens.
@@ -83,7 +94,7 @@ bash scripts/stop.sh
 
 The `database`, `broker`, and `artifacts` named volumes survive normal `down` and subsequent startup. Do not use `docker compose down --volumes` unless permanent data deletion is intended and backed up.
 
-## 5. Managed Ubuntu/WSL deployment
+## 6. Managed Ubuntu/WSL deployment
 
 The managed scripts create a private environment under
 `${XDG_DATA_HOME:-$HOME/.local/share}/museforge-managed`, generate database and
@@ -112,7 +123,7 @@ bash scripts/deploy/start.sh mock --create-only
 
 See the [operations runbook](deployment/machines/reference/runbook.md) for backup, restore, update, rollback, drain, and recovery procedures.
 
-## 6. YuE2 song-provider deployment
+## 7. YuE2 weights and prerequisites
 
 YuE2 requires an external Docker volume named by
 `MUSEFORGE_YUE2_WEIGHTS_VOLUME`, defaulting to `museforge-yue2-weights`, as
