@@ -2,9 +2,9 @@
 
 - Plan date: 2026-09-13
 - Scope: Part 1 portable application plus Part 2 model integration and deployment handoff.
-- Branch: `phase-6-rest`
+- Implementation branch: `phase-6-rest`; integration target: `main`
 - Baseline commit: `ac46f5a535e4461250322351e31b3433bbf96988`
-- Execution state: see [overall status](status.md); Phases 00–05 and Part 2 D03–D05 are complete on their recorded gates. Phase 06 mock release is complete; its normal-mode CPU YuE2 gate remains host-blocked.
+- Execution state: see [overall status](status.md); Phases 00–05 and Part 2 D03–D05 are complete on their recorded gates. Phase 06 mock release passed at `c7b2a87`; CPU/release corrections, dependency/evidence work, and final certification remain open alongside the host prerequisite blocker. See the [Phase 06 plan](phases/06-release-verification-and-handoff/plan.md).
 
 ## Outcome and source of truth
 

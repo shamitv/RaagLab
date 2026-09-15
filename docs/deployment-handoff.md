@@ -2,8 +2,9 @@
 
 Date: 2026-09-15. This handoff describes the portable Part 1 release and the
 boundary to machine/model deployment. The mock release is portable; the
-normal-mode CPU YuE2 gate is an opt-in release check requiring a host with at
-least 32 GiB available memory and the external verified weights volume.
+normal-mode CPU YuE2 gate is selected with `--real-cpu` and is required for
+Phase 06 closure. It needs at least 32 GiB available host memory and the external
+verified weights volume; implementation and evidence follow-ups also remain.
 
 ## Proven mock start
 
@@ -24,12 +25,16 @@ broker, and artifact volumes. It does not reset user data. The release gate is
 run with `bash scripts/test.sh release`; its dated evidence is under
 `docs/implementation/evidence/06/`.
 
-Run `bash scripts/test.sh release --real-cpu` to add the normal-mode CPU model
-generation. It uses `YUE2_DEVICE=cpu`, four CPU threads, one worker with a 28
-GiB memory limit, and verifies nontruncated audio, durable provenance,
-playback/range/hash retrieval, resource samples, and stop/start checksum
-preservation. The command fails before model startup when the host has less
-than 32 GiB available memory or the pinned weights volume is absent.
+`bash scripts/test.sh release --revision HEAD --real-cpu` selects the normal-mode
+CPU verifier. The target is explicit CPU, four threads, concurrency one, a 28 GiB
+worker limit, 900-second warmup, and 3,600-second inference. Memory preflight,
+durable provenance/audio checks, resource sampling, and stop/start checksum code
+are present; this is not yet a verified normal CPU operating command. Device and
+deadline alignment, browser playback/seek/download/refresh/reopen, timing/log
+retention, and cleanup safeguards still need completion. See the
+[Phase 06 follow-ups](implementation/phases/06-release-verification-and-handoff/plan.md).
+The recorded CPU preflight failed before model startup at 7.2 GiB available;
+the expected pinned weights volume was also absent.
 
 ## Service and storage contract
 

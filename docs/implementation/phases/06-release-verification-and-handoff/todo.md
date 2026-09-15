@@ -1,19 +1,25 @@
 # Phase 06 to-do
 
-Phase 06 implementation is in progress. The mock release and documentation
-work are complete; the normal-mode CPU gate is blocked by host prerequisites.
-Planning preparation is tracked in Phase 00.
+Updated: 2026-09-15. State: in_progress. The mock gate passed at `c7b2a87`;
+normal-mode CPU verification and final certification remain open. Partial tasks
+remain unchecked. See the [plan](plan.md) for concrete implementation gaps.
 
-- [x] 06-01 Audit the requirement matrix and every phase report against current source/locks/migrations/configuration; current release evidence and limitations are recorded.
-- [ ] 06-02 Recheck selected dependency/runtime support and record exact source revision, lock hashes, image IDs/digests, readiness/migration state, effective non-secret configuration and test environment for the current candidate.
-- [ ] 06-03 Reproduce documented setup and mock startup from a clean configured checkout with isolated fresh test storage; confirm migration serialization, service/profile selection, built UI and loopback/internal network boundaries for the current candidate.
-- [ ] 06-04 Run the release test entry point covering A01–A12 with real PostgreSQL/broker/worker transport, routing/cache/ranges, lyrics, lineage/idempotency/concurrency, interruption recovery/cancellation, honest capabilities, and normal-mode CPU YuE2.
-- [ ] 06-05 Run API-served desktop/mobile/browser/keyboard/long-content/offline/zoom checks and the user-oriented create/play/seek/download/refine/history/save/reopen/library/settings/templates smoke for the current candidate.
-- [ ] 06-06 Verify CPU stop/start/update persistence, ignored/generated/secret files and build contexts; exercise artifact maintenance dry-run and dedicated test cleanup.
-- [x] 06-07 Refresh operating/development/API/model documentation with tested commands, configuration, service health/logging, persistence semantics, limitations and troubleshooting.
-- [x] 06-08 Publish `docs/deployment-handoff.md` with the mock command/URL, service/storage/migration/routing contracts, provider limits and Part 2 ownership.
-- [x] 06-09 Audit the merged Part 2 boundary: target topology/device/resource/backup/restore and real-model operational obligations are current, with semantic/native-Linux limitations explicit.
-- [ ] 06-10 Publish the compact verification record with current command outcomes, evidence links and implemented/tested/mock/pending/blocked split.
-- [ ] 06-11 Synchronize phase and overall status and deliver start instructions and limitations; close Phase 06 only after the CPU gate passes.
+- [x] 06-01 Audit requirements and phase reports for the current checkpoint; correct unsupported completion claims and retain historical evidence.
+- [ ] 06-02 Finish the dated official-source dependency support/fix review. Revision, lock hashes, image IDs/digests, runtime versions, and migration head are already recorded; rerun affected checks if pins change.
+- [x] 06-03 Reproduce documented mock setup/start from an explicit committed revision with fresh configuration, isolated storage, and loopback networking.
+- [ ] 06-04 Complete CPU/release runner corrections and executable regressions; pass normal-mode CPU inference in addition to the passing mock integration/recovery gate.
+  - [ ] Align explicit CPU versus auto-fallback provenance and verify persisted deployment mode, auto GPU selection, and strict CUDA failure.
+  - [ ] Apply 900-second warmup and 3,600-second inference budgets consistently to worker, verifier, and outer watchdogs.
+  - [ ] Assert normal planning/token settings, no GPU allocation, exact lyrics, validated nontruncated audio, and matching download checksum.
+  - [ ] Preserve timing fields and command logs; bound remaining subprocess/network calls and cover interruption/timeout behavior.
+  - [ ] Provide at least 32 GiB available host RAM and the pinned read-only weights; current preflight is blocked.
+- [ ] 06-05 Add and run real CPU browser playback/seek/download/refresh/reopen checks. Mock Chromium workflows and viewport/keyboard/reduced-motion/native-zoom inspection already ran; publish final-run attachments and record optional WebKit separately.
+- [ ] 06-06 Verify CPU saved-state/audio preservation across the required lifecycle and finish cleanup ownership checks and failure reporting. Mock rebuild/update, stop/start, artifact dry-run, and Compose cleanup passed; final status must include worktree cleanup too.
+- [x] 06-07 Refresh README, architecture, development, API, and model operating documentation for the current checkpoint.
+- [x] 06-08 Publish the deployment handoff with service/storage/migration/routing/provider contracts and Part 2 ownership.
+- [x] 06-09 Audit merged Part 2 D04/D05 reports within their recorded hardware, operations, and capability limits.
+- [ ] 06-10 Finish evidence publication: individual A01–A12 and 06-AC mappings, final-run logs/screenshots, CPU measurements and acceptance, and the implemented/tested/blocked split. The mock summary and blocked preflight are published.
+- [ ] 06-11 Certify the final committed candidate with `bash scripts/test.sh release --revision HEAD --real-cpu`, refresh exact tested commands, synchronize final reports, and close only after all required gates pass. Checkpoint tracking is updated.
 
-No task has been removed or moved. If scope changes, keep the original identifier, explain the change and link its destination. See [plan](plan.md) and [status](status.md).
+No task has been removed or moved. See [status](status.md) and
+[implementation report](implementation-status.md) for completed work and evidence.

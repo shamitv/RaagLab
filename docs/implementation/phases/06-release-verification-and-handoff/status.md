@@ -4,41 +4,54 @@
 - Started: 2026-09-15
 - Last updated: 2026-09-15
 - Completed: not yet
-- Current focus: normal-mode CPU YuE2 verification on a host meeting memory and weights prerequisites
+- Current focus: finish CPU/release verification gaps, satisfy host prerequisites, and certify the final committed revision
 
 ## Completed work
 
-The mock release gate, lifecycle checks, evidence record, and deployment handoff
-are complete. CPU deployment support and the full normal-mode verifier are
-implemented, but the required CPU gate is blocked. See the [implementation
-status](implementation-status.md), [mock evidence](../../evidence/06/20260915-104002-622828de/README.md),
-and [blocked CPU record](../../evidence/06/20260915-cpu-gate-blocked/README.md).
+Tasks **06-01, 06-03, 06-07, 06-08, and 06-09** are complete for this checkpoint.
+The mock release runner, clean-checkout lifecycle, initial documentation, and
+deployment handoff are delivered. CPU device selection, normal-mode verification,
+resource preflight/sampling, and stop/start checksum checks are implemented but
+still need corrections and runtime verification.
+
+The [mock release record](../../evidence/06/20260915-104002-622828de/README.md)
+certifies `c7b2a87c55d1c80b2142c7bd179adff9290808ff` for its recorded mock gate:
+42 command outcomes passed, migration head `0004_worker_runtime`, and successful
+Compose cleanup. Integration/recovery, frontend, API-served Chromium, documented
+lifecycle, and mock restart/update persistence ran. Ten focused runner/deployment
+checks also passed; some deployment checks assert source text rather than behavior.
 
 ## Remaining work
 
-Tasks 06-01 through 06-08 and 06-10 are complete. 06-04, 06-05, 06-06,
-06-09, and 06-11 remain open for the normal-mode CPU run and its evidence; the
-merged Part 2 D04/D05 reports are current.
+Tasks **06-02, 06-04, 06-05, 06-06, 06-10, and 06-11** remain open or partial:
 
-## Blockers and decisions needed
+- Finish the dated dependency review and implementation corrections listed in
+  the [plan](plan.md): device/provenance alignment, inference/watchdog deadlines,
+  normal settings assertions, timing/log retention, interruption handling, and
+  resource ownership plus final cleanup reporting.
+- Add and run CPU browser playback/seek/download/refresh/reopen and lifecycle
+  persistence checks on a host meeting the model prerequisites.
+- Publish individual A01–A12 and phase results, CPU resource/timing measurements,
+  and final-run logs/screenshots. The latest summary is aggregate; its published
+  screenshots are from the earlier same-day run.
+- Verify the final committed candidate, refresh its tested commands and reports,
+  then mark complete. Existing D04/D05 results keep their original scope.
 
-The selected Linux VM is reachable with its ignored key, but it reports 10 GiB
-total RAM (about 7.3 GiB available) and does not contain the verified
-`musicgen-yue2-test_weights` volume. The CPU gate therefore remains blocked;
-WebKit is unavailable and remains unclaimed.
+## Runtime blocker
 
-## Latest verification
+The selected VM `yolo1@10.42.0.42` is reachable with its configured ignored SSH
+key. The recorded inspection found 10 GiB total RAM and no external verified
+`musicgen-yue2-test_weights` volume. CPU preflight ran and exited 1 at 7.2 GiB
+available versus the required 32 GiB; no model container started. See the
+[blocked preflight](../../evidence/06/20260915-cpu-gate-blocked/README.md).
 
-The mock release run passed 172 container unit tests (6 expected skips), 49 real
-service integration tests, 34 Chromium browser checks with 22 intentional
-responsive/stateful skips, 3 frontend tests, recovery/restart/update
-persistence, the documented lifecycle, static audits, and native zoom/keyboard
-inspection. The normal CPU YuE2 run is unrun due to the recorded host
-prerequisites. See the [mock evidence](../../evidence/06/20260915-104002-622828de/README.md)
-and [blocked CPU record](../../evidence/06/20260915-cpu-gate-blocked/README.md).
+WebKit was unavailable and remains optional/unclaimed. Normal-mode CPU inference
+and its measurements are unrun. Historical short CPU smoke is not evidence for
+this normal-mode gate.
 
 ## Next action
 
-Restore a host with at least 32 GiB available memory and the pinned verified
-weights volume, run `bash scripts/test.sh release --real-cpu`, publish its
-evidence, and then close the remaining Phase 06 tasks.
+Finish the implementation/evidence follow-ups, recheck available host memory and
+pinned weights, then run `bash scripts/test.sh release --revision HEAD --real-cpu`
+on the final candidate. See the [checklist](todo.md) and
+[implementation report](implementation-status.md).

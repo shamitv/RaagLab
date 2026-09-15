@@ -9,7 +9,7 @@
 - Application started: 2026-09-13T08:12:41Z
 - Last updated: 2026-09-15
 - Application completed: not completed
-- Current focus: normal-mode CPU YuE2 release gate is blocked by target host memory and missing verified weights
+- Current focus: finish CPU/release verification gaps and evidence, satisfy host memory/weights prerequisites, and certify the final committed revision
 
 ## Phase summary
 
@@ -21,7 +21,7 @@
 | [03 Complete responsive workspace](phases/03-complete-responsive-workspace/status.md) | completed | Responsive workspace, immutable iterations and browser acceptance verified | [Completion report](phases/03-complete-responsive-workspace/implementation-status.md) |
 | [04 Projects, versions, and recovery](phases/04-projects-versions-and-recovery/status.md) | completed | Project/library lifecycle, workspace settings/templates, draft recovery, retries, and artifact/worker recovery verified | [Completion report](phases/04-projects-versions-and-recovery/implementation-status.md) |
 | [05 Provider readiness](phases/05-provider-readiness/status.md) | completed | Evidence-backed provider capability contract, capability-driven composer, and integrated mock regression verified | [Completion report](phases/05-provider-readiness/implementation-status.md) |
-| [06 Release verification and handoff](phases/06-release-verification-and-handoff/status.md) | in_progress | Mock release gate and handoff complete; normal-mode CPU YuE2 gate is blocked | Restore a host with >=32 GiB RAM and pinned weights |
+| [06 Release verification and handoff](phases/06-release-verification-and-handoff/status.md) | in_progress | Mock gate passed; CPU verifier and initial handoff delivered; implementation/evidence follow-ups remain | Finish verification gaps and provide >=32 GiB available RAM plus pinned weights |
 
 ## Completed work
 
@@ -51,12 +51,14 @@ audio retrieval, playback, and seeking. See [application evidence](../deployment
 The [Phase 05 completion report](phases/05-provider-readiness/implementation-status.md)
 records which provider behaviors are supported, unsupported and unknown.
 
-Phase 06 mock verification is complete: the isolated release gate passed 172
-container unit tests, 49 real-service integration tests, 34 Chromium browser
-checks with 22 intentional skips, 3 frontend tests, recovery/restart/update
-persistence, the documented lifecycle, native zoom/keyboard evidence, and
-static audits. The required normal-mode CPU YuE2 gate is implemented but blocked
-on the target's 10 GiB RAM and absent verified weights. See the [Phase 06 report](phases/06-release-verification-and-handoff/implementation-status.md),
+Phase 06's mock gate passed at committed revision `c7b2a87`: 42 recorded command
+outcomes, including integration/recovery, frontend, API-served Chromium,
+documented lifecycle, restart/update persistence, and Compose cleanup. CPU
+verification code and the initial handoff are delivered, with remaining
+device/deadline/browser/safety corrections and evidence work recorded in the
+[Phase 06 plan](phases/06-release-verification-and-handoff/plan.md).
+The target's 10 GiB RAM and absent verified weights independently block CPU
+model execution. See the [Phase 06 report](phases/06-release-verification-and-handoff/implementation-status.md),
 [release evidence](evidence/06/20260915-104002-622828de/README.md), and
 [CPU gate record](evidence/06/20260915-cpu-gate-blocked/README.md).
 
@@ -64,8 +66,14 @@ The repository/design/reference audit, [architecture decision](decisions/0001-ap
 
 ## Remaining work
 
-Phase 06 release acceptance is complete for the mock Part 1 release. The CPU
-release gate remains blocked by host prerequisites. Part 2 D03 is complete for the narrow
+Phase 06 must finish the dated dependency review, CPU/release runner corrections,
+behavioral regressions, CPU browser/lifecycle checks, individual acceptance
+mapping, and final evidence retention/publication. Tasks 06-02, 06-04, 06-05,
+06-06, 06-10, and 06-11 remain open or partial. A passing final committed-revision
+run is required for closure; providing an eligible host alone does not complete
+the work. See the [checklist](phases/06-release-verification-and-handoff/todo.md).
+
+Part 2 D03 is complete for the narrow
 English user-lyrics route. Broader capability semantics, language support, lyric
 adherence, and true instrumental output are not established by that technical
 acceptance gate; Part 2 D04/D05 deployment validation and handoff are complete
@@ -73,19 +81,22 @@ on Ubuntu1 with their documented limitations.
 
 ## Blockers and decisions needed
 
-No Phase 05 or Part 2 D04/D05 implementation decisions remain. Phase 06 cannot
-close until the normal-mode CPU gate runs on a host meeting its memory and
-weights prerequisites.
+No Phase 05 or Part 2 D04/D05 implementation decisions remain. Phase 06 CPU
+preflight failed at 7.2 GiB available versus 32 GiB required, before model startup.
+The pinned weights volume is also absent. Runtime verification requires these
+prerequisites; independent runner/evidence follow-ups can proceed meanwhile.
 
 ## Latest verification
 
-Phase 06 mock release verification passed: 172 container unit tests (6 expected
-skips), 49 PostgreSQL/RabbitMQ integration tests, 34 Chromium browser checks
-with 22 intentional skips, 3 frontend tests. Ten focused release-runner/deployment
-safety tests are implemented and passed on the rebuilt candidate. Recovery, lifecycle, persistence, and static audits passed;
-WebKit was unavailable and remains unclaimed. The normal CPU gate was not run:
-the selected host reports 10 GiB total memory and no `musicgen-yue2-test_weights`
-volume. See [mock evidence](evidence/06/20260915-104002-622828de/README.md) and
+The latest mock record reports 42 passing command outcomes at `c7b2a87`, migration
+head `0004_worker_runtime`, and passing Compose cleanup. Ten focused
+runner/deployment checks passed separately; some deployment checks are
+source-based and need behavioral coverage. Frontend tests (3) and the production
+build passed. Individual A01–A12 results and final-run attachments still need
+publication; the latest summary links earlier same-day screenshots. Historical
+suite totals remain in their dated records below. WebKit was unavailable and
+remains unclaimed. CPU preflight ran and failed; normal CPU inference did not
+start. See [mock evidence](evidence/06/20260915-104002-622828de/README.md) and
 the [blocked CPU record](evidence/06/20260915-cpu-gate-blocked/README.md).
 
 Phase 05 local tests passed: 173 Python unit tests (5 optional NumPy skips), 3
@@ -117,6 +128,7 @@ and fresh-container reproducibility passed. See [the dated deployment record](..
 
 ## Next action
 
-Restore a CPU-capable verification host with at least 32 GiB RAM and the pinned
-weights volume, then run `bash scripts/test.sh release --real-cpu` and publish
-the resulting evidence before marking Phase 06 complete.
+Finish the [Phase 06 implementation/evidence follow-ups](phases/06-release-verification-and-handoff/plan.md),
+provide at least 32 GiB available host RAM and the pinned weights volume, then
+run `bash scripts/test.sh release --revision HEAD --real-cpu` on the final
+committed candidate. Publish all required acceptance evidence before closing.
