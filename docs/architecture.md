@@ -15,3 +15,9 @@ The API has read-only artifact access. Browser results reconnect through persist
 Projects and the completed-version library are server-backed and stably paginated. Search/filter state is bound into cursors. Duplicate projects get new project/version IDs, remapped parentage and active selection, and shared audio references; they do not copy jobs. Archive is conditional and refuses projects with active jobs. Explicit retry creates a new linked job while preserving the original operation, immutable execution snapshot, route and lyrics checkpoint. Worker leases and fences reject late results, and project-level locking allocates concurrent version numbers without losing manual selection.
 
 Tests use a unique isolated Compose stack and actual HTTP, PostgreSQL 18, RabbitMQ 4.3, dispatcher and separate workers. Test scenarios are enabled only by explicit `MOCK_TEST_ENABLED`; the isolated API snapshots server-configured seed scenarios under `_test`, which the ordinary worker ignores. The test configuration reserves seeds 4294967201 (fatal validation), 4294967202 (typed timeout), 4294967203 (15-second cooperative delay), and 4294967204 (transient failure until attempts exhaust). No public request field enables test behavior. Production defaults have no scenarios or artificial delay. Phase 04 service/browser evidence is in [the completion report](implementation/phases/04-projects-versions-and-recovery/implementation-status.md).
+
+The current packaged mock release is verified with `bash scripts/test.sh release`
+using isolated PostgreSQL, RabbitMQ, dispatcher, worker, artifact volumes, and
+API-served Chromium. The tested migration head is `0004_worker_runtime`; the
+release record and deployment boundary are in the [Phase 06 evidence](implementation/evidence/06/20260915-090415-d55061e8/README.md)
+and [deployment handoff](deployment-handoff.md).
