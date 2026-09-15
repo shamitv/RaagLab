@@ -18,6 +18,7 @@ COPY apps/web/package.json apps/web/package-lock.json ./
 RUN npm ci --no-audit --no-fund
 RUN npx playwright install --with-deps chromium
 COPY apps/web/ ./
+COPY scripts/verify-workspace-browser.mjs /web/verify-workspace-browser.mjs
 ENV API_BASE_URL=http://api:8000
 CMD ["npm", "run", "test:browser"]
 
