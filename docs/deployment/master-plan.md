@@ -1,9 +1,9 @@
 # MuseForge Part 2 deployment plan
 
 - Plan date: 2026-09-14
-- Target alias: `ubuntu1`
-- Topology: Ubuntu 24.04.5 LTS inside WSL2, with Docker Engine running in the distribution
-- Source workspace: `C:\work\musicgen` (deployment test invoked through `/mnt/c/work/musicgen`)
+- Target class: reference Ubuntu/WSL2 deployment
+- Topology: Ubuntu LTS inside WSL2, with Docker Engine running in the distribution
+- Source workspace: repository root; the exact host path is local-only
 - Current branch: `codex/part2-d04-d05-deployment`
 
 ## Scope and current outcome
@@ -35,18 +35,18 @@ from a style prompt and supplied lyrics. The exact model revision is
 use CC BY-NC 4.0 weights. The inference package is the official
 `yue2-infer==0.1.5` wheel, pinned by URL and SHA-256.
 
-The local image is `musicgen-yue2:0.1.5`, based on the pinned Python 3.12
+The local image is `museforge-yue2:0.1.5`, based on the pinned Python 3.12
 slim-bookworm image, PyTorch 2.10.0+cu128, and CUDA 12.8 wheels. Model files are
 acquired separately into the persistent Docker volume
-`musicgen-yue2-test_weights`; the image contains no weights. Generated results
-are retained in `musicgen-yue2-test_outputs`. See the [machine manifest](machines/ubuntu1/deployment-manifest.md)
-and [verification record](machines/ubuntu1/verification.md) for measured IDs and
-resource limits.
+`museforge-yue2-weights`; the image contains no weights. Generated results
+are retained in `museforge-yue2-validation-outputs`. See the [deployment manifest](machines/reference/deployment-manifest.md)
+and [verification record](machines/reference/verification.md) for measured outcomes
+and resource limits.
 
-The observed GPU is an NVIDIA RTX 5080 Laptop GPU with 16,303 MiB VRAM. Upstream
-documents a 24 GB recommendation; this plan therefore treats the 16 GB result as
-a bounded feasibility checkpoint, with one inference at a time, a 16 GiB runtime
-budget, and no claim about maximum context or concurrent generation.
+The reference host exposed a compatible NVIDIA GPU and passed the bounded gate.
+Because it did not meet every upstream recommendation, the result remains a
+feasibility checkpoint with one inference at a time and no claim about maximum
+context or concurrent generation. Exact host capacity is local-only.
 
 ## Deployment phases
 
@@ -54,14 +54,14 @@ budget, and no claim about maximum context or concurrent generation.
 | --- | --- | --- |
 | D00 Inventory and plan | completed | Target, topology, model decision, gaps, and acceptance checks recorded |
 | D01 Host preparation | completed | WSL/Docker/NVIDIA path and isolated deployment configuration are verified |
-| D02 Mock deployment | completed on `ubuntu1` | Target browser playback, persistence, cancellation, and restart/recovery checks passed |
+| D02 Mock deployment | completed on the reference host | Target browser playback, persistence, cancellation, and restart/recovery checks passed |
 | D03 Real model | completed | Corrected integrated worker passed one durable real API job, verified provenance, 48 kHz retrieval/playback, and Phase 4-baseline regressions; [evidence](evidence/2026-09-14-d03-review-corrections/README.md) |
 | D04 System validation | completed | Real readiness, queued job, provenance, audio retrieval/range checks, and queued cancellation passed |
 | D05 Operations and handoff | completed | Runbook, manifest, backup/restore, isolated playback, update, rollback, and portability evidence passed |
 
 The prior mock acceptance on the separate VM remains preserved in
 `docs/implementation/evidence/02/2026-09-13-mock-end-to-end/`; it is not silently
-reclassified as an `ubuntu1` deployment.
+reclassified as a reference-host deployment.
 
 ## Acceptance and recovery rules
 
@@ -74,5 +74,6 @@ persist model provenance with the result.
 
 The standalone evidence is [here](evidence/2026-09-14-yue2/README.md), and the
 integrated application evidence is [here](evidence/2026-09-14-d03-review-corrections/README.md).
-The persistent Ubuntu1 deployment is available through the runbook. Native Linux
-remains documented only, and the product capability limitations remain explicit.
+The dated reference-host deployment passed the runbook gates. Live state is
+recorded locally. Native Linux remains documented only, and the product
+capability limitations remain explicit.

@@ -1,13 +1,16 @@
-# Deployment manifest: ubuntu1
+# Reference deployment manifest
 
 - Validation date: 2026-09-15
 - Source branch: `codex/part2-d04-d05-deployment`
-- Compose project: `museforge-ubuntu1`
-- Compose files: `compose.yaml`, `compose.yue2.yaml`, `compose.yue2.gpu.yaml`, `deploy/compose/compose.ubuntu1*.yaml`
+- Compose project: `museforge-managed`
+- Compose files: `compose.yaml`, `compose.yue2.yaml`, `compose.yue2.gpu.yaml`, `deploy/compose/compose.managed*.yaml`
 - Application URL: `http://127.0.0.1:8000`
-- Deployment root: `/home/shamit/.local/share/museforge-ubuntu1` (private)
-- Database/broker/artifact volumes: `museforge-ubuntu1_database`, `museforge-ubuntu1_broker`, `museforge-ubuntu1_artifacts`
-- Weights volume: `musicgen-yue2-test_weights` (read-only during inference)
+- Default deployment root: `${XDG_DATA_HOME:-$HOME/.local/share}/museforge-managed` (private)
+- Database/broker/artifact volumes: `museforge-managed_database`, `museforge-managed_broker`, `museforge-managed_artifacts`
+- Weights volume: `MUSEFORGE_YUE2_WEIGHTS_VOLUME` (default
+  `museforge-yue2-weights`; read-only during inference)
+- Standalone output volume: `MUSEFORGE_YUE2_OUTPUTS_VOLUME` (default
+  `museforge-yue2-validation-outputs`)
 
 ## Model and runtime
 
@@ -16,13 +19,13 @@
 - License: CC BY-NC 4.0 weights
 - Inference package: `yue2-infer` pinned by `packaging/yue2/requirements.lock`; runtime reported 0.1.6
 - Python 3.12.14; PyTorch 2.10.0+cu128; CUDA 12.8; BF16
-- GPU: RTX 5080 Laptop, 16,303 MiB VRAM; one active inference
+- GPU: compatible NVIDIA GPU; one active inference; exact host capacity is local-only
 - Runtime budget: 16 GiB; FP32 VAE; no quantization; full symbolic planning
 - Generation deadline: 900 seconds; 5-second graceful process termination, followed by kill/reap
 
 ## Provider state
 
-The active MuseForge application provider is `yue2` in the persistent deployment;
+The verified MuseForge application provider was `yue2` in the reference deployment;
 the mock profile remains available as a diagnostic path. Exact lyric adherence,
 language breadth, musical control, instrumental fidelity, and subjective
 listening quality remain unverified.

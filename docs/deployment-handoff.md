@@ -84,8 +84,8 @@ must fail explicitly; the application never silently falls back to mock audio.
 | D01 host preparation | Prepare layered device/toolkit readiness and resource limits; keep credentials, weights, and generated media outside the repository and image contexts. |
 | D02 mock deployment | Re-run the documented mock command and API-served browser smoke on the target, including persistence and loopback/network checks. |
 | D03 real model | Select the provider image/override, acquire and hash-lock model files, validate device readiness, route a real queued job, and retain provider provenance. |
-| D04 system validation | Completed on Ubuntu1 with measured CUDA resources, one durable real job, cancellation, playback/range checks, and explicit capability gaps; repeat CPU and native-Linux checks as target resources permit. |
-| D05 operations and handoff | Completed on Ubuntu1 with startup/update/rollback, coordinated database/artifact backup, isolated restore playback, bounded drain, and portability records. |
+| D04 system validation | Completed on reference host with measured CUDA resources, one durable real job, cancellation, playback/range checks, and explicit capability gaps; repeat CPU and native-Linux checks as target resources permit. |
+| D05 operations and handoff | Completed on reference host with startup/update/rollback, coordinated database/artifact backup, isolated restore playback, bounded drain, and portability records. |
 
 Part 2 must preserve the API/database/broker/artifact/routing contracts above.
 Host-specific paths, devices, model caches, and resource limits belong in its

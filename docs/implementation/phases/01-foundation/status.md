@@ -16,7 +16,9 @@ None in Phase 01. Generation/provider execution, transactional dispatch, and pla
 
 ## Blockers and decisions needed
 
-None. Phase 00 was already complete; its previously reported entry blocker was stale. The user supplied a Linux Docker VM at `10.42.0.42`, resolving runtime availability. No model decision was needed.
+None. Phase 00 was already complete; its previously reported entry blocker was
+stale. An authorized Linux Docker host resolved runtime availability. Exact
+connection details are local-only. No model decision was needed.
 
 ## Latest verification
 
@@ -28,4 +30,4 @@ Begin Phase 02 at 02-01 using the established schema, queue, storage and API bou
 
 ## Review correction — 2026-09-13
 
-The three review findings are fixed on `fix/phase-1-review`: bounded subprocess broker probes, redacted Celery consumer errors, and LF shell checkouts. Verification passed in the existing Ubuntu1 WSL2 Docker environment: 63 final Python unit tests (the image's Git-only skip passed separately on the host), 2 frontend tests, and 8 integration tests before and after restart, including actual worker log redaction. See the [dated correction record](../../evidence/01/2026-09-13-review-corrections/README.md). Original completion evidence is preserved; no correction checks remain pending.
+The three review findings are fixed on `fix/phase-1-review`: bounded subprocess broker probes, redacted Celery consumer errors, and LF shell checkouts. Verification passed in the existing reference host Docker environment: 63 final Python unit tests (the image's Git-only skip passed separately on the host), 2 frontend tests, and 8 integration tests before and after restart, including actual worker log redaction. See the [dated correction record](../../evidence/01/2026-09-13-review-corrections/README.md). Original completion evidence is preserved; no correction checks remain pending.

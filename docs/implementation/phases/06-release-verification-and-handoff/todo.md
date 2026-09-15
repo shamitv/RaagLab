@@ -12,7 +12,7 @@ Updated: 2026-09-15. State: completed. See the [plan](plan.md),
   - [x] Resolve 900-second warmup and 3,600-second inference deadlines with bounded outer allowances.
   - [x] Assert normal planning/token settings, no GPU allocation, exact lyrics, validated audio and matching checksums.
   - [x] Retain separate readiness/queue/generation timings, unique logs, bounded inspections and interruption evidence.
-  - [x] Raise Ubuntu1 WSL memory to 40 GiB and validate the pinned external weights volume.
+  - [x] Meet the reference-host memory prerequisite and validate the pinned external weights volume.
 - [x] 06-05 Run real-provider browser playback/seek/download/refresh/reopen checks and retain Chromium evidence; WebKit recorded optional/unavailable.
 - [x] 06-06 Verify saved audio across stop/start and ownership-checked cleanup, including interrupted-run cleanup.
 - [x] 06-07 Refresh README, architecture, development, API, and model operating documentation.

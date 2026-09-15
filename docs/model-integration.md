@@ -3,7 +3,7 @@
 This document is the application handoff boundary for the selected YuE2 real
 music provider. The portable application still defaults to the `mock` provider.
 YuE2 is enabled only with the explicit real-worker Compose override and remains
-validated by the Ubuntu1 queued-generation acceptance gate on 2026-09-14. See
+validated by the reference host queued-generation acceptance gate on 2026-09-14. See
 [application evidence](deployment/evidence/2026-09-14-d03-review-corrections/README.md).
 
 ## Provider contract
@@ -122,7 +122,8 @@ on 2026-09-14. Keep these checks in regression coverage:
 
 Build the integrated worker from the repository root with
 `packaging/yue2/Dockerfile.worker`, after the standalone model volume
-`musicgen-yue2-test_weights` has been acquired and verified. Start the API,
+named by `MUSEFORGE_YUE2_WEIGHTS_VOLUME` (default
+`museforge-yue2-weights`) has been acquired and verified. Start the API,
 dispatcher, and the `yue2` Compose profile with `compose.yue2.yaml`. The override
 sets `MUSIC_PROVIDER=yue2`, `LYRICS_PROVIDER=user`, the pinned model and decoder
 revisions, auto device selection/BF16, one inference process, and 900-second execution

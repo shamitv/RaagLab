@@ -8,7 +8,7 @@ Read `docs/prompts/01-portable-application.md`, the existing implementation reco
 
 The intended first target is a Linux environment inside WSL on a Windows machine. WSL is optional: another deployment may run entirely on native Linux. Support both deployment paths through the same application source and Linux container images, with separate host instructions and configuration where necessary.
 
-The authoring workspace was `C:\work\musicgen`; treat this as a starting clue, not a required deployment path. Discover the actual repository location, target host, WSL distribution if applicable, container engine, and hardware. Do not assume a particular GPU, amount of VRAM, Linux distribution, model, or installed driver.
+The authoring workspace was `<repository-root>`; treat this as a starting clue, not a required deployment path. Discover the actual repository location, target host, WSL distribution if applicable, container engine, and hardware. Do not assume a particular GPU, amount of VRAM, Linux distribution, model, or installed driver.
 
 ## 1. Define the deployment outcome
 

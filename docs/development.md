@@ -137,7 +137,8 @@ Use `compose.yaml` + `compose.yue2.yaml` with the `yue2` profile on GPU-free VMs
 Add `compose.yue2.gpu.yaml` only on hosts with NVIDIA Container Toolkit to expose
 the GPU. Docker cannot fall back from a failed container-level GPU reservation;
 omit the GPU override if the host cannot provide it. Verified weights are still
-required in the external `musicgen-yue2-test_weights` volume.
+required in the external volume selected by `MUSEFORGE_YUE2_WEIGHTS_VOLUME`,
+which defaults to `museforge-yue2-weights`.
 
 Weight checksum/identity failures, model load errors, startup timeouts, and
 inference failures do not trigger device fallback. The selected device is kept
@@ -148,7 +149,7 @@ For an existing deployment, apply migrations before starting the upgraded
 services. Queued jobs remain runtime-revision pinned: drain old 0.1.5 work with
 a compatible worker or resubmit it explicitly; the upgrade does not rewrite it.
 
-Real-service integration commands (Ubuntu1 or another Linux Docker engine):
+Real-service integration commands (reference host or another Linux Docker engine):
 
 ```bash
 bash scripts/test.sh yue2-cpu
@@ -193,7 +194,12 @@ full symbolic planning and its original >5-second/nontruncation thresholds.
 
 ## Remote Linux execution
 
-The original foundation verification used the user-provided VM at `10.42.0.42` as `yolo1`, with a key in the ignored `secrets/` directory. That historical checkout is `/home/yolo1/raaglab-foundation-20260913`; credentials are not present in this checkout. The review corrections use the existing `Ubuntu1` WSL2 distribution and its Linux Docker engine, reachable from PowerShell with `wsl -d Ubuntu1 -- bash scripts/test.sh integration`. Use the same checkout and commands on another Linux engine; do not copy keys, a developer `.env`, weights, or generated audio into the build context.
+The original foundation verification used an authorized remote Linux Docker
+host reached through SSH. Review corrections used a separate WSL2 Docker host.
+Exact endpoints, usernames, distribution aliases, and checkout paths are kept
+only in ignored local documentation. Run the same commands from the repository
+root on another Linux engine; do not copy keys, a developer `.env`, weights, or
+generated audio into the build context.
 
 For browser access to a remote loopback port, forward that port over SSH and point `API_BASE_URL` at the local tunnel. Do not widen the Compose host binding. The evidence record names exact tested engine, Compose, runtime, schema, and verification results.
 

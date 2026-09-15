@@ -2,13 +2,13 @@
 
 - State: `completed`
 - Last updated: 2026-09-15
-- Target: `ubuntu1` (Ubuntu 24.04.5 LTS in WSL2; Docker Engine in WSL)
-- Current focus: handoff complete; persistent Ubuntu1 real deployment is healthy
+- Verification target: reference Ubuntu/WSL2 deployment with a Linux Docker Engine
+- Current focus: dated handoff complete; live deployment state is recorded locally
 
 ## Completed
 
 - D00 target inventory, topology, model decision, phase plan, and acceptance rules.
-- D01 Docker/Compose and GPU readiness on Ubuntu1.
+- D01 Docker/Compose and GPU readiness on the reference host class.
 - D02 target mock gate: 49 integration checks, 34 browser checks, and 22 intentional skips;
   queued restart, broker/dispatcher restart, worker-loss recovery, and full restart passed.
 - D03 integrated YuE2 adapter, isolated worker image/queue, startup readiness, provenance,
@@ -21,7 +21,7 @@
 
 ## Remaining work
 
-- None for the Ubuntu1 D04/D05 acceptance gates. Native Linux remains documented only.
+- None for the recorded D04/D05 acceptance gates. Native Linux remains documented only.
 
 ## Limitations
 
@@ -31,6 +31,6 @@ duration, subjective listening quality, and native-Linux execution remain unveri
 ## Latest verification
 
 See [D04/D05 evidence](evidence/2026-09-15-d04-d05/README.md), the integrated D03 evidence,
-and the Ubuntu1 runbook and manifest. The D05 backup/restore and rollback checks
-have current evidence; the remaining native-Linux and semantic-audio limitations
-are explicitly recorded.
+and the managed runbook and reference manifest. The D05 backup/restore and rollback checks
+have dated evidence; live health belongs in ignored local documentation. The remaining
+native-Linux and semantic-audio limitations are explicitly recorded.

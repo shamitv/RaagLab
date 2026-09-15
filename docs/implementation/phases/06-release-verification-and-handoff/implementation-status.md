@@ -32,8 +32,8 @@ records failures after both Compose and temporary-worktree cleanup.
 - Committed mock release: 42 outcomes passed, including PostgreSQL/RabbitMQ
   integration, frontend unit/build, API-served Chromium, recovery, lifecycle,
   persistence, and cleanup.
-- Normal CPU YuE2: passed on Ubuntu1 with 37.06 GiB available, external pinned
-  weights, 28 GiB worker limit and four CPU threads. The accepted result has
+- Normal CPU YuE2: passed on a reference host that met the 32 GiB prerequisite,
+  with external pinned weights, a 28 GiB worker limit, and four CPU threads. The accepted result has
   exact lyrics, `torch-eager` CPU provenance, normal settings, validated 48 kHz
   stereo audio, and identical audio SHA-256 before and after stop/start.
 - Final browser correction: targeted API-served Chromium passed playback,

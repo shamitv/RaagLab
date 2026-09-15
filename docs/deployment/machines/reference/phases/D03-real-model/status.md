@@ -6,7 +6,7 @@
   CUDA/BF16 readiness, three real prompt generations, bounded cleanup, fresh
   container reproducibility, and the repository-side YuE2 adapter, route,
   readiness, provenance, and integrated-worker Compose implementation. Review
-  corrections were integrated against Phase 4 and verified on Ubuntu1. One real
+  corrections were integrated against Phase 4 and verified on the reference host. One real
   durable API job succeeded with one attempt/version and verified provenance;
   its 48 kHz stereo PCM WAV passed full/HEAD/range retrieval and browser playback
   and seeking. Mock unit, integration, browser, recovery, and smoke checks passed.

@@ -29,7 +29,9 @@ Compose profile; it is not the default provider. The repository name does not
 select a model. Default port 8000 is
 configurable and is not asserted available on any target machine.
 
-Phase 01 was implemented from Linux and verified on the user-supplied Docker VM at `10.42.0.42`; see its [evidence](evidence/01/2026-09-13-foundation/README.md). The baseline environment observations above are historical.
+Phase 01 was implemented from Linux and verified on an authorized remote Docker
+host; exact connection details are local-only. See its
+[evidence](evidence/01/2026-09-13-foundation/README.md). The baseline environment observations above are historical.
 
 ## Architecture and stack
 
@@ -57,7 +59,7 @@ Deferred product validation: broader real-provider capability and recovery
 checks, semantic audio quality, and native-Linux execution remain explicitly
 unverified. Part 2 D04/D05 deployment validation, backup/restore, rollback, and
 operations handoff are recorded as complete in the merged deployment reports.
-The normal-mode CPU release gate passed on Ubuntu1 with the pinned weights and
+The normal-mode CPU release gate passed on a reference host with the pinned weights and
 is recorded in the Phase 06 completion evidence. The final browser-profile
 correction was retested separately at the final implementation revision.
 
@@ -131,7 +133,7 @@ Runtime documentation will be delivered as `README.md`, `docs/architecture.md`, 
 Part 1 passes on the resolved mock startup command, source/image versions, migration head, internal service names, data and artifact mount contracts, provider routing, effective limits, fixture provenance, and test evidence. It lists exact missing musical capabilities and explains real-image construction without choosing a model by folder name.
 
 Part 2 has its separate `docs/deployment/` record and D00–D05 phases. It contains
-the Ubuntu1 inventory, YuE2 model/image manifest, standalone verification, the
+the reference deployment inventory, YuE2 model/image manifest, standalone verification, the
 narrow successful user-facing queued inference, and completed D04/D05 evidence
 for the persistent deployment. The Phase 06 CPU gate repeats technical model
 verification on a host with sufficient RAM and pinned weights; its retained

@@ -6,7 +6,7 @@ The mock and integrated YuE2 routes expose evidence-backed capabilities and a st
 
 ## Dependencies and entry criteria
 
-Phase 04 persistence/recovery gates pass and the mock workflow remains usable. The narrow YuE2 D03 application gate also passed on Ubuntu1: a durable English user-lyrics job ran through the real worker and its verified 48 kHz result was retrieved and played through the API. D03 proves transport, provenance, and technical audio handling; it does not prove lyric adherence, instrumental-only output, language fidelity, style-control fidelity, or duration control. Phase 05 audits and enforces those distinctions.
+Phase 04 persistence/recovery gates pass and the mock workflow remains usable. The narrow YuE2 D03 application gate also passed on the reference host: a durable English user-lyrics job ran through the real worker and its verified 48 kHz result was retrieved and played through the API. D03 proves transport, provenance, and technical audio handling; it does not prove lyric adherence, instrumental-only output, language fidelity, style-control fidelity, or duration control. Phase 05 audits and enforces those distinctions.
 
 ## Scope
 

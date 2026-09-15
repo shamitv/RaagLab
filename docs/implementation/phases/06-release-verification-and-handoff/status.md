@@ -18,9 +18,9 @@ services. Effective normal deadlines are 900 seconds for warmup and 3,600
 seconds for inference, with compatible queue, watchdog, restart, browser and
 cleanup allowances.
 
-The committed mock release passed 42 outcomes. The normal CPU run passed on
-Ubuntu1 after WSL memory was raised to 40 GiB: 37.06 GiB was available, the
-external pinned weights volume was present, and the worker used a 28 GiB limit,
+The committed mock release passed 42 outcomes. The normal CPU run passed on a
+reference WSL2 host after its memory prerequisite was met. The external pinned
+weights volume was present, and the worker used a 28 GiB limit,
 four CPU threads, concurrency one, CPU/torch-eager provenance, pinned model and
 decoder, normal settings, exact lyrics, validated nontruncated 48 kHz stereo
 audio, and matching API/download checksums. Audio remained byte-identical after

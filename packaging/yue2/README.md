@@ -7,16 +7,17 @@ Nothing is added to the MuseForge API or existing worker dependency environment.
 
 ## Build and acquire
 
-Use the existing Ubuntu1 WSL Docker engine. If GPU passthrough is not configured,
-run `setup-gpu.sh` as root there. It configures NVIDIA Container Toolkit 1.19.0 and
+Use a compatible Linux Docker engine. If GPU passthrough is not configured,
+run `setup-gpu.sh` as root on the target host. It configures NVIDIA Container Toolkit 1.19.0 and
 restarts Docker; stop unrelated workloads before running it.
 
 From this directory in WSL:
 
 ```bash
-docker build -t musicgen-yue2:0.1.6 .
-docker volume create musicgen-yue2-test_weights
-docker run --rm -v musicgen-yue2-test_weights:/weights musicgen-yue2:0.1.6
+docker build -t museforge-yue2:0.1.6 .
+export MUSEFORGE_YUE2_WEIGHTS_VOLUME="${MUSEFORGE_YUE2_WEIGHTS_VOLUME:-museforge-yue2-weights}"
+docker volume create "$MUSEFORGE_YUE2_WEIGHTS_VOLUME"
+docker run --rm -v "$MUSEFORGE_YUE2_WEIGHTS_VOLUME:/weights" museforge-yue2:0.1.6
 ```
 
 Acquisition uses `hf download` with immutable revisions, downloads only runtime
@@ -52,14 +53,17 @@ docker compose run --rm test python run.py --only acoustic-folk --label restart
 ```
 
 `test` has no network or published ports. Weights mount read-only, temporary files
-use tmpfs, and all reports/audio persist in `musicgen-yue2-test_outputs`. Each run
+use tmpfs, and all reports/audio persist in the volume named by
+`MUSEFORGE_YUE2_OUTPUTS_VOLUME`, which defaults to
+`museforge-yue2-validation-outputs`. Each run
 gets a unique timestamp directory. Inspect retained results with a temporary
 container mounting that volume; export them with `docker cp` for local playback.
 Do not use `docker compose down -v` if you want to retain weights and results.
 
-The GPU must expose BF16. The host used for this test has 16 GB VRAM and about
-31 GiB WSL RAM; upstream recommends 24 GB VRAM and 24 GB available host RAM.
-This is therefore a feasibility test, not a claim of upstream hardware support.
+The GPU must expose BF16. The verified host met the bounded runtime checks but
+did not meet every upstream hardware recommendation. This is therefore a
+feasibility test, not a claim of upstream hardware support. Exact host capacity
+is retained only in the ignored local record.
 The inference package receives a 16 GiB budget (it reserves 2 GiB internally),
 BF16 AR/NAR, FP32 VAE, no quantization, full symbolic planning, and its default
 sampling limits. Only CUDA OOM triggers one retry with `offload_ar=True`.

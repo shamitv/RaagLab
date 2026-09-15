@@ -1,4 +1,4 @@
-# YuE2 verification: ubuntu1
+# YuE2 verification: reference deployment
 
 The complete dated record is [evidence/2026-09-14-yue2](../../evidence/2026-09-14-yue2/README.md).
 
@@ -19,10 +19,10 @@ The complete dated record is [evidence/2026-09-14-yue2](../../evidence/2026-09-1
 | Browser playback and lyric adherence | pending | No listening tool; no app real path |
 
 The generated audio is technically valid 48 kHz stereo FLAC, finite and nonempty,
-with no planning/semantic token truncation. The supervisor measured 9.06–9.20 GiB
-whole-device peak use and 9.18–9.33 GiB process-tree RSS; available WSL memory
-remained above 21 GiB. These are measurements for these prompts, not capacity or
-throughput guarantees.
+with no planning/semantic token truncation. The supervisor recorded bounded GPU,
+process-tree, and host-memory use throughout the run. Exact host-capacity figures
+are retained only in the ignored local originals; these measurements are not
+capacity or throughput guarantees.
 
 The standalone image and report prove the model can execute on this target. They
 do not prove that the MuseForge application can expose the model's capabilities,

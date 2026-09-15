@@ -29,11 +29,11 @@ Documented decisions only: [contracts](../../contracts.md), [job reliability](..
 
 ## Acceptance criteria
 
-- **00-AC1:** Baseline repository/instructions and all three product references are inspected; both prompt files and images remain unchanged and model/host assumptions are explicit.
+- **00-AC1:** Baseline repository/instructions and all three product references are inspected; their Phase 00 hashes are recorded and model/host assumptions are explicit. Later privacy sanitization may replace machine identifiers while preserving originals outside the tracked tree.
 - **00-AC2:** Architecture, selected versions and API/data/provider/queue/storage/selection/recovery contracts contain concrete decisions sufficient to start foundation work.
 - **00-AC3:** Master plan plus all seven plan/status/to-do sets exist with dependency-ordered work, stable IDs, deliverables, acceptance checks and verification instructions; Phase 02 remains the early integrated checkpoint.
 - **00-AC4:** The requirement matrix covers Part 1/design sections and all A01–A12 checks with owners/evidence; Part 2 and unavailable product scope remain explicit.
-- **00-AC5:** Documentation integrity and original-file preservation checks pass; dependency checks are recorded accurately and no application build/runtime/browser test is falsely reported.
+- **00-AC5:** Documentation integrity and baseline-file hash checks pass; dependency checks are recorded accurately and no application build/runtime/browser test is falsely reported.
 - **00-AC6:** Overall/phase status is synchronized, Phase 00 closure describes documentation only, future-phase tasks remain unchecked and future completion reports are absent.
 
 ## Verification

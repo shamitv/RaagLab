@@ -1,6 +1,6 @@
 # D01 implementation status
 
-D01 completed on 2026-09-15. Ubuntu1 uses the existing Docker Engine inside
+D01 completed on 2026-09-15. The reference host uses the existing Docker Engine inside
 WSL2, the Windows-provided NVIDIA integration, and Linux-home deployment data.
 The private environment generator, loopback port guard, isolated Compose project,
 and mock/real startup profiles are implemented under `scripts/deploy/`.

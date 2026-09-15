@@ -1,7 +1,7 @@
 # D02 implementation status
 
-D02 completed on Ubuntu1 on 2026-09-15 using disposable Compose project
-`museforge-phase4-test-7376f5f707c2`, isolated from `museforge-ubuntu1` and the
+D02 completed on the reference host on 2026-09-15 using disposable Compose project
+`<isolated-d02-project>`, isolated from `museforge-managed` and the
 D03 review project.
 
 - 49 integration checks passed.
@@ -9,7 +9,7 @@ D03 review project.
 - Generation, playback, seek, download, iteration, reopen, queued restart,
   broker recovery, dispatcher restart, worker-loss recovery, and full restart
   persistence passed.
-- Evidence: `test-results/museforge-phase4-test-7376f5f707c2/`.
+- Evidence: `test-results/<isolated-d02-project>/`.
 
 The persistent mock profile remains available as a diagnostic mode; no user
 volumes were deleted during verification.

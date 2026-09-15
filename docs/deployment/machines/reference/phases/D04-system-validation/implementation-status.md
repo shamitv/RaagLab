@@ -1,7 +1,7 @@
 # D04 implementation status
 
-D04 completed on Ubuntu1 on 2026-09-15. The persistent project
-`museforge-ubuntu1` ran the API, dispatcher, and one GPU YuE2 worker with the
+D04 completed on the reference host on 2026-09-15. The persistent project
+`museforge-managed` ran the API, dispatcher, and one GPU YuE2 worker with the
 existing verified weights volume.
 
 - Real readiness reached `ready` with CUDA, BF16, pinned model and decoder revisions.
@@ -20,6 +20,6 @@ existing verified weights volume.
   mock-provider evidence from the isolated D02 run.
 
 Evidence is under the private host path
-`/home/shamit/.local/share/museforge-ubuntu1/evidence/20260915T030821Z-real`.
+`$EVIDENCE_ROOT/20260915T030821Z-real`.
 Musical quality, lyric adherence, broader language/vocal behavior, exact duration,
 and native Linux remain unverified.

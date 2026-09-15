@@ -165,7 +165,7 @@ compatible-model readiness. The successful child test substitutes fake audio
 modules, so it does not verify actual FLAC decoding and WAV transcoding.
 
 After correcting the findings, run the Linux unit/integration and mock regression
-suites, then complete the Ubuntu1 acceptance gate: one real API request crossing
+suites, then complete the reference host acceptance gate: one real API request crossing
 PostgreSQL/outbox and RabbitMQ, producing one persisted version with verified
 provenance, and supporting full, HEAD, and range retrieval plus browser playback
 and seeking.

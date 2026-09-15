@@ -34,9 +34,9 @@ instructions. Public APIs, product schemas and migrations remain unchanged.
 
 ## Verification result
 
-The committed mock release passed 42 outcomes. On Ubuntu1 WSL, memory was raised
-to 40 GiB and 37.06 GiB was available; the pinned external weights volume was
-present. The normal CPU model run passed at `735c960`, including the accepted
+The committed mock release passed 42 outcomes. On the reference host, the
+32 GiB memory prerequisite and pinned external weights requirement were met.
+The normal CPU model run passed at `735c960`, including the accepted
 audio and lifecycle checks. After the browser Compose profile correction, a
 targeted Chromium run against an existing completed YuE2 artifact passed at
 `4b2d425`; a no-model Compose configuration check also passed.

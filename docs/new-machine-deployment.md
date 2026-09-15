@@ -23,8 +23,8 @@ The first command must print `linux`.
 ## 2. Clone and configure
 
 ```bash
-git clone <repository-url> musicgen
-cd musicgen
+git clone <repository-url> museforge
+cd museforge
 bash scripts/setup.sh
 ```
 
@@ -85,7 +85,10 @@ The `database`, `broker`, and `artifacts` named volumes survive normal `down` an
 
 ## 5. Managed Ubuntu/WSL deployment
 
-The managed scripts create a private environment under `$HOME/.local/share/museforge-ubuntu1`, generate database and broker passwords, and use the Compose project name `museforge-ubuntu1`. This example explicitly starts the mock provider:
+The managed scripts create a private environment under
+`${XDG_DATA_HOME:-$HOME/.local/share}/museforge-managed`, generate database and
+broker passwords, and use the Compose project name `museforge-managed`. This
+example explicitly starts the mock provider:
 
 ```bash
 bash scripts/deploy/setup.sh
@@ -107,11 +110,15 @@ Pass the same two `MUSEFORGE_...` variables to later deployment commands. Create
 bash scripts/deploy/start.sh mock --create-only
 ```
 
-See the [operations runbook](deployment/machines/ubuntu1/runbook.md) for backup, restore, update, rollback, drain, and recovery procedures.
+See the [operations runbook](deployment/machines/reference/runbook.md) for backup, restore, update, rollback, drain, and recovery procedures.
 
 ## 6. YuE2 song-provider deployment
 
-YuE2 requires the exact external `musicgen-yue2-test_weights` Docker volume described by the [deployment manifest](deployment/machines/ubuntu1/deployment-manifest.md). The weights are not stored in Git or application images, and their license and hashes must be reviewed before provisioning them on a new host.
+YuE2 requires an external Docker volume named by
+`MUSEFORGE_YUE2_WEIGHTS_VOLUME`, defaulting to `museforge-yue2-weights`, as
+described by the [deployment manifest](deployment/machines/reference/deployment-manifest.md).
+The weights are not stored in Git or application images, and their license and
+hashes must be reviewed before provisioning them on a new host.
 
 After the volume and NVIDIA Container Toolkit are available, select the device and start real mode:
 

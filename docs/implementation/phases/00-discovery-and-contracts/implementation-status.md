@@ -8,7 +8,7 @@
 
 Created the [master plan](../../master-plan.md), [overall status](../../status.md), [ADR 0001](../../decisions/0001-application-architecture.md), [dependency baseline](../../dependency-baseline.md), [application contracts](../../contracts.md), [job reliability](../../job-reliability.md), [responsive/UI decisions](../../ui-behavior.md), [requirement matrix](../../requirements-matrix.md), [verification strategy](../../verification-strategy.md), [planning evidence](../../evidence/planning-verification.md) and plan/status/to-do files for all seven phases.
 
-There are 73 stable task IDs across the seven phases: eight documentation tasks completed here and 65 application tasks remaining in 01–06. There are 48 phase acceptance criteria, including six for this documentation phase. All original prompts/design/images are unchanged. No migration, endpoint, application source, runtime manifest/lock, container, model or deployment state was delivered.
+There are 73 stable task IDs across the seven phases: eight documentation tasks completed here and 65 application tasks remaining in 01–06. There are 48 phase acceptance criteria, including six for this documentation phase. At Phase 00 completion, all original prompts, design files, and images were unchanged. The machine-deployment prompt was later sanitized to remove its authoring path; its original is retained only in ignored local records and Git history. No migration, endpoint, application source, runtime manifest/lock, container, model or deployment state was delivered.
 
 ## Acceptance results
 
