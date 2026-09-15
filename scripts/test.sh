@@ -28,7 +28,8 @@ case "${1:-}" in
     fi
     ;;
   release)
-    fail 'Full release acceptance belongs to Phase 06. Use unit, integration, or e2e for implementation checks.'
+    require_engine
+    python3 scripts/verify-release.py
     ;;
   *) fail 'Usage: bash scripts/test.sh unit|integration|e2e|yue2-cpu|yue2-gpu|release' ;;
 esac

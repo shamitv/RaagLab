@@ -47,3 +47,8 @@ Migration `0002_version_favorites` adds the favorite relation without modifying 
 If an artifact is missing or unsafe, artifact playback returns 410 and version/library metadata remains inspectable with `available: false`. A successful later read can restore the availability flag after the object returns. Missing media is never replaced with generated content implicitly.
 
 Migration `0003_workspace_settings` adds revisioned settings and the verified project/library and recovery indexes. It follows `0002_version_favorites`; existing applied migrations are not rewritten. See [development](development.md) for safe artifact inspection/collection and full Phase 04 verification commands.
+
+The current release schema head is `0004_worker_runtime`; apply it with the
+guarded `bash scripts/migrate.sh` command before starting an upgraded stack.
+The complete mock release and persistence evidence is recorded in the [Phase 06
+release report](implementation/evidence/06/20260915-090415-d55061e8/README.md).

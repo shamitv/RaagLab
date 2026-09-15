@@ -9,11 +9,12 @@ import uuid
 
 ROOT=Path(__file__).resolve().parents[1]
 prefix=os.environ.get('MUSEFORGE_TEST_PROJECT_PREFIX','museforge-phase2-test-')
-project=prefix+uuid.uuid4().hex[:12]
+project=os.environ.get('MUSEFORGE_TEST_PROJECT') or prefix+uuid.uuid4().hex[:12]
 env=dict(os.environ, APP_PORT='0')
 base=['docker','compose','--project-name',project,'--env-file','.env','--profile','mock','-f','compose.yaml','-f','compose.test.yaml']
-evidence=ROOT/'test-results'/project
+evidence=Path(os.environ.get('MUSEFORGE_EVIDENCE_DIR', str(ROOT/'test-results'/project)))
 evidence.mkdir(parents=True,exist_ok=True)
+recovery_checks=os.environ.get('MUSEFORGE_RECOVERY_CHECKS')=='1' or prefix.startswith('museforge-phase4-test-')
 
 
 def run(*args, capture=False, timeout=600):
@@ -60,7 +61,7 @@ try:
     recovery_only=os.environ.get('PHASE4_RECOVERY_ONLY')=='1'
     if os.environ.get('PHASE4_BROWSER')=='1' and not recovery_only:
         run('build','browser-tests',timeout=1800)
-    if prefix.startswith('museforge-phase4-test-'):
+    if recovery_checks:
         run('up','-d','--scale','worker-mock=2','--wait','--wait-timeout','180','api','dispatcher','worker-mock')
     else:
         run('up','-d','--wait','--wait-timeout','180','api','dispatcher','worker-mock')
@@ -76,6 +77,14 @@ try:
         browser=run('run','--rm','--no-deps','-e',f'PLAYWRIGHT_OUTPUT_DIR=/test-results/{project}/browser',
                     'browser-tests',capture=True,timeout=1200)
         (evidence/'browser.txt').write_text(browser)
+        if os.environ.get('PHASE6_VISUAL')=='1':
+            visual=run('run','--rm','--no-deps',
+                       '-e',f'API_BASE_URL=http://api:8000',
+                       '-e',f'EVIDENCE_DIR=/test-results/{project}/workspace-inspection',
+                       '-e','PLAYWRIGHT_MODULE=/web/node_modules/@playwright/test/index.mjs',
+                       'browser-tests','node','/web/verify-workspace-browser.mjs',
+                       capture=True,timeout=1200)
+            (evidence/'workspace-inspection.txt').write_text(visual)
     # Hold a dedicated worker: accepted work survives API restart while queued.
     run('stop','worker-mock')
     body=json.dumps({'brief':'Queued restart checkpoint','instruments':['Piano'],'mood':'Calm',
@@ -129,7 +138,7 @@ try:
             with urllib.request.urlopen(origin+version['audio']['url'],timeout=10) as response:
                 assert len(response.read())==version['audio']['byte_size']
     (evidence/'restart.json').write_text(json.dumps({'projects_preserved':len(after['items']), 'origin_before':origin_before_restart, 'origin_after':origin}))
-    if prefix.startswith('museforge-phase4-test-'):
+    if recovery_checks:
         # Confirm at RabbitMQ, lose the publisher before its DB mark, then reclaim
         # the expired claim and publish a duplicate while no worker can consume.
         run('stop','dispatcher','worker-mock')
@@ -211,11 +220,11 @@ try:
     if os.environ.get('PHASE2_BROWSER')=='1':
         subprocess.run(['npm','run','test:browser'],cwd=ROOT/'apps/web',env=dict(os.environ,API_BASE_URL=origin),check=True,timeout=600)
     (evidence/'readiness.json').write_text(json.dumps(get('/health/ready'),indent=2))
-    phase='Phase 4' if prefix.startswith('museforge-phase4-test-') else 'Phase 2'
+    phase='Phase 4' if recovery_checks else 'Phase 2'
     print(f'{phase} service checks passed. Evidence: {evidence}')
 finally:
     try:
         (evidence/'services.log').write_text(run('logs','--no-color',capture=True,timeout=30))
     finally:
-        assert project.startswith(('museforge-phase2-test-','museforge-phase4-test-'))
+        assert project.startswith(('museforge-phase2-test-','museforge-phase4-test-','museforge-phase6-test-'))
         run('down','--volumes','--remove-orphans',timeout=120)

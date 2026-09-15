@@ -2,9 +2,9 @@
 
 - Plan date: 2026-09-13
 - Scope: Part 1 portable application plus Part 2 model integration and deployment handoff.
-- Branch: `planning-docs`
+- Branch: `phase-6-release-verification`
 - Baseline commit: `ac46f5a535e4461250322351e31b3433bbf96988`
-- Execution state: see [overall status](status.md); Phases 00–05 are complete and Phase 06 release verification remains. Part 2 D03 has a narrow integrated YuE2 success; D04/D05 remain.
+- Execution state: see [overall status](status.md); Phases 00–06 are complete for Part 1. Part 2 D03 has a narrow integrated YuE2 success; D04/D05 remain.
 
 ## Outcome and source of truth
 

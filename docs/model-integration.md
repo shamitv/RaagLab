@@ -137,3 +137,9 @@ short smoke mode in a disposable stack; production smoke mode remains disabled.
 D03 closure is supported by the recorded durable application result, not merely
 a standalone model command, image build, or successful import. Broader provider
 semantics and quality remain outside this narrow verification.
+
+Part 1 release verification is complete for the mock provider. The release gate
+does not widen any YuE2 capability claim; host resource measurements, real
+browser validation, rollback, coordinated backup/restore, and operational
+handoff remain Part 2 D04/D05 work. See the [deployment handoff](deployment-handoff.md)
+and [Phase 06 evidence](implementation/evidence/06/20260915-090415-d55061e8/README.md).

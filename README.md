@@ -19,7 +19,7 @@ bash scripts/logs.sh         # recent application process logs
 bash scripts/stop.sh         # preserves database, broker, and artifact volumes
 ```
 
-The `mock` profile selects the CPU worker. An explicit `yue2` Compose override selects the integrated YuE2 worker for English, user-supplied lyrics; it has passed one durable queued-generation check. That narrow check proves routing and technical audio handling, not lyric adherence, instrumental-only output, style fidelity, or duration control. Missing model files or GPU access fail startup rather than returning demo audio. Run `bash scripts/seed-demo.sh` to create three source-labelled demo projects, or `bash scripts/smoke.sh mock` for a measured audio smoke check. Both use `API_BASE_URL` (default http://127.0.0.1:8000). Full release acceptance remains Phase 06 work.
+The `mock` profile selects the CPU worker. An explicit `yue2` Compose override selects the integrated YuE2 worker for English, user-supplied lyrics; it has passed one durable queued-generation check. That narrow check proves routing and technical audio handling, not lyric adherence, instrumental-only output, style fidelity, or duration control. Missing model files or GPU access fail startup rather than returning demo audio. Run `bash scripts/seed-demo.sh` to create three source-labelled demo projects, or `bash scripts/smoke.sh mock` for a measured audio smoke check. Both use `API_BASE_URL` (default http://127.0.0.1:8000). The mock release gate is `bash scripts/test.sh release`; its current record is linked below.
 
 ## Verify
 
@@ -40,4 +40,12 @@ sufficient RAM are required. See [device configuration](docs/development.md#yue2
 boundary](docs/model-integration.md), [queued application evidence](docs/deployment/evidence/2026-09-14-d03-review-corrections/README.md),
 and [YuE2 evidence](docs/deployment/evidence/2026-09-14-yue2/README.md).
 
-See [development instructions](docs/development.md), [Phase 04 status](docs/implementation/phases/04-projects-versions-and-recovery/status.md), [Phase 05 status](docs/implementation/phases/05-provider-readiness/status.md), and [Phase 04 evidence](docs/implementation/evidence/04/2026-09-14-projects-recovery/README.md). Phase 05 provider readiness is verified; release certification remains Phase 06 work.
+Run `bash scripts/test.sh release` on a reachable Linux Docker engine for the
+isolated Phase 06 release gate. It records the exact source, runtime, lock,
+image, migration, persistence, browser, and acceptance results under
+`test-results/phase6-<run-id>/`; copy the compact report to
+`docs/implementation/evidence/06/` when publishing a release. See the
+[development instructions](docs/development.md), [deployment handoff](docs/deployment-handoff.md),
+[Phase 04 status](docs/implementation/phases/04-projects-versions-and-recovery/status.md),
+[Phase 05 status](docs/implementation/phases/05-provider-readiness/status.md), and
+[Phase 04 evidence](docs/implementation/evidence/04/2026-09-14-projects-recovery/README.md).

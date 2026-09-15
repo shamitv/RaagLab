@@ -83,6 +83,22 @@ Browser generation and navigation checks use the actual API origin (start the mo
 
 These checks cover all lyrics modes, actual playback/seek/download, refresh, navigation, no overflow at 1440/390/320 px, browser errors, and automated axe checks. They do not claim the full Phase 03 accessibility or Phase 06 browser acceptance.
 
+The release gate combines the pinned frontend unit/build image, real-service
+integration and recovery matrix, API-served Chromium projects, and the native
+200% zoom/keyboard/clipboard inspection:
+
+```bash
+bash scripts/test.sh release
+```
+
+Run it only from a clean configured checkout or a dedicated test workspace. It
+uses uniquely named Compose projects, fresh volumes, an ephemeral loopback API
+port, bounded waits, and removes only those test-owned volumes after writing
+evidence. The normal lifecycle portion separately exercises `setup.sh`,
+`start.sh`, `migrate.sh`, `seed-demo.sh`, `logs.sh`, `smoke.sh`,
+`artifact-gc.sh`, `stop.sh`, rebuild/update, and restart persistence. The
+release runner never deletes volumes from an ordinary deployment.
+
 ## Phase 04 acceptance and artifact maintenance
 
 Run the full isolated Phase 04 gate on a Linux Docker engine with:
